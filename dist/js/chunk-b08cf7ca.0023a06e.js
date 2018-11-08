@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-b08cf7ca"],{"0929":function(e,c,n){"use strict";n.r(c);var t=function(){var e=this,c=e.$createElement,n=e._self._c||c;return n("section")},s=[],i=(n("cadf"),n("551c"),n("097d"),{}),u=i,a=(n("f5e0"),n("2877")),f=Object(a["a"])(u,t,s,!1,null,"2806cebe",null);f.options.__file="Classify.vue";c["default"]=f.exports},e4c0:function(e,c,n){},f5e0:function(e,c,n){"use strict";var t=n("e4c0"),s=n.n(t);s.a}}]);
-//# sourceMappingURL=chunk-b08cf7ca.0023a06e.js.map
