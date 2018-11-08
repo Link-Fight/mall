@@ -25,9 +25,7 @@
     <!-- 推荐商品 -->
     <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
     <!-- 返回顶部 -->
-    <div v-show="isShowToTopPoint" @click="moveToTop" class="home-flex-toTop-icon xa-cell">
-      <i class="iconfont icon-dingbu xa-txt-20"></i>
-    </div>
+    <App2Top/>
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="home-flex-loading-point"></div>
     <AppLoadingMore v-if="canLoadingMore"/>
@@ -42,7 +40,7 @@ import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
 import AppLoadingMore from '@/components/AppLoadingMore'
-import startMove from '@/util/startMove'
+import App2Top from '@/components/App2Top'
 function queryM() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -61,7 +59,6 @@ export default {
       goods: homeCfg.goods,
       activitysType: 1,
       activitys: homeCfg.activitys,
-      isShowToTopPoint: false,
       isLoadingMore: false,
       canLoadingMore: true,
       pageQuery: {
@@ -72,6 +69,7 @@ export default {
   },
   components: {
     AppLoadingMore,
+    App2Top,
     HomeSearchBar,
     HomeActivity,
     HomeGoods
@@ -87,15 +85,6 @@ export default {
         this.canLoadingMore = false
       }
       this.isLoadingMore = false
-    },
-    moveToTop() {
-      let target = document.documentElement || document.body
-      startMove(target, { scrollTop: 0 })()
-    },
-    handleScroll() {
-      let clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-      let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      this.isShowToTopPoint = scrollTop / clientHeight > 0.5
     }
   },
   mounted() {
@@ -110,10 +99,6 @@ export default {
       }
     })
     LoadingMoreObserver.observe(this.$refs.footPoint)
-    window.addEventListener('scroll', this.handleScroll)
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll)
   }
 }
 </script>

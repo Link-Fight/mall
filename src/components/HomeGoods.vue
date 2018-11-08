@@ -3,13 +3,13 @@
     <div class="goods-title">{{title}}</div>
     <div class="goods-box xa-cell">
       <template v-for="(item,index) in items">
-        <div class="goods-item" :key="index">
+        <router-link class="goods-item" tag="div" :key="index" :to="'/goods?guid='+index">
           <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
           <p class="title">{{item.title}}</p>
           <p class="sub-title">{{item.subTitle}}</p>
           <p class="tips">{{item.tip}}</p>
           <p class="price">￥&nbsp;{{item.price}}</p>
-        </div>
+        </router-link>
       </template>
     </div>
   </div>
