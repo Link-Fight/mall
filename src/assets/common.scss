@@ -40,6 +40,10 @@ input {
   padding: 0
 }
 
+input::-webkit-search-cancel-button {
+  display: none;
+}
+
 textarea {
   padding: 0
 }

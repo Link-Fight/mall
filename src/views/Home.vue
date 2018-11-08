@@ -22,10 +22,13 @@
     </div>
     <!-- 活动模块 -->
     <HomeActivity class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
+    <!-- 推荐商品 -->
     <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
+    <!-- 返回顶部 -->
     <div v-show="isShowToTopPoint" @click="moveToTop" class="home-flex-toTop-icon xa-cell">
       <i class="iconfont icon-dingbu xa-txt-20"></i>
     </div>
+    <!-- 加载更多触发点 -->
     <div ref="footPoint" class="home-flex-loading-point"></div>
     <div v-if="canLoadingMore" class="home-loading xa-cell">
       <img src="../assets/loading.svg" alt="">正在加载更多

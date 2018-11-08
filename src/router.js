@@ -12,6 +12,11 @@ export default new Router({
       component: Home
     },
     {
+      path: '/search',
+      name: 'search',
+      component: () => import('@/views/Search')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

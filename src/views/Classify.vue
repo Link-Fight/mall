@@ -1,10 +1,10 @@
 <template>
   <section class="classify-page xa-view">
-    <div class="xa-cell search-bar-box">
+    <router-link class="xa-cell search-bar-box" tag="div" to="/search">
       <div class="xa-flex xa-cell search-bar">
         <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<span>搜索</span>
       </div>
-    </div>
+    </router-link>
     <section class="classify-content">
       <div class="classify-slide">
         <div class="slide-item" v-for="(item,index) in slides" :class="{'active':curSlideItem==item.key}" :key="index" @click="curSlideItem=item.key">
