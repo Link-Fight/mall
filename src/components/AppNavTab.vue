@@ -43,17 +43,22 @@ export default {
 </script>
 <style lang="scss" scoped>
 .nav-tab {
-  height: 44px;
+  box-sizing: border-box;
+  padding-top: 8px;
+  height: 48px;
   background-color: #ffffff;
   text-align: center;
+  color: #9d9d9d;
   .iconfont {
-    font-size: 22px;
+    font-size: 20px;
   }
   p {
-    font-size: 12px;
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 14px;
   }
 }
 .router-link-active {
-  color: red;
+  color: #1d1d1d;
 }
 </style>

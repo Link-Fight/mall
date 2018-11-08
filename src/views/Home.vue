@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home-page">
     <!-- 主滑块 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
@@ -41,7 +41,7 @@ import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
 import startMove from '@/util/startMove'
-function queryM(params) {
+function queryM() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
@@ -118,9 +118,9 @@ export default {
 @import url("../../node_modules/swiper/dist/css/swiper.min.css");
 </style>
 <style scoped lang="scss">
-.home {
+.home-page {
   padding-top: 44px;
-  padding-bottom: 44px;
+  padding-bottom: 48px;
   min-height: 100vh;
 }
 .home-space {
