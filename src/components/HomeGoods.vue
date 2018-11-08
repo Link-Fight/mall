@@ -73,13 +73,13 @@ export default {
     margin-top: 12px;
     font-size: 13px;
     font-weight: 600;
-    color: rgba(29, 29, 29, 1);
+    color: #1d1d1d;
     line-height: 18px;
   }
   .sub-title {
     font-size: 12px;
     font-weight: 400;
-    color: rgba(29, 29, 29, 1);
+    color: #1d1d1d;
     line-height: 17px;
   }
   .tips {

@@ -30,9 +30,7 @@
     </div>
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="home-flex-loading-point"></div>
-    <div v-if="canLoadingMore" class="home-loading xa-cell">
-      <img src="../assets/loading.svg" alt="">正在加载更多
-    </div>
+    <AppLoadingMore v-if="canLoadingMore"/>
     <div class="home-search max-container"><HomeSearchBar/></div>
   </div>
 </template>
@@ -43,6 +41,7 @@ import homeCfg from '@/config/views/Home'
 import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
+import AppLoadingMore from '@/components/AppLoadingMore'
 import startMove from '@/util/startMove'
 function queryM() {
   return new Promise(resolve => {
@@ -72,6 +71,7 @@ export default {
     }
   },
   components: {
+    AppLoadingMore,
     HomeSearchBar,
     HomeActivity,
     HomeGoods
@@ -138,14 +138,6 @@ export default {
   background-color: #fff;
   z-index: 10;
 }
-.home-loading {
-  justify-content: center;
-  font-size: 12px;
-  color: 999;
-  img {
-    width: 30px;
-  }
-}
 .home-flex-loading-point {
   position: absolute;
   bottom: 60px;
@@ -153,7 +145,6 @@ export default {
   right: 20px;
   width: 20px;
   height: 20px;
-  background-color: aqua;
   pointer-events: none;
   z-index: 10;
 }

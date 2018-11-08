@@ -9,12 +9,13 @@ export default new Router({
     {
       path: '/',
       name: 'home',
+      redirect: '/main/home',
       component: Home
     },
     {
-      path: '/search',
-      name: 'search',
-      component: () => import('@/views/Search')
+      path: '/prodList',
+      name: 'ProdList',
+      component: () => import('@/views/ProdList')
     },
     {
       path: '/about',
