@@ -3,27 +3,20 @@
   <keep-alive>
     <router-view></router-view>
   </keep-alive>
-  <AppNavTab class="main-nav max-container"/>
+  <MainNavTab class="app-fb-tab"/>
 </section>
 </template>
 <script>
-import AppNavTab from '@/components/AppNavTab'
+import MainNavTab from '@/components/MainNavTab'
 export default {
   name: 'mainRoot',
   components: {
-    AppNavTab
+    MainNavTab
   }
 }
 </script>
 <style lang="scss" scoped>
 .main-page {
   position: relative;
-}
-.main-nav {
-  position: fixed;
-  z-index: 1;
-  bottom: 0;
-  width: 100%;
-  border-top: 1px solid #e5e5e5;
 }
 </style>

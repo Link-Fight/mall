@@ -149,6 +149,7 @@ export default {
 .swiper-container {
   width: 100%;
   height: 49.3vw;
+  max-height: 320px;
 }
 .swiper-slide {
   position: relative;

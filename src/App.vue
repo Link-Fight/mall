@@ -3,7 +3,6 @@
     <router-view/>
   </div>
 </template>
-
 <style>
 body {
   background-color: black;
@@ -19,7 +18,15 @@ body {
   color: #2c3e50;
   background-color: #f6f6f9;
 }
+.app-fb-tab,
 .max-container {
   max-width: 640px;
+}
+#app .app-fb-tab {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e5e5e5;
 }
 </style>

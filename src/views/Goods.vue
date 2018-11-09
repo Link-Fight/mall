@@ -29,12 +29,14 @@
     <img style="width:100%;" src="../assets/notice.jpg" alt="">
     <!-- 返回顶部 -->
     <App2Top/>
+    <GoodsNavTab class="app-fb-tab"/>
   </section>
 </template>
 <script>
 import Swiper from 'swiper'
 import goodsCfg from '@/config/views/Goods'
 import App2Top from '@/components/App2Top'
+import GoodsNavTab from '@/components/GoodsNavTab'
 export default {
   name: 'Goods',
   data() {
@@ -43,7 +45,8 @@ export default {
     }
   },
   components: {
-    App2Top
+    App2Top,
+    GoodsNavTab
   },
   methods: {
   },
