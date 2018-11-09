@@ -29,26 +29,45 @@
     <img style="width:100%;" src="../assets/notice.jpg" alt="">
     <!-- 返回顶部 -->
     <App2Top/>
-    <GoodsNavTab class="app-fb-tab"/>
+    <GoodsNavTab @add="onTabAction('add')" @buy="onTabAction('buy')" class="app-fb-tab"/>
+    <AppPopPanel v-show="isShowSku" @close="isShowSku=false">
+      <SkuPanel :changeAction="changeGoodsBySku"/>
+    </AppPopPanel>
   </section>
 </template>
 <script>
 import Swiper from 'swiper'
 import goodsCfg from '@/config/views/Goods'
 import App2Top from '@/components/App2Top'
+import AppPopPanel from '@/components/AppPopPanel'
 import GoodsNavTab from '@/components/GoodsNavTab'
+import SkuPanel from '@/components/SkuPanel'
 export default {
   name: 'Goods',
   data() {
     return {
+      isShowSku: false,
       info: goodsCfg
     }
   },
   components: {
     App2Top,
-    GoodsNavTab
+    AppPopPanel,
+    GoodsNavTab,
+    SkuPanel
   },
   methods: {
+    onTabAction() {
+      this.isShowSku = true
+    },
+    changeGoodsBySku(skuInfo) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.name + parseInt(Math.random() * 100 % 100)
+          resolve()
+        }, 3000);
+      })
+    }
   },
   mounted() {
     new Swiper('.swiper-container', {

@@ -2,15 +2,17 @@
   <ul class="xa-cell nav-tab">
     <div class="icon xa-cell">
       <i class="iconfont icon-caigou-xianxing"></i>
-      <span class="num">2</span>
+      <span v-if="num" class="num">2</span>
     </div>
-    <div class="add-btn xa-cell xa-flex">加入购物车</div>
-    <div class="buy-btn xa-cell xa-flex">立即购买</div>
+    <div @click="$emit('add')" class="add-btn xa-cell xa-flex">加入购物车</div>
+    <div @click="$emit('buy')" class="buy-btn xa-cell xa-flex">立即购买</div>
   </ul>
 </template>
 <script>
 export default {
-
+  props: {
+    num: [String, Number]
+  }
 }
 </script>
 <style lang="scss" scoped>
