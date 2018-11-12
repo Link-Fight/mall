@@ -1,7 +1,9 @@
+console.log('process.env.NODE_ENV', process.env.NODE_ENV)
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'git'
-    ? '/mall/dist/'
-    : '/',
+  // outputDir: process.env.NODE_ENV === 'git'
+  //   ? 'doc'
+  //   : 'dist',
+  outputDir: 'doc',
   configureWebpack: {
   },
   devServer: {
