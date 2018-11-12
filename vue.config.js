@@ -3,5 +3,8 @@ module.exports = {
     ? '/mall/dist/'
     : '/',
   configureWebpack: {
+  },
+  devServer: {
+    proxy: 'http://localhost:97'
   }
 }

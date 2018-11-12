@@ -58,7 +58,7 @@ export default {
   font-size: 16px;
 }
 .xa-Number__input {
-  padding: 4px;
+  padding: 3px;
   width: 24px;
   background: #f2f2f2;
   text-align: center;
