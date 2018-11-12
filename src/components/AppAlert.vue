@@ -1,6 +1,6 @@
 <template>
-<div class="app-alert xa-view" :class="{'show':show}" @touchmove="touchMove">
-  <div class="content">
+<div class="app-alert xa-view" v-show="show"  @touchmove="touchMove">
+  <div class="content" :class="{'show':show}">
    <div class="txt">{{message}}</div>
    <div class="btn" @click="hiddenAlert">确定</div>
   </div>
@@ -52,8 +52,6 @@ export default {
   top: 0;
   right: 0;
   bottom: 0;
-  transition: transform 0.3s;
-  transform: scale(0);
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.6);
@@ -64,6 +62,11 @@ export default {
     max-width: 300px;
     border-radius: 5px;
     background-color: #fff;
+    transition: transform 0.3s;
+    transform: scale(0);
+    &.show {
+      transform: scale(1);
+    }
     .txt {
       color: #999;
       padding: 24px 8px;
@@ -74,9 +77,6 @@ export default {
       font-size: 18px;
     }
   }
-}
-.app-alert.show {
-  transform: scale(1);
 }
 </style>
 

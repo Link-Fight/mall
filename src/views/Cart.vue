@@ -32,6 +32,7 @@ import AppInputNum from '@/components/AppInputNum'
 import { getCartList, addCart } from '@/controllers/cart'
 import { checkOrder } from '@/controllers/order'
 const storageKey = '/Mall3.0/Cart/prods'
+const storageProdsSelectedKey = '/Mall3.0/Cart/prodsSelected'
 export default {
   components: {
     AppInputNum,
@@ -43,6 +44,7 @@ export default {
       selectedShopGuid: '',
       selectedGoodsMap: {},
       prodsNumMap: {},
+      prodsSelectedMap: {},
       prods: []
     }
   },
@@ -55,6 +57,13 @@ export default {
     }
   },
   methods: {
+    checkGoodsSelected() {
+      const prodsSelectedMap = {}
+      this.prods.forEach(shop => shop.list.forEach(goods => {
+        prodsSelectedMap[goods.guid] = goods.selected
+      }))
+      this.prodsSelectedMap = prodsSelectedMap
+    },
     updateGoodsNum: debounce(function () {
       this.prods.forEach(shop => {
         shop.list.forEach(goods => {
@@ -71,7 +80,6 @@ export default {
       })
     }),
     /** 选择商品
-     * 
      */
     onSelectGoods(shop, goods) {
       if (!goods.selected && this.selectedShopGuid && shop.shop.shop_guid !== this.selectedShopGuid) {
@@ -103,12 +111,14 @@ export default {
       }
     },
     async init() {
+      this.selectedShopGuid = ''
       this.$appLoading.showLoading()
       const data = this.isTest ? await CartConfig() : await getCartList()
       let prodsNumMap = {}
       data.forEach(shop => {
         shop.list.forEach(goods => {
-          goods.selected = false
+          goods.selected = !!this.prodsSelectedMap[goods.guid]
+          goods.selected && (this.selectedShopGuid = shop.shop.shop_guid)
           prodsNumMap[goods.guid] = goods.count
         })
         shop.selected = this.checkShopSelectAllGoods(shop)
@@ -138,9 +148,11 @@ export default {
         } catch (error) {
           this.$appLoading.hiddenLoading()
           await this.$alert.showAlert(error.message)
+          this.checkGoodsSelected()
           this.init()
           return
         }
+        this.$appLoading.hiddenLoading()
         storage.setStorage(storageKey, {
           orderList: orderList,
           orderTip: data
@@ -177,7 +189,12 @@ export default {
       return totalNum
     }
   },
+  beforeDestroy() {
+    this.checkGoodsSelected()
+    storage.setStorage(storageProdsSelectedKey, this.prodsSelectedMap)
+  },
   mounted() {
+    this.prodsSelectedMap = storage.getStorage(storageProdsSelectedKey) || {}
     this.init()
   }
 }
