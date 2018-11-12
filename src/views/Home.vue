@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home-page">
     <!-- 主滑块 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
@@ -22,14 +22,13 @@
     </div>
     <!-- 活动模块 -->
     <HomeActivity class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
+    <!-- 推荐商品 -->
     <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
-    <div v-show="isShowToTopPoint" @click="moveToTop" class="home-flex-toTop-icon xa-cell">
-      <i class="iconfont icon-dingbu xa-txt-20"></i>
-    </div>
+    <!-- 返回顶部 -->
+    <App2Top/>
+    <!-- 加载更多触发点 -->
     <div ref="footPoint" class="home-flex-loading-point"></div>
-    <div v-if="canLoadingMore" class="home-loading xa-cell">
-      <img src="../assets/loading.svg" alt="">正在加载更多
-    </div>
+    <AppLoadingMore v-if="canLoadingMore"/>
     <div class="home-search max-container"><HomeSearchBar/></div>
   </div>
 </template>
@@ -40,8 +39,9 @@ import homeCfg from '@/config/views/Home'
 import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
-import startMove from '@/util/startMove'
-function queryM(params) {
+import AppLoadingMore from '@/components/AppLoadingMore'
+import App2Top from '@/components/App2Top'
+function queryM() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
@@ -59,7 +59,6 @@ export default {
       goods: homeCfg.goods,
       activitysType: 1,
       activitys: homeCfg.activitys,
-      isShowToTopPoint: false,
       isLoadingMore: false,
       canLoadingMore: true,
       pageQuery: {
@@ -69,6 +68,8 @@ export default {
     }
   },
   components: {
+    AppLoadingMore,
+    App2Top,
     HomeSearchBar,
     HomeActivity,
     HomeGoods
@@ -84,15 +85,6 @@ export default {
         this.canLoadingMore = false
       }
       this.isLoadingMore = false
-    },
-    moveToTop() {
-      let target = document.documentElement || document.body
-      startMove(target, { scrollTop: 0 })()
-    },
-    handleScroll() {
-      let clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-      let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      this.isShowToTopPoint = scrollTop / clientHeight > 0.5
     }
   },
   mounted() {
@@ -107,10 +99,6 @@ export default {
       }
     })
     LoadingMoreObserver.observe(this.$refs.footPoint)
-    window.addEventListener('scroll', this.handleScroll)
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll)
   }
 }
 </script>
@@ -118,9 +106,9 @@ export default {
 @import url("../../node_modules/swiper/dist/css/swiper.min.css");
 </style>
 <style scoped lang="scss">
-.home {
+.home-page {
   padding-top: 44px;
-  padding-bottom: 44px;
+  padding-bottom: 48px;
   min-height: 100vh;
 }
 .home-space {
@@ -135,14 +123,6 @@ export default {
   background-color: #fff;
   z-index: 10;
 }
-.home-loading {
-  justify-content: center;
-  font-size: 12px;
-  color: 999;
-  img {
-    width: 30px;
-  }
-}
 .home-flex-loading-point {
   position: absolute;
   bottom: 60px;
@@ -150,7 +130,6 @@ export default {
   right: 20px;
   width: 20px;
   height: 20px;
-  background-color: aqua;
   pointer-events: none;
   z-index: 10;
 }
@@ -170,6 +149,7 @@ export default {
 .swiper-container {
   width: 100%;
   height: 49.3vw;
+  max-height: 320px;
 }
 .swiper-slide {
   position: relative;

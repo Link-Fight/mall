@@ -1,7 +1,7 @@
 /* 重置、默认 */
 
 $color-blue: #3399FF;
-$color-red:#ef3338;
+$color-red:#DA0126;
 $color-green:#42bd56;
 $color-yellow:#ff9900;
 
@@ -38,6 +38,10 @@ ul {
 
 input {
   padding: 0
+}
+
+input::-webkit-search-cancel-button {
+  display: none;
 }
 
 textarea {
@@ -230,6 +234,11 @@ input:focus {
 .xa-txt-ccc {
   color: #ccc;
 }
+
+.xa-txt-1d {
+  color: #1d1d1d;
+}
+
 
 .xa-txt-right {
   text-align: right

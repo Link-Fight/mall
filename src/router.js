@@ -9,7 +9,18 @@ export default new Router({
     {
       path: '/',
       name: 'home',
+      redirect: '/main/home',
       component: Home
+    },
+    {
+      path: '/prodList',
+      name: 'ProdList',
+      component: () => import('@/views/ProdList')
+    },
+    {
+      path: '/Goods',
+      name: 'Goods',
+      component: () => import('@/views/Goods')
     },
     {
       path: '/about',
