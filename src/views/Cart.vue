@@ -147,7 +147,7 @@ export default {
           })
         } catch (error) {
           this.$appLoading.hiddenLoading()
-          await this.$alert.showAlert(error.message)
+          await this.$appAlert.showAlert(error.message)
           this.checkGoodsSelected()
           this.init()
           return

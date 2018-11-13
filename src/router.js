@@ -18,12 +18,12 @@ export default new Router({
       component: () => import('@/views/ProdList')
     },
     {
-      path: '/BillInfoList',
+      path: '/billInfoList',
       name: 'BillInfoList',
       component: () => import('@/views/BillInfoList')
     },
     {
-      path: '/Goods',
+      path: '/goods',
       name: 'Goods',
       component: () => import('@/views/Goods')
     },
@@ -33,12 +33,12 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/Order',
+      path: '/order',
       name: 'order',
       component: () => import(/* webpackChunkName: "about" */ './views/Order.vue')
     },
     {
-      path: '/Bill',
+      path: '/bill',
       name: 'Bill',
       component: () => import(/* webpackChunkName: "about" */ './views/Bill.vue')
     },
@@ -62,6 +62,10 @@ export default new Router({
           path: 'user', component: () => import('@/views/User')
         }
       ]
+    },
+    {
+      path: '/form/billInfo',
+      component: () => import('@/views/form/billInfo'),
     }
   ]
 })

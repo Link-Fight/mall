@@ -1,4 +1,5 @@
-import { saveWechatRes } from '@/apis/wx.js'
+/* eslint-disable */
+import { saveWechatRes } from './wechat'
 import fileUpload from '@/controllers/fileUpload'
 var u = navigator.userAgent
 var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
