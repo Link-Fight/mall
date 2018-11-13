@@ -43,4 +43,20 @@ function base(url, data = {}, type = 'get', config = {}) {
     })
   })
 }
+function copy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+const storage = {}
+window.S = storage
+export async function cache(url, data = {}) {
+  const paramsData = copy(data)
+  delete paramsData.fromUrl
+  const storageKey = url + JSON.stringify(paramsData)
+  if (storage[storageKey]) {
+    return storage[storageKey]
+  }
+  const result = await base.apply(this, arguments)
+  storage[storageKey] = copy(result)
+  return result
+}
 export default base

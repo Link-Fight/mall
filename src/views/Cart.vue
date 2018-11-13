@@ -31,7 +31,7 @@ import CartConfig from '@/config/views/Cart'
 import AppInputNum from '@/components/AppInputNum'
 import { getCartList, addCart } from '@/controllers/cart'
 import { checkOrder } from '@/controllers/order'
-const storageKey = '/Mall3.0/Cart/prods'
+const storageProdKey = '/Mall3.0/Cart/prods'
 const storageProdsSelectedKey = '/Mall3.0/Cart/prodsSelected'
 export default {
   components: {
@@ -153,8 +153,13 @@ export default {
           return
         }
         this.$appLoading.hiddenLoading()
-        storage.setStorage(storageKey, {
+        storage.setStorage(storageProdKey, {
           orderList: orderList,
+          shopInfo: {
+            name: orderList[0].shop,
+            shop_guid: orderList[0].shop_guid,
+            shop_logo: orderList[0].shop_logo
+          },
           orderTip: data
         }, 'sessionStorage')
         this.$router.push({
@@ -191,10 +196,10 @@ export default {
   },
   beforeDestroy() {
     this.checkGoodsSelected()
-    storage.setStorage(storageProdsSelectedKey, this.prodsSelectedMap)
+    storage.setStorage(storageProdsSelectedKey, this.prodsSelectedMap, 'sessionStorage')
   },
   mounted() {
-    this.prodsSelectedMap = storage.getStorage(storageProdsSelectedKey) || {}
+    this.prodsSelectedMap = storage.getStorage(storageProdsSelectedKey, 'sessionStorage') || {}
     this.init()
   }
 }

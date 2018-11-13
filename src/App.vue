@@ -50,5 +50,6 @@ body {
   bottom: 0;
   width: 100%;
   border-top: 1px solid #e5e5e5;
+  box-shadow: 0 0 8px #ccc;
 }
 </style>

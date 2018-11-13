@@ -1,7 +1,7 @@
 <template>
 <transition name="pop-pane-fade">
     <div class="pop-panel__wrapper">
-        <div class="pop-mask" @click.stop="$emit('close')" @touchstart="$emit('close')" @touchmove="$emit('close')"></div>
+        <div class="xa-mask" @click.stop="$emit('close')" @touchstart="$emit('close')" @touchmove="$emit('close')"></div>
         <template v-if="isShow">
           <transition name="slide-fade">
               <div class="pop-panel__content">
@@ -41,15 +41,6 @@ export default {
 .max-page-width {
   max-width: 640px;
   margin: 0 auto;
-}
-.pop-mask {
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
 }
 .pop-pane-fade-enter,
 .pop-pane-fade-leave-active {
