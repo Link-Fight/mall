@@ -25,7 +25,7 @@ export default {
     Vue.prototype.$appLoading = this.$refs.loading
     Vue.prototype.$appToast = this.$refs.toast
     Vue.prototype.$appConfirm = this.$refs.confirm
-    Vue.prototype.$actinWithLoading = function (promiseAction, { loading = '正在加载' } = {}) {
+    Vue.prototype.$actionWithLoading = function (promiseAction, { loading = '正在加载' } = {}) {
       this.$appLoading.showLoading(loading)
       return promiseAction.then(data => {
         this.$appLoading.hiddenLoading()

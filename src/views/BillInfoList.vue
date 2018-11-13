@@ -77,7 +77,7 @@ export default {
     clickFn(action, guid) {
       if (action === 'delete') {
         this.$appConfirm.showConfirm('确定要删除该发票抬头？').then(async () => {
-          await this.$actinWithLoading(deleteBillInfo(guid), { loading: '正在提交' })
+          await this.$actionWithLoading(deleteBillInfo(guid), { loading: '正在提交' })
           this.$appToast.showToast('删除成功')
           for (let i = 0; i < this.dataList.length; i++) {
             if (this.dataList[i].guid === guid) {
@@ -106,7 +106,7 @@ export default {
   },
   mounted() {
     this.isLoadingState = true
-    this.$actinWithLoading(getBillInfoList())
+    this.$actionWithLoading(getBillInfoList())
       .then(data => {
         this.dataList = data
         this.isLoadingState = false

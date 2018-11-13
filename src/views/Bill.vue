@@ -1,6 +1,6 @@
 <template>
 <section class="bill-page">
-  <div><p v-show="needBill" class="bill-head xa-txt-red" @click="isNoticeShow=true">发票须知</p></div>
+  <div><p class="bill-head xa-txt-red" @click="isNoticeShow=true">发票须知</p></div>
   <div class="bill-content">
     <div class="bill-cell">
       <h2 class="title">发票类型</h2>
@@ -29,16 +29,16 @@
       <h2 class="title" v-if="billType==0">发票寄送地址</h2>
       <div v-if="billType==0">
           <div class="xa-cell" @click="gotoSelectAddress">
-              <div v-if="address.name" class="weui-cell__bd">
+              <div v-if="address" class="weui-cell__bd">
                   <p class="address-person xa-txt-14">
-                      <span v-html='address.name'></span>
-                      <span>{{address.phone}}</span>
+                      <span v-html='address.name'></span>&nbsp;<span class="xa-txt-999">{{address.phone}}</span>
                   </p>
                   <p class="address-where xa-txt-12">{{address.area_name}}{{address.area_address}}</p>
               </div>
               <template v-else>
-                <div class="xa-flex xa-txt-999">请选择地址</div><i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
+                <div class="xa-flex xa-txt-999">请选择地址</div>
               </template>
+              <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
           </div>
       </div>
       <div style="padding-top:17px;" class="xa-txt-10 xa-txt-gray">
@@ -55,7 +55,9 @@
 import storage from '@/util/storage'
 import notice from '@/components/notice/bill'
 import BillInfoItem from '@/components/BillInfoItem.vue'
-import { SESSION_BILLINFO_SELECTED } from '@/storeKey'
+import { SESSION_BILLINFO_SELECTED, SESSION_BILL_ADDRESS_SELECTED, SESSION_BILL_SUBMIT } from '@/storeKey'
+let billType = 0
+let isNoticeShow = true
 export default {
   components: {
     BillInfoItem,
@@ -65,24 +67,24 @@ export default {
     return {
       invoiceElectronic: true, // 电子发票
       invoicePaper: true, // 纸质发票
-      needBill: true,  // 是否需要发票
-      billType: 0,  // 个人/公司 发票  电子
-      isNoticeShow: false,  // 是否显示须知
+      billType,  // 个人/公司 发票  电子
+      isNoticeShow,  // 是否显示须知
       isWatchNoticeShow: false,  // 记录须知是否自动提示过
-      address: {}, // 地址信息
+      address: null, // 地址信息
       billInfo: {} // 发票信息
     }
   },
-  watch: {
-    needBill(val) {
-      if (val === true && this.isWatchNoticeShow === false) {
-        this.isNoticeShow = true
-        this.isWatchNoticeShow = true
-      }
-    }
-  },
   methods: {
-    setBillMsg() { },
+    setBillMsg() {
+      const submit = {
+        type: this.billType,
+        billInfo: this.billInfo
+      }
+      if (this.billType === 0) {
+        submit.address = this.address
+      }
+      storage.setStorage(SESSION_BILL_SUBMIT, submit, 'sessionStorage')
+    },
     changeBillType(type) {
       if (this.onlyEinvoice && type === 0) {
         return
@@ -90,33 +92,25 @@ export default {
       this.billType = type
     },
     gotoSelectAddress() {
-      this.setBillMsg({
-        needBill: this.needBill,
-        type: this.billType
-      })
-      this.$router.push({ path: '/address', query: { action: 'billselect', guid: this.address.guid } })
+      this.$router.push({ path: '/addressList', query: { action: 'billselect', guid: this.address ? this.address.guid : '' } })
     },
     gotoSelectBillInfo() {
-      this.setBillMsg({
-        needBill: this.needBill,
-        type: this.billType
-      })
       this.$router.push({ path: '/billInfoList', query: { action: 'select', guid: this.billInfo.guid } })
     },
     submitFn() {
-      if (this.needBill === true && !this.billInfo.guid) {
-        this.$appAlert.showAlert('请添加或选择发票信息')
+      if (!this.billInfo.guid) {
+        this.$appAlert.showAlert('请选择发票信息')
+      } else if (this.billType === 0 && !this.address) {
+        this.$appAlert.showAlert('请选择寄送地址')
       } else {
-        this.setBillMsg({
-          needBill: this.needBill,
-          type: this.billType
-        })
+        this.setBillMsg()
         this.$router.go(-1)
       }
     }
   },
   mounted() {
     this.billInfo = storage.getStorage(SESSION_BILLINFO_SELECTED, 'sessionStorage') || {}
+    this.address = storage.getStorage(SESSION_BILL_ADDRESS_SELECTED, 'sessionStorage') || {}
     if (this.$route.query.invoice) {
       let invoice = Array.isArray(this.$route.query.invoice) ? this.$route.query.invoice.join('') : this.$route.query.invoice
       this.invoiceElectronic = this.invoicePaper = false
@@ -133,6 +127,10 @@ export default {
     if (this.invoicePaper && !this.invoiceElectronic) {
       this.billType = 0
     }
+  },
+  beforeDestroy() {
+    billType = this.billType
+    isNoticeShow = this.isNoticeShow
   }
 }
 </script>

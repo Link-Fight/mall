@@ -18,6 +18,11 @@ export default new Router({
       component: () => import('@/views/ProdList')
     },
     {
+      path: '/addressList',
+      name: 'AddressList',
+      component: () => import('@/views/AddressList')
+    },
+    {
       path: '/billInfoList',
       name: 'BillInfoList',
       component: () => import('@/views/BillInfoList')
@@ -66,6 +71,10 @@ export default new Router({
     {
       path: '/form/billInfo',
       component: () => import('@/views/form/billInfo'),
+    },
+    {
+      path: '/form/address',
+      component: () => import('@/views/form/address'),
     }
   ]
 })

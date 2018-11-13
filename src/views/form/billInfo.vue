@@ -68,6 +68,7 @@ import FormCell from '@/components/FormCell.vue'
 import FormCells from '@/components/FormCells.vue'
 import notice from '@/components/notice/notice'
 export default {
+  name: 'formBillinfo',
   components: {
     FormTitle,
     FormCell,
@@ -123,9 +124,9 @@ export default {
           return
         }
         this.$appLoading.showLoading('正在提交')
-        saveBillInfo(parmas).then(data => {
-          this.$router.go(-1)
+        saveBillInfo(parmas).then(() => {
           this.$appLoading.hiddenLoading()
+          this.$router.go(-1)
         }).catch(error => {
           this.$appLoading.hiddenLoading()
           this.$appAlert.showAlert(error.message)
@@ -140,9 +141,9 @@ export default {
   mounted() {
     this.oldRecord = JSON.stringify(this.record)
     this.record.invoice_type = this.$route.query.type
-    this.isLoading = true
     if (this.$route.query.guid) {
-      this.$actinWithLoading(getBillInfoList(this.$route.query.guid))
+      this.isLoading = true
+      this.$actionWithLoading(getBillInfoList(this.$route.query.guid))
         .then(data => {
           if (data && data.length) {
             Object.assign(this.record, data[0])
@@ -176,5 +177,8 @@ export default {
   line-height: 46px;
   text-align: center;
   margin: 16px 17px 0;
+}
+.submit-btn.disabled {
+  opacity: 0.3;
 }
 </style>
