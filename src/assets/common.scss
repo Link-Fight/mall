@@ -36,8 +36,11 @@ ul {
   list-style: none
 }
 
+textarea,
 input {
-  padding: 0
+  padding: 0;
+  outline: none;
+  border: none;
 }
 
 input::-webkit-search-cancel-button {
@@ -148,7 +151,7 @@ input:focus {
 
 .xa-txt-right {
   text-align: end;
-  text-align: center;
+  text-align: right;
 }
 
 .xa-txt-nowrap {
@@ -239,11 +242,6 @@ input:focus {
   color: #1d1d1d;
 }
 
-
-.xa-txt-right {
-  text-align: right
-}
-
 .xa-txt--nowrap {
   word-break: break-all;
   white-space: nowrap
@@ -299,6 +297,31 @@ body.hidden-scroll {
 .xa-flex-wrap {
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+}
+
+.xa-mask {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.xa-dialog {
+  position: fixed;
+  z-index: 5000;
+  width: 80%;
+  max-width: 300px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 /* 元件 */
@@ -380,4 +403,62 @@ body.hidden-scroll {
   content: "";
   transform-origin: 0 0;
   bottom: -1px;
+}
+
+.xa-img {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.xa-switch {
+  position: relative;
+  height: 23px;
+  width: 40px;
+  background-color: #DFDFDF;
+  border: 1px solid #DFDFDF;
+  outline: 0;
+  border-radius: 16px;
+  box-sizing: border-box;
+  transition: background-color 0.1s, border 0.1s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  &:checked {
+    background-color: $color-red;
+    border-color: $color-red;
+  }
+
+  &:before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    background-color: #Fdfdfd;
+    transition: transform 0.35s cubic-bezier(0.45, 1, 0.4, 1), -webkit-transform 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+  }
+
+  &:checked:before {
+    transform: scale(0);
+  }
+
+  &:after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    background-color: #FFFFFF;
+    transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35), -webkit-transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
+  }
+
+  &:checked:after {
+    transform: translateX(17px);
+  }
 }

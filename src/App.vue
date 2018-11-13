@@ -4,23 +4,38 @@
     <AppAlert ref="alert"/>
     <AppToast ref="toast"/>
     <AppLoading ref="loading"/>
+    <AppConfirm ref="confirm"/>
   </div>
 </template>
 <script>
 import AppAlert from '@/components/AppAlert'
 import AppToast from '@/components/AppToast'
 import AppLoading from '@/components/AppLoading'
+import AppConfirm from '@/components/AppConfirm'
 import Vue from 'vue'
 export default {
   components: {
     AppAlert,
+    AppConfirm,
     AppToast,
     AppLoading
   },
   mounted() {
-    Vue.prototype.$alert = this.$refs.alert
+    Vue.prototype.$appAlert = this.$refs.alert
     Vue.prototype.$appLoading = this.$refs.loading
     Vue.prototype.$appToast = this.$refs.toast
+    Vue.prototype.$appConfirm = this.$refs.confirm
+    Vue.prototype.$actinWithLoading = function (promiseAction, { loading = '正在加载' } = {}) {
+      this.$appLoading.showLoading(loading)
+      return promiseAction.then(data => {
+        this.$appLoading.hiddenLoading()
+        return data
+      }).catch(error => {
+        this.$appLoading.hiddenLoading()
+        this.$appAlert.showAlert(error.message)
+        return Promise.reject(error)
+      })
+    }
   }
 }
 </script>
