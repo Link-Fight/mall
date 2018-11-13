@@ -32,10 +32,12 @@
 </section>
 </template>
 <script>
+import storage from '@/util/storage'
 import editItem from '@/components/BillEditInfoItem.vue'
 import billInfo from '@/components/BillInfoItem.vue'
 import billInfoNotice from '@/components/notice/billInfo.vue'
 import { getBillInfoList, deleteBillInfo } from '@/controllers/bill'
+import { SESSION_BILLINFO_SELECTED } from '@/storeKey'
 let needNoticeShow = false
 export default {
   name: 'billInfoList',
@@ -69,7 +71,9 @@ export default {
     }
   },
   methods: {
-    setSelectedBillIno() { },
+    setSelectedBillIno(info) {
+      storage.setStorage(SESSION_BILLINFO_SELECTED, info, 'sessionStorage')
+    },
     clickFn(action, guid) {
       if (action === 'delete') {
         this.$appConfirm.showConfirm('确定要删除该发票抬头？').then(async () => {

@@ -44,7 +44,6 @@ export default {
 <style lang="scss" scoped>
 .nav-tab {
   box-sizing: border-box;
-  padding-top: 8px;
   height: 48px;
   background-color: #ffffff;
   text-align: center;

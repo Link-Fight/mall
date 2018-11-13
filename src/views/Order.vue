@@ -33,6 +33,9 @@
             <input :checked="needInvoice" @change="needInvoice=!needInvoice" class="xa-switch" type="checkbox">
         </div>
       </selectItem>
+      <router-link tag="div" to="/bill">
+        <selectItem v-show="needInvoice" label="发票信息"/>
+      </router-link>
       <div class="tip-container" v-html="orderTip.logistics_info"></div>
     </div>
     <OrderNavTab class="app-fb-tab" :total="totalPrice"/>
@@ -46,7 +49,7 @@ import OrderNavTab from '@/components/OrderNavTab'
 import OrderProtectionSelect from '@/components/OrderProtectionSelect/index'
 import storage from '@/util/storage'
 import { getDefaultAddress } from '@/controllers/address'
-const storageProdKey = '/Mall3.0/Cart/prods'
+import { SESSION_CART_2_ORDER } from '@/storeKey'
 const logisticsSelectedMap = {
   0: '物流快递',
   1: '上门自提'
@@ -102,7 +105,7 @@ export default {
   async mounted() {
     const address = await getDefaultAddress()
     this.deliveryAddress = address
-    const data = storage.getStorage(storageProdKey, 'sessionStorage')
+    const data = storage.getStorage(SESSION_CART_2_ORDER, 'sessionStorage')
     if (data) {
       this.orderList = data.orderList
       this.shopInfo = data.shopInfo

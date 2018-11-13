@@ -18,10 +18,11 @@
     <div class="bill-cell">
       <h2 class="title">发票信息</h2>
       <div class="xa-cell" @click="gotoSelectBillInfo">
-          <BillInfoItem v-if="billInfo.guid" :config="billInfo"/>
+          <BillInfoItem class="xa-flex" v-if="billInfo.guid" :config="billInfo"/>
           <template v-else>
-            <div class="xa-flex xa-txt-999">请添加发票或选择发票信息</div><i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
+            <div class="xa-flex xa-txt-999">请添加发票或选择发票信息</div>
           </template>
+          <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
     </div>
     <div class="bill-cell">
@@ -51,8 +52,10 @@
 </section>
 </template>
 <script>
+import storage from '@/util/storage'
 import notice from '@/components/notice/bill'
 import BillInfoItem from '@/components/BillInfoItem.vue'
+import { SESSION_BILLINFO_SELECTED } from '@/storeKey'
 export default {
   components: {
     BillInfoItem,
@@ -98,7 +101,7 @@ export default {
         needBill: this.needBill,
         type: this.billType
       })
-      this.$router.push({ path: '/form/billInfoList', query: { action: 'select', guid: this.billInfo.guid } })
+      this.$router.push({ path: '/billInfoList', query: { action: 'select', guid: this.billInfo.guid } })
     },
     submitFn() {
       if (this.needBill === true && !this.billInfo.guid) {
@@ -113,6 +116,7 @@ export default {
     }
   },
   mounted() {
+    this.billInfo = storage.getStorage(SESSION_BILLINFO_SELECTED, 'sessionStorage') || {}
     if (this.$route.query.invoice) {
       let invoice = Array.isArray(this.$route.query.invoice) ? this.$route.query.invoice.join('') : this.$route.query.invoice
       this.invoiceElectronic = this.invoicePaper = false
