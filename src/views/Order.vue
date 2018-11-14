@@ -1,17 +1,8 @@
 <template>
   <section class="order-page">
-    <div class="order-info xa-bg-white ">
-      <div class="xa-cell goods-container" v-for="goods in orderList" :key="goods.guid">
-        <div class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'"></div>
-        <div class="goods-info xa-flex">
-          <p class="title xa-txt-16 xa-txt-bold">{{goods.title}}</p>
-          <p class="sku">{{goods.sku}}</p>
-          <div class="xa-cell price-box">
-            <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
-            <p>x{{goods.count}}</p>
-          </div>
-        </div>
-      </div>
+    <div class="order-info xa-bg-white">
+      <ShopInfo v-if="shopInfo" :config="shopInfo"/>
+      <OrderGoods :items="orderList"/>
       <selectItem label="配送方式" @click="onSelectDelivery" :value="logisticsSelectedMap[logisticsSelected]" :access="canSelectelogistics"/>
       <router-link v-if="logisticsSelected==0" tag="div" to="/addressList?action=select">
         <div v-if="deliveryAddress" class="address-item xa-cell">
@@ -56,6 +47,8 @@
 <script>
 import OrderDelivery from '@/components/OrderDelivery'
 import OrderNavTab from '@/components/OrderNavTab'
+import OrderGoods from '@/components/OrderGoods'
+import ShopInfo from '@/components/ShopInfo'
 import OrderProtectionSelect from '@/components/OrderProtectionSelect'
 import storage from '@/util/storage'
 import { getDefaultAddress } from '@/controllers/address'
@@ -74,7 +67,9 @@ export default {
   components: {
     OrderNavTab,
     OrderDelivery,
+    OrderGoods,
     OrderProtectionSelect,
+    ShopInfo,
     selectItem: {
       render(h) {
         let that = this
@@ -158,8 +153,12 @@ export default {
           }
           submit.bill = billObj
         }
-        const result = await this.$actionWithLoading(submitOrder(submit))
-        window.location.href = result.pay_page_url
+        try {
+          const result = await this.$actionWithLoading(submitOrder(submit))
+          window.location.href = result.pay_page_url
+        } catch (e) {
+          this.$router.push('./order/read??action=cancel&guid=4001536546403283885')
+        }
       }
     },
     async initDeliveryAddress() {
@@ -234,28 +233,6 @@ export default {
     border-bottom: 1px solid #e4e4e4;
     &:last-child {
       border-bottom: none;
-    }
-  }
-}
-.goods-container {
-  padding: 20px 0;
-  .goods-img {
-    width: 80px;
-    height: 80px;
-    margin-right: 11px;
-  }
-  .goods-info {
-    .title {
-      min-height: 42px;
-    }
-    .sku {
-      color: #6d6d6d;
-      font-size: 12px;
-      min-height: 17px;
-    }
-    .price-box {
-      padding-right: 17px;
-      justify-content: space-between;
     }
   }
 }

@@ -43,6 +43,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Order.vue')
     },
     {
+      path: '/order/read',
+      name: 'orderRead',
+      component: () => import(/* webpackChunkName: "about" */ './views/OrderRead.vue')
+    },
+    {
       path: '/bill',
       name: 'Bill',
       component: () => import(/* webpackChunkName: "about" */ './views/Bill.vue')
