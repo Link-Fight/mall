@@ -64,6 +64,7 @@ export default {
       return new Promise(resolve => {
         setTimeout(() => {
           this.name + parseInt(Math.random() * 100 % 100)
+          skuInfo.name = this.name
           resolve()
         }, 3000);
       })

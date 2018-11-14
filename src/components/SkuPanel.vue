@@ -106,7 +106,7 @@ export default {
   methods: {
     async onChangeSku(sku) {
       this.isLoading = true
-      await this.changeAction()
+      await this.changeAction(sku)
       this.isLoading = false
     }
   }

@@ -126,7 +126,7 @@ export default {
         this.$appLoading.hiddenLoading()
         this.updateVaule()
       } catch (error) {
-        console.log('error', JSON.stringify(error))
+        // console.log('error', JSON.stringify(error))
       }
     },
     updateVaule() {
