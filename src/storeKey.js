@@ -5,3 +5,5 @@ export const SESSION_BILLINFO_SELECTED = pre + 'BillinfoSelected' // 选中的�
 export const SESSION_BILL_ADDRESS_SELECTED = pre + 'BillAddressSelected' // 发票寄送地址
 export const SESSION_ORDER_ADDRESS_SELECTED = pre + 'OrderAddressSelected' // 订单寄送地址
 export const SESSION_BILL_SUBMIT = pre + 'BillSubmitInfo' // 发票页面的内容:{发票类型，发票抬头，寄送地址}
+
+export const LOCAL_SEARCH_HISTORY = pre + 'SearchHistory' // 搜索历史

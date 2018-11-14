@@ -17,14 +17,20 @@ import ProdColumelist from '@/components/ProdColumelist'
 import prodlist from '@/config/components/prodlist'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import SearchPrompt from '@/components/SearchPrompt'
-const storageKey = '/Mall3.0/Search/History'
+import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
+import { getProductList, getShopProductList } from '@/controllers/category'
 export default {
   data() {
     return {
+      type: this.$route.query.type || 'CATEGORY',
       keyword: '',
       hotItems: ['P20电池', 'P30电池', 'M3*8*19圆柱', '大灯', '轮胎'],
       historyItems: [],
-      prodList: prodlist.items
+      prodList: prodlist.items,
+      query: {
+        pageIndex: 1,
+        pageSize: 10
+      }
     }
   },
   components: {
@@ -43,14 +49,28 @@ export default {
           if (this.historyItems.length >= 5) {
             this.historyItems.shift()
           }
-          storage.setStorage(storageKey, this.historyItems)
+          storage.setStorage(LOCAL_SEARCH_HISTORY, this.historyItems)
         }
       }
+    },
+    async queryData() {
+      let data = {}
+      if (this.type === 'CATEGORY') {
+        data = await getProductList({ category_guid: this.$route.query.guid, ...this.query })
+      } else if (this.type === 'SHOP') {
+        data = await getShopProductList({ shop_guid: this.$route.query.guid, ...this.query })
+      } else if (this.type === 'SEARCH') {
+        data = await getProductList({ category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
+      }
+      this.query.pageIndex++
+      return data
     }
   },
-  mounted() {
-    let result = storage.getStorage(storageKey)
+  async mounted() {
+    let result = storage.getStorage(LOCAL_SEARCH_HISTORY)
     this.historyItems = result || []
+    const data = await this.queryData()
+    this.prodList = data.items
   }
 }
 </script>

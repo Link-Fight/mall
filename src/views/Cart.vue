@@ -11,7 +11,7 @@
         <i @click="onSelectGoods(shop,goods)" class="iconfont" :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
         <div class="goods-img" :style="'backgroundImage:url('+goods.img+')'"></div>
         <div class="goods-info xa-flex">
-          <p class="title xa-txt-16 xa-txt-bold">{{goods.title}}</p>
+          <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
           <p class="sku">{{goods.sku}}</p>
           <div class="xa-cell price-box">
             <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>

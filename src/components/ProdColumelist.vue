@@ -4,9 +4,10 @@
         <div class="prod-item xa-cell" :key="index">
           <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
           <div class="content xa-flex">
-            <p class="title">{{item.title}}</p>
-            <p class="sub-title">{{item.subTitle}}</p>
-            <p class="tips">{{item.tip}}</p>
+            <div style="min-height:76px;">
+              <p class="title xa-txt-ellipsis-2">{{item.title}}</p>
+              <p class="sub-title xa-txt-ellipsis-2">{{item.sub_title}}</p>
+            </div>
             <p class="price">￥&nbsp;{{item.price}}</p>
           </div>
         </div>
@@ -29,21 +30,22 @@ export default {
 </script>
 <style lang="scss" scoped>
 .prod-item {
-  margin: 8px 0;
+  padding: 8px 0;
   box-sizing: border-box;
   font-family: PingFang-SC-Medium;
-  p {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  background-color: #fff;
+  &:last-of-type {
+    .content {
+      border: none;
+    }
   }
   img {
     display: block;
     flex-shrink: 0;
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     margin-bottom: 10px;
-    margin-right: 8px;
+    margin-right: 11px;
     border-radius: 4px;
     background-color: #eee;
   }
@@ -52,7 +54,7 @@ export default {
     border-bottom: 1px solid #e4e4e4;
   }
   .title {
-    height: 48px;
+    // height: 42px;
     font-size: 15px;
     font-weight: 600;
     color: #1d1d1d;
@@ -60,22 +62,16 @@ export default {
     line-height: 24px;
   }
   .sub-title {
-    height: 34px;
+    min-height: 34px;
     font-size: 12px;
-    color: #1d1d1d;
-    line-height: 17px;
-  }
-  .tips {
-    margin-top: 6px;
-    font-size: 12px;
-    color: rgba(109, 109, 109, 1);
+    color: #6d6d6d;
     line-height: 17px;
   }
   .price {
-    margin-top: 4px;
-    font-weight: 600;
+    margin-bottom: 4px;
+    font-weight: 700;
     color: #da0126;
-    line-height: 20px;
+    line-height: 25px;
   }
 }
 </style>
