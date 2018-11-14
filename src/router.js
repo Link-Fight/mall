@@ -53,6 +53,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Bill.vue')
     },
     {
+      path: '/promotions',
+      name: 'Promotions',
+      component: () => import(/* webpackChunkName: "about" */ './views/Promotions.vue')
+    },
+    {
       path: '/main',
       component: () => import('@/views/MainRoute'),
       children: [
