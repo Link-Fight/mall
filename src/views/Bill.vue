@@ -165,5 +165,6 @@ export default {
 .action-disable {
   color: #d6d6d6;
   pointer-events: none;
+  display: none;
 }
 </style>

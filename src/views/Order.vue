@@ -36,7 +36,7 @@
             <input :checked="needInvoice" @change="needInvoice=!needInvoice" class="xa-switch" type="checkbox">
         </div>
       </selectItem>
-      <router-link v-if="needInvoice" tag="div" to="/bill">
+      <router-link v-if="needInvoice" tag="div" :to="'/bill?invoice='+$route.query.invoice">
         <selectItem v-if="!billData" label="发票信息"/>
         <selectItem v-else label="发票信息">
           <div class="xa-flex xa-txt-right">
@@ -158,7 +158,6 @@ export default {
           }
           submit.bill = billObj
         }
-        console.log(submit)
         const result = await this.$actionWithLoading(submitOrder(submit))
         window.location.href = result.pay_page_url
       }
