@@ -12,7 +12,7 @@
           </div>
         </div>
       </div>
-      <selectItem label="配送方式" @click="onSelectDelivery" :value="logisticsSelectedMap[logisticsSelected]"/>
+      <selectItem label="配送方式" @click="onSelectDelivery" :value="logisticsSelectedMap[logisticsSelected]" :access="canSelectelogistics"/>
       <router-link v-if="logisticsSelected==0" tag="div" to="/addressList?action=select">
         <div v-if="deliveryAddress" class="address-item xa-cell">
           <div class="xa-flex">
@@ -87,12 +87,16 @@ export default {
                 that.$emit('click')
               }
             }
-          }, [this.value || '请选择', h('i', { 'class': 'iconfont icon-xiangyou1', style: 'opacity:0.5' })])
+          }, [this.value || '请选择', that.access && h('i', { 'class': 'iconfont icon-xiangyou1', style: 'opacity:0.5' })])
         ])
       },
       props: {
         label: String,
-        value: String
+        value: String,
+        access: {
+          type: Boolean,
+          default: true
+        }
       }
     }
   },
@@ -100,11 +104,12 @@ export default {
     return {
       shopInfo: null, // 商店信息
       billData: null, // 发票信息
-      billDataMsg: '',
+      billDataMsg: '', // 发票信息(显示用)
       logisticsSelectedMap,
-      isShowOrderDelivery: false,
-      isShowOrderProtectionSelect: false,
+      isShowOrderDelivery: false, // 选择快递地址
+      isShowOrderProtectionSelect: false, // 选择保障中心
       logisticsSelected,
+      canSelectelogistics: true, // 能否选择配送方式
       deliveryAddress: null, // 快递地址
       warehouse, // 保障中心
       orderList: [],
@@ -116,7 +121,7 @@ export default {
   },
   methods: {
     onSelectDelivery() {
-      this.isShowOrderDelivery = true
+      this.canSelectelogistics && (this.isShowOrderDelivery = true)
     },
     checkInfo() {
       if (this.logisticsSelected === -1) {
@@ -185,6 +190,16 @@ export default {
       this.totalPrice = cartData.orderTip.total_price
     } else {
       this.$router.replace('/main/cart')
+    }
+    if (this.$route.query.way) {
+      const way = parseInt(Array.isArray(this.$route.query.way) ? this.$route.query.way.join('') : this.$route.query.way)
+      if (way === 1) {
+        this.canSelectelogistics = false
+        this.logisticsSelected = 0
+      } else if (way === 2) {
+        this.canSelectelogistics = false
+        this.logisticsSelected = 1
+      }
     }
   },
   beforeDestroy() {
