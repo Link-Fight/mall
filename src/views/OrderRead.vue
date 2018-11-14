@@ -1,5 +1,5 @@
 <template>
-  <section class="orderRead-page">
+  <section class="orderRead-page" v-show="!isLoading">
     <div class="xa-bg-white xa-cell cell-space" style="padding:17px 17px;">
       <div class="address-icon">
         <i class="iconfont icon-zuobiaofill xa-txt-24"></i>  
@@ -52,6 +52,7 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
       shopInfo: {},
       status: -1,
       products: [],
@@ -166,6 +167,7 @@ export default {
   async mounted() {
     const data = await this.$actionWithLoading(getOrder({ order_no: this.$route.query.guid }))
     this.initData(data)
+    this.isLoading = false
   }
 }
 </script>
