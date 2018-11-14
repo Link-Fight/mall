@@ -41,6 +41,7 @@ import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import App2Top from '@/components/App2Top'
+import { getMain } from '@/controllers/main'
 function queryM() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -99,6 +100,15 @@ export default {
       }
     })
     LoadingMoreObserver.observe(this.$refs.footPoint)
+  },
+  async beforeMount() {
+    const data = await this.$actionWithLoading(getMain())
+    this.navItms = data.category.map(item => {
+      return {
+        img: item.logo,
+        label: item.name
+      }
+    })
   }
 }
 </script>
