@@ -30,7 +30,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .prod-item {
-  padding: 8px 0;
+  padding: 8px 0 8px 17px;
   box-sizing: border-box;
   font-family: PingFang-SC-Medium;
   background-color: #fff;

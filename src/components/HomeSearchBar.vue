@@ -1,5 +1,5 @@
 <template>
-  <router-link class="xa-cell search-bar-box" tag="div" to="/prodList">
+  <router-link class="xa-cell search-bar-box" tag="div" to="/prodList?type=SEARCH">
     <img src="../assets/logo.png" alt="">
     <div class="xa-flex xa-cell search-bar">
       <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<span>搜索</span>

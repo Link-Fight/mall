@@ -1,20 +1,25 @@
 <template>
   <section class="search-page">
-    <form class="xa-cell search-bar-box max-container" @submit.prevent="()=> false" action="javascript:return true">
+    <form class="xa-cell search-bar-box max-container" @onSearchQuery.prevent="()=> false" action="javascript:return true">
       <div class="xa-flex xa-cell search-bar">
-        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<input v-model="keyword" type="search" placeholder="搜索" @keyup.enter.stop="submit" ><i v-show="keyword" @click="keyword=''" class="iconfont icon-guanbi2fill" style="margin-right:4px"></i>
+        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<input @focus="onSearchFocus" @blur="onSearchBlur" v-model="keyword" type="search" placeholder="搜索" @keyup.enter.stop="onSearchQuery" ><i v-show="keyword" @click="keyword=''" class="iconfont icon-guanbi2fill" style="margin-right:4px"></i>
       </div>
       <span class="cancel-btn" @click="onCancelClick">取消</span>
     </form>
-    <SearchPrompt :hotItems="hotItems" :historyItems="historyItems"/>
+    <App2Top/>
+    <SearchPrompt v-show="isShowSearchPrompt" @select="onSearchSelect" :hotItems="hotItems" :historyItems="historyItems"/>
     <ProdColumelist :items="prodList"/>
-    <AppLoadingMore/>
+    <!-- 加载更多触发点 -->
+    <div ref="footPoint" class="page-flex-loading-point"></div>
+    <AppLoadingMore v-show="prodList.length&&canLoadingMore"/>
+    <div v-if="!canLoadingMore&&prodList.length" class="xa-txt-center xa-txt-999 xa-txt-12" style="padding:16px">已加载全部输数据</div>
   </section>
 </template>
 <script>
 import storage from '@/util/storage'
 import ProdColumelist from '@/components/ProdColumelist'
-import prodlist from '@/config/components/prodlist'
+import App2Top from '@/components/App2Top'
+// import prodlist from '@/config/components/prodlist'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import SearchPrompt from '@/components/SearchPrompt'
 import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
@@ -26,24 +31,39 @@ export default {
       keyword: '',
       hotItems: ['P20电池', 'P30电池', 'M3*8*19圆柱', '大灯', '轮胎'],
       historyItems: [],
-      prodList: prodlist.items,
+      prodList: [],
+      isLoadingMore: false,
+      isShowSearchPrompt: false,
+      canLoadingMore: true,
       query: {
-        pageIndex: 1,
-        pageSize: 10
+        page_index: 1,
+        page_size: 10
       }
     }
   },
   components: {
+    App2Top,
     AppLoadingMore,
     SearchPrompt,
     ProdColumelist
   },
   methods: {
+    onSearchFocus() {
+      this.isShowSearchPrompt = true
+    },
+    onSearchBlur() {
+      this.isShowSearchPrompt = false
+    },
     onCancelClick() {
       this.$router.go(-1)
     },
-    submit() {
+    onSearchSelect(keyword) {
+      this.keyword = keyword
+      this.onSearchQuery()
+    },
+    async onSearchQuery() {
       if (this.keyword) {
+        this.isShowSearchPrompt = false
         if (this.historyItems.indexOf(this.keyword) === -1) {
           this.historyItems.push(this.keyword)
           if (this.historyItems.length >= 5) {
@@ -51,30 +71,72 @@ export default {
           }
           storage.setStorage(LOCAL_SEARCH_HISTORY, this.historyItems)
         }
+        this.query.page_index = 1
+        const data = await this.$actionWithLoading(this.queryData())
+        this.prodList = data.items
+        if (data.items.length === 0) {
+          this.isShowSearchPrompt = true
+          this.$appToast.showToast('抱歉！没有相关内容！')
+        } else if (data.items.length < this.query.page_size) {
+          this.canLoadingMore = false
+        } else {
+          this.canLoadingMore = true
+        }
       }
     },
     async queryData() {
       let data = {}
       if (this.type === 'CATEGORY') {
-        data = await getProductList({ category_guid: this.$route.query.guid, ...this.query })
+        data = await getProductList({ category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
       } else if (this.type === 'SHOP') {
-        data = await getShopProductList({ shop_guid: this.$route.query.guid, ...this.query })
+        data = await getShopProductList({ shop_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
       } else if (this.type === 'SEARCH') {
         data = await getProductList({ category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
       }
-      this.query.pageIndex++
+      this.query.page_index++
       return data
+    },
+    async queryMore() {
+      if (!this.canLoadingMore) return
+      if (!this.prodList.length) return
+      this.isLoadingMore = true
+      const data = await this.queryData()
+      this.isLoadingMore = false
+      if (data.items.length < this.query.page_size) {
+        this.canLoadingMore = false
+      }
+      this.prodList = this.prodList.concat(data.items)
     }
   },
   async mounted() {
     let result = storage.getStorage(LOCAL_SEARCH_HISTORY)
     this.historyItems = result || []
-    const data = await this.queryData()
-    this.prodList = data.items
+    if (this.$route.query.type === 'SEARCH') {
+      this.isShowSearchPrompt = true
+    } else {
+      const data = await this.queryData()
+      this.prodList = data.items
+    }
+    let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+      if (entries[0].intersectionRatio) {
+        !this.isLoadingMore && this.queryMore()
+      }
+    })
+    LoadingMoreObserver.observe(this.$refs.footPoint)
   }
 }
 </script>
 <style lang="scss" scoped>
+.page-flex-loading-point {
+  position: absolute;
+  bottom: 60px;
+  bottom: 30vh;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 10;
+}
 .search-page {
   padding-top: 44px;
 }
