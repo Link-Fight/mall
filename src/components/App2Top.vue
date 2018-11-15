@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     moveToTop() {
-      let target = document.documentElement || document.body
+      let target = document.documentElement.scrollTop ? document.documentElement : document.body
       startMove(target, { scrollTop: 0 })()
     },
     handleScroll() {

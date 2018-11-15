@@ -4,7 +4,9 @@
       <div class="shop-info xa-cell">
         <i @click="onSelectShop(shop)" class="iconfont" :class="shop.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
         <div class="shop-img" :style="'backgroundImage:url('+shop.shop.shop_logo+')'"></div>
-        <div class="xa-txt-16">{{shop.shop.name}}</div>
+        <router-link class="xa-txt-16" tag="div" :to="'/prodList?type=SHOP&guid='+shop.shop.shop_guid">
+          {{shop.shop.name}}
+        </router-link>
         <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
       <div class="xa-cell shop-goods" v-for="goods in shop.list" :key="goods.guid">

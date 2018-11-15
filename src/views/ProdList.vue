@@ -86,13 +86,19 @@ export default {
     },
     async queryData() {
       let data = {}
+      let action
+      let query = {}
       if (this.type === 'CATEGORY') {
-        data = await getProductList({ category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
+        action = getProductList
+        query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       } else if (this.type === 'SHOP') {
-        data = await getShopProductList({ shop_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
+        action = getShopProductList
+        query = { shop_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       } else if (this.type === 'SEARCH') {
-        data = await getProductList({ category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query })
+        action = getProductList
+        query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       }
+      data = await this.$actionWithLoading(action(query))
       this.query.page_index++
       return data
     },
