@@ -36,6 +36,12 @@ export default {
         return Promise.reject(error)
       })
     }
+    Vue.prototype.$actionWithAlert = function (promiseAction) {
+      return promiseAction.catch(error => {
+        this.$appAlert.showAlert(error.message)
+        return Promise.reject(error)
+      })
+    }
   }
 }
 </script>
