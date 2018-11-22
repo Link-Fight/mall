@@ -18,6 +18,11 @@ export default new Router({
       component: () => import('@/views/ProdList')
     },
     {
+      path: '/orderList',
+      name: 'OrderList',
+      component: () => import('@/views/OrderList')
+    },
+    {
       path: '/addressList',
       name: 'AddressList',
       component: () => import('@/views/AddressList')
