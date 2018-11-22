@@ -29,15 +29,15 @@
     <img style="width:100%;" src="../assets/notice.jpg" alt="">
     <!-- 返回顶部 -->
     <App2Top/>
-    <GoodsNavTab @add="onTabAction('add')" @buy="onTabAction('buy')" class="app-fb-tab"/>
+    <GoodsNavTab :disable="info.buy!=1" :notice="info.buy_notice" @add="onTabAction('add')" @buy="onTabAction('buy')" class="app-fb-tab"/>
     <AppPopPanel v-show="isShowSku" @close="isShowSku=false">
-      <SkuPanel :changeAction="changeGoodsBySku"/>
+      <SkuPanel :changeAction="changeGoodsBySku" :buyType="buyType" :info="info" :guid="guid" :skus="skuInfo.skus" :params="skuInfo.params" :choice="skuInfo.choice"/>
     </AppPopPanel>
   </section>
 </template>
 <script>
 import Swiper from 'swiper'
-import goodsCfg from '@/config/views/Goods'
+import { getDetail_2 } from '@/controllers/good'
 import App2Top from '@/components/App2Top'
 import AppPopPanel from '@/components/AppPopPanel'
 import GoodsNavTab from '@/components/GoodsNavTab'
@@ -46,8 +46,15 @@ export default {
   name: 'Goods',
   data() {
     return {
-      isShowSku: false,
-      info: goodsCfg
+      isShowSku: true,
+      buyType: 1, // [1:加入购物车,2:立即购买]
+      info: {},
+      guid: '',
+      skuInfo: {
+        skus: null,
+        params: null,
+        choice: null
+      }
     }
   },
   components: {
@@ -57,17 +64,25 @@ export default {
     SkuPanel
   },
   methods: {
-    onTabAction() {
+    onTabAction(action) {
+      this.buyType = action === 'add' ? 1 : 2
       this.isShowSku = true
     },
-    changeGoodsBySku(skuInfo) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          this.name + parseInt(Math.random() * 100 % 100)
-          skuInfo.name = this.name
-          resolve()
-        }, 3000);
-      })
+    changeGoodsBySku(guid) {
+      this.guid = guid
+      this.queryData()
+    },
+    async queryData() {
+      const data = await this.$actionWithLoading(getDetail_2({
+        guid: this.guid
+      }))
+      this.info = data
+      this.skuInfo.params = data.params.length ? data.params : null
+      this.skuInfo.choice = data.params.length ? data.param_choice : null
+      this.skuInfo.skus = data.sku.length ? {
+        title: data.sku_name,
+        option: data.sku
+      } : null
     }
   },
   mounted() {
@@ -79,6 +94,8 @@ export default {
         el: '.swiper-pagination',
       }
     })
+    this.guid = this.$route.query.guid
+    this.queryData()
   }
 }
 </script>
@@ -86,6 +103,9 @@ export default {
 @import url("../../node_modules/swiper/dist/css/swiper.min.css");
 </style>
 <style lang="scss" scoped>
+.goods-page {
+  padding-bottom: 63px;
+}
 .swiper-container {
   width: 100%;
   height: 100vw;

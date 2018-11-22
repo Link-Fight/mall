@@ -33,7 +33,7 @@ export default {
 <style scoped>
 .app-toast {
   position: fixed;
-  z-index: 99;
+  z-index: 9999;
   bottom: 80px;
   width: 100%;
   transition: transform 0.3s;

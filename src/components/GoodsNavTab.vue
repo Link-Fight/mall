@@ -1,22 +1,40 @@
 <template>
-  <ul class="xa-cell nav-tab">
+  <ul class="xa-cell nav-tab" :class="{'disable':disable}">
+    <div v-show="notice" class="tab-notice">
+      {{notice}}
+    </div>
     <div class="icon xa-cell">
       <i class="iconfont icon-caigou-xianxing"></i>
       <span v-if="num" class="num">2</span>
     </div>
-    <div @click="$emit('add')" class="add-btn xa-cell xa-flex">加入购物车</div>
-    <div @click="$emit('buy')" class="buy-btn xa-cell xa-flex">立即购买</div>
+    <div @click="onClick('add')" class="add-btn xa-cell xa-flex">加入购物车</div>
+    <div @click="onClick('buy')" class="buy-btn xa-cell xa-flex">立即购买</div>
   </ul>
 </template>
 <script>
 export default {
   props: {
-    num: [String, Number]
+    num: [String, Number],
+    disable: {
+      type: Boolean,
+      default: false
+    },
+    notice: String
+  },
+  methods: {
+    onClick(action) {
+      if (this.disable) {
+        this.$appToast.showToast('该商品目前无法购买')
+      } else {
+        this.$emit(action)
+      }
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
 .nav-tab {
+  position: relative;
   height: 48px;
   box-sizing: border-box;
   background-color: #ffffff;
@@ -24,6 +42,15 @@ export default {
   font-size: 18px;
   color: #fff;
   align-items: stretch;
+  .tab-notice {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 47px;
+    line-height: 22px;
+    font-size: 12px;
+    background-color: #FFC107;
+  }
   .xa-cell {
     justify-content: center;
   }
@@ -52,6 +79,16 @@ export default {
   }
   .buy-btn {
     background-color: #da0126;
+  }
+  &.disable {
+    .add-btn {
+      // opacity: 0.5;
+      background-color: #999;
+    }
+    .buy-btn {
+      // opacity: 0.5;
+      background-color: #666;
+    }
   }
 }
 </style>
