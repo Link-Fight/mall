@@ -1,5 +1,5 @@
 <template>
-<section>
+<section v-show="!loading">
   <div class="weui-cells weui-cells_form" style="margin-top:0">
     <div class="weui-cell">
       <div class="weui-cell__hd">
@@ -43,6 +43,7 @@
 </template>
 <script>
 import { getAddressDetail, saveAddress } from '@/controllers/address.js'
+import { getLocationDetail } from '@/controllers/common.js'
 import AddressAreaSelect from '@/components/AddressAreaSelect'
 export default {
   name: 'formAddress',
@@ -98,7 +99,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.oldRecord = JSON.stringify(this.record)
     this.viewState = 'ADD'
     if (this.$route.query.guid) {
@@ -107,6 +108,24 @@ export default {
         Object.assign(this.record, data)
         this.oldRecord = JSON.stringify(this.record)
       })
+    } else {
+      if (this.$root.latlng) {
+        this.loading = true
+        try {
+          const result = await getLocationDetail(this.$root.latlng)
+          if (result) {
+            this.record.area = {
+              id: result.id,
+              name: result.name
+            }
+            this.record.area_address = result.address
+          }
+        } finally {
+          this.$nextTick(() => {
+            this.loading = false
+          })
+        }
+      }
     }
   }
 }

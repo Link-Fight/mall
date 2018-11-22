@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive include="mainRoot">
+      <router-view/>
+    </keep-alive>
     <AppAlert ref="alert"/>
     <AppToast ref="toast"/>
     <AppLoading ref="loading"/>

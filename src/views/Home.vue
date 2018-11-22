@@ -15,7 +15,7 @@
     <div class="home-space nav-container xa-cell">
       <template v-for="item in navItms">
         <a class="nav-item" :key="item.label" :href="item.href">
-          <img :src="item.img" alt="">
+          <div class="xa-img" :style="'backgroundImage:url('+'http://192.168.11.85:8080/img/logo.fd6ca067.png'+')'"></div>
           <p>{{item.label}}</p>
         </a>
       </template>
@@ -103,9 +103,9 @@ export default {
   },
   async beforeMount() {
     const data = await this.$actionWithLoading(getMain())
-    this.navItms = data.category.map(item => {
+    this.navItms = data.recommend_nav.map(item => {
       return {
-        img: item.logo,
+        img: item.icon,
         label: item.name
       }
     })
@@ -181,7 +181,7 @@ export default {
   text-align: center;
   background-color: #fff;
   font-size: 12px;
-  img {
+  .xa-img {
     width: 44px;
     height: 44px;
     border-radius: 50%;

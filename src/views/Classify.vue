@@ -7,103 +7,44 @@
     </router-link>
     <section class="classify-content">
       <div class="classify-slide">
-        <div class="slide-item" v-for="(item,index) in slides" :class="{'active':curSlideItem==item.key}" :key="index" @click="curSlideItem=item.key">
-          {{item.label}}
+        <div class="slide-item" v-for="(item,index) in slides" :class="{'active':curSide==item.guid}" :key="index" @click="curSide=item.guid">
+          {{item.name}}
         </div>
       </div>
       <div class="classify-main">
-        <div class="main-item" v-for="(item,index) in 5" :key="index">
-          <img :src="curClassify[0].img" alt="">
-          <p>{{curClassify[0].label}}</p>
-        </div>
+        <router-link class="main-item" v-for="(item,index) in classifyMap[curSide]" :key="index" tag="div" :to="'/prodList?guid='+item.guid">
+            <div class="xa-img" :style="'backgroundImage:url('+item.logo+')'"></div>
+            <p>{{item.name}}</p>
+        </router-link>
       </div>
     </section>
   </section>
 </template>
 <script>
+import { getCategory } from '@/controllers/category'
 export default {
   name: 'classify',
   data() {
     return {
-      curSlideItem: '20:2019',
-      slides: [
-        {
-          label: 'P10 19配件',
-          key: '10:2019'
-        },
-        {
-          label: 'P20 19配件',
-          key: '20:2019'
-        },
-        {
-          label: 'P30 19配件',
-          key: '30:2019'
-        },
-        {
-          label: 'C2000 19配件',
-          key: '2000:2019'
-        },
-        {
-          label: 'P10 18配件',
-          key: '10:2018'
-        },
-        {
-          label: 'P20 18配件',
-          key: '20:2018'
-        },
-        {
-          label: 'P30 18配件',
-          key: '30:2018'
-        },
-        {
-          label: 'C2000 18配件',
-          key: '2000:2018'
-        },
-        {
-          label: 'P10 17款配件',
-          key: '10:2017'
-        },
-        {
-          label: 'P20 17款配件',
-          key: '20:2017'
-        },
-        {
-          label: 'P30 17款配件',
-          key: '30:2017'
-        },
-        {
-          label: 'C2000 17款配件',
-          key: '2000:2017'
-        }
-      ],
-      curClassify: [
-        {
-          img: 'http://agri-private.static.xag.cn/v3/upload/2018/05/24/b4b1b0f533a6698b2b8c8067b68fdaaf.png?imageView2/0/w/750/h/750&e=1854930099&token=wYqu938c9qi_H_uUgnE_B36feoECpNZuZ1cZQw1S:R63Vr4RaXQFmWB0tpy1rjXN0hS4=',
-          label: '全部',
-          href: ''
-        },
-        {
-          img: 'http://agri-private.static.xag.cn/v3/upload/2018/05/24/b4b1b0f533a6698b2b8c8067b68fdaaf.png?imageView2/0/w/750/h/750&e=1854930099&token=wYqu938c9qi_H_uUgnE_B36feoECpNZuZ1cZQw1S:R63Vr4RaXQFmWB0tpy1rjXN0hS4=',
-          label: '螺旋桨',
-          href: ''
-        },
-        {
-          img: 'http://agri-private.static.xag.cn/v3/upload/2018/05/24/b4b1b0f533a6698b2b8c8067b68fdaaf.png?imageView2/0/w/750/h/750&e=1854930099&token=wYqu938c9qi_H_uUgnE_B36feoECpNZuZ1cZQw1S:R63Vr4RaXQFmWB0tpy1rjXN0hS4=',
-          label: '胶圈',
-          href: ''
-        },
-        {
-          img: 'http://agri-private.static.xag.cn/v3/upload/2018/05/24/b4b1b0f533a6698b2b8c8067b68fdaaf.png?imageView2/0/w/750/h/750&e=1854930099&token=wYqu938c9qi_H_uUgnE_B36feoECpNZuZ1cZQw1S:R63Vr4RaXQFmWB0tpy1rjXN0hS4=',
-          label: '电机',
-          href: ''
-        },
-        {
-          img: 'http://agri-private.static.xag.cn/v3/upload/2018/05/24/b4b1b0f533a6698b2b8c8067b68fdaaf.png?imageView2/0/w/750/h/750&e=1854930099&token=wYqu938c9qi_H_uUgnE_B36feoECpNZuZ1cZQw1S:R63Vr4RaXQFmWB0tpy1rjXN0hS4=',
-          label: '飞控',
-          href: ''
-        }
-      ]
+      curSide: '',
+      slides: [],
+      classifyMap: {}
     }
+  },
+  async created() {
+    const data = await this.$actionWithLoading(getCategory())
+    const classifyMap = {}
+    let curSide = ''
+    this.slides = data.map(item => {
+      classifyMap[item.guid] = item.son
+      curSide = curSide || item.guid
+      return {
+        name: item.name,
+        guid: item.guid
+      }
+    })
+    this.curSide = curSide
+    this.classifyMap = classifyMap
   }
 }
 </script>
@@ -172,8 +113,7 @@ export default {
     padding-top: 23px;
     padding-bottom: 5px;
     width: 33.33%;
-    img {
-      display: block;
+    .xa-img {
       width: 60px;
       height: 60px;
     }

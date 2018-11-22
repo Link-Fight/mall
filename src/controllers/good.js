@@ -2,7 +2,7 @@ import base from './index.js'
 import { getNewCfg } from '@/config/views/Goods'
 function getDetail(params) { return base('/wechat/mall/product/detail', params) }
 async function getDetail_2(params) {
-  return getNewCfg() || base('/wechat/mall/product/detail_v2', params)
+  return base('/wechat/mall/product/detail_v2', params) || getNewCfg()
 }
 function getMoreDetail(params) { return base('/test2/test_get', params) }
 function addCart(params) {

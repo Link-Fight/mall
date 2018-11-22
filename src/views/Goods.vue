@@ -46,7 +46,7 @@ export default {
   name: 'Goods',
   data() {
     return {
-      isShowSku: true,
+      isShowSku: false,
       buyType: 1, // [1:加入购物车,2:立即购买]
       info: {},
       guid: '',

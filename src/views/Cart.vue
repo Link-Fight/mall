@@ -11,7 +11,7 @@
       </div>
       <div class="xa-cell shop-goods" v-for="goods in shop.list" :key="goods.guid">
         <i @click="onSelectGoods(shop,goods)" class="iconfont" :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
-        <div class="goods-img" :style="'backgroundImage:url('+goods.img+')'"></div>
+        <router-link class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'" :to="'/goods?guid='+goods.guid" tag="div"></router-link>
         <div class="goods-info xa-flex">
           <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
           <p class="sku">{{goods.sku}}</p>
@@ -41,6 +41,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       isTest: false,
       selectedShopGuid: '',
       selectedGoodsMap: {},
@@ -112,9 +113,12 @@ export default {
       }
     },
     async init() {
+      if (this.isLoading) {
+        return
+      }
+      this.isLoading = true
       this.selectedShopGuid = ''
-      this.$appLoading.showLoading()
-      const data = this.isTest ? await CartConfig() : await getCartList()
+      const data = await this.$actionWithLoading(this.isTest ? CartConfig() : getCartList())
       let prodsNumMap = {}
       data.forEach(shop => {
         shop.list.forEach(goods => {
@@ -126,7 +130,7 @@ export default {
       })
       this.prodsNumMap = prodsNumMap
       this.prods = data
-      this.$appLoading.hiddenLoading()
+      this.isLoading = false
     },
     async onBuyClick() {
       if (this.totalNum > 0) {
@@ -195,9 +199,13 @@ export default {
       return totalNum
     }
   },
-  beforeDestroy() {
+  deactivated() {
     this.checkGoodsSelected()
     storage.setStorage(SESSION_CAER_SELECTED, this.prodsSelectedMap, 'sessionStorage')
+  },
+  activated() {
+    this.prodsSelectedMap = storage.getStorage(SESSION_CAER_SELECTED, 'sessionStorage') || {}
+    this.init()
   },
   mounted() {
     this.prodsSelectedMap = storage.getStorage(SESSION_CAER_SELECTED, 'sessionStorage') || {}

@@ -1,6 +1,7 @@
 <template>
 <div>
   <div class="xa-cell goods-container" v-for="goods in items" :key="goods.guid">
+    <!-- <router-link class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'" :to="'/goods?guid='+goods.guid" tag="div"></router-link> -->
     <div class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'"></div>
     <div class="goods-info xa-flex">
       <p class="title xa-txt-16 xa-txt-bold">{{goods.title}}</p>
