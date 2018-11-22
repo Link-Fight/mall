@@ -55,7 +55,7 @@ export default {
 <style lang="scss" scoped>
 .app-confirm {
   position: fixed;
-  z-index: 99;
+  z-index: 9999;
   left: 0;
   top: 0;
   right: 0;
