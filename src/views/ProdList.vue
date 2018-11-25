@@ -7,7 +7,7 @@
       <span class="cancel-btn" @click="onCancelClick">取消</span>
     </form>
     <App2Top/>
-    <SearchPrompt v-show="isShowSearchPrompt" @select="onSearchSelect" :hotItems="hotItems" :historyItems="historyItems"/>
+    <SearchPrompt v-show="isShowSearchPrompt&&hotItems" @select="onSearchSelect" :hotItems="hotItems" :historyItems="historyItems"/>
     <ProdColumelist :items="prodList"/>
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="page-flex-loading-point"></div>
@@ -23,13 +23,15 @@ import App2Top from '@/components/App2Top'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import SearchPrompt from '@/components/SearchPrompt'
 import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
+import { getRecommendSearch } from '@/controllers/main'
 import { getProductList, getShopProductList } from '@/controllers/category'
+let mRecommendSearch = null
 export default {
   data() {
     return {
       type: this.$route.query.type || 'CATEGORY',
       keyword: '',
-      hotItems: ['P20电池', 'P30电池', 'M3*8*19圆柱', '大灯', '轮胎'],
+      hotItems: mRecommendSearch,
       historyItems: [],
       prodList: [],
       isLoadingMore: false,
@@ -65,9 +67,9 @@ export default {
       if (this.keyword) {
         this.isShowSearchPrompt = false
         if (this.historyItems.indexOf(this.keyword) === -1) {
-          this.historyItems.push(this.keyword)
+          this.historyItems.unshift(this.keyword)
           if (this.historyItems.length >= 5) {
-            this.historyItems.shift()
+            this.historyItems.pop()
           }
           storage.setStorage(LOCAL_SEARCH_HISTORY, this.historyItems)
         }
@@ -129,6 +131,9 @@ export default {
       }
     })
     LoadingMoreObserver.observe(this.$refs.footPoint)
+    const recommendSearchResult = await getRecommendSearch()
+    this.hotItems = recommendSearchResult
+    mRecommendSearch = recommendSearchResult
   }
 }
 </script>

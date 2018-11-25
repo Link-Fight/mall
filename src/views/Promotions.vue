@@ -1,7 +1,10 @@
 <template>
-  <section class="promotions-page">
-    <img src="https://static.xag.cn/img/farming/farm-header.jpg" alt="">
-    <p class="title">关怀计划</p>
+  <section class="promotions-page" >
+    <template v-if="!isLoading">
+      <img :src="info.img" alt="">
+      <div v-html="info.content" style="padding:17px 17px 0"></div>
+    </template>
+    <!-- <p class="title">关怀计划</p>
     <p class="tip">极飞商城 2018-11-05</p>
     <p class="panel-content">利用世界领先的无人机技术，帮助农民精准、高效地管理农田，不断降低农业生产中农药、化肥的使用及水资源的浪费，减少农产品的化学物质残留和土地污染，实现人与自然的可持续发展。</p>
     <hr>
@@ -31,19 +34,32 @@
           <p class="goods-buy">立即购买</p>
         </div>
       </div>
-    </div>
+    </div> -->
   </section>
 </template>
 <script>
+import { getActivityDetail } from '@/controllers/main'
 export default {
+  data() {
+    return {
+      isLoading: true,
+      info: {}
+    }
+  },
+  async mounted() {
+    const data = await this.$actionWithLoading(getActivityDetail(this.$route.query))
+    Object.assign(this.info, data)
+    this.isLoading = false
+  }
 }
 </script>
 <style lang="scss" scoped>
-.promotions-page {
+/deep/.promotions-page {
   background-color: #fff;
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
   img {
     max-width: 100%;
+    display: block;
   }
   .title {
     margin-top: 24px;
@@ -65,7 +81,6 @@ export default {
     line-height: 20px;
   }
   hr {
-    margin: 25px 17px 25px;
     border: none;
     border-bottom: 1px solid #e4e4e4;
   }
