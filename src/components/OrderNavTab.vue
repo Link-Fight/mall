@@ -1,6 +1,6 @@
 <template>
   <div class="xa-cell nav-tab xa-bg-white">
-    <div class="tip-content xa-cell xa-flex">
+    <div class="tip-content xa-cell xa-flex xa-txt-16">
       合计: <span class="xa-txt-red xa-txt-bold"> {{total}}元</span>
     </div>
     <div @click="$emit('buy')" class="buy-btn xa-bg-red">提交订单</div>

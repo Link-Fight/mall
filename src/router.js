@@ -13,6 +13,11 @@ export default new Router({
       component: Home
     },
     {
+      path: '/vconsole',
+      name: 'Vconsole',
+      component: () => import('@/views/Vconsole')
+    },
+    {
       path: '/prodList',
       name: 'ProdList',
       component: () => import('@/views/ProdList')

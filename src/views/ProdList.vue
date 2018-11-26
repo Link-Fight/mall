@@ -124,6 +124,9 @@ export default {
     } else {
       const data = await this.queryData()
       this.prodList = data.items
+      if (data.items.length === 0) {
+        this.$appToast.showToast('抱歉！没有相关内容！')
+      }
     }
     let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
       if (entries[0].intersectionRatio) {

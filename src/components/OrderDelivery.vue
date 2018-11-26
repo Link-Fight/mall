@@ -2,8 +2,8 @@
 <AppPopPanel @close="onClose">
     <div class="xa-bg-white container">
       <p class="title xa-txt-999">请选择配送方式:</p>
-      <div class="xa-cell">
-        <p v-for="item in items" class="item" :class="{'active':item.id==value}" :key="item.title" @click="onSelect(item)">{{item.title}}</p>
+      <div class="item-wrap xa-view">
+        <p v-for="item in items" class="item xa-flex" :class="{'active':item.id==value}" :key="item.title" @click="onSelect(item)">{{item.title}}</p>
       </div>
       <div class="close xa-txt-red" @click="onClose">
         <i class="xa-txt-24 iconfont icon-guanbi1"></i>
@@ -45,12 +45,16 @@ export default {
 .title {
   margin-bottom: 12px;
 }
+.item-wrap {
+  flex-wrap: wrap;
+}
 .item {
+  text-align: center;
   padding: 6px 12px;
   border: 1px solid;
   border-radius: 4px;
   & + & {
-    margin-left: 8px;
+    margin-top: 16px;
   }
   &.active {
     color: #da0126;

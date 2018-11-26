@@ -1,5 +1,5 @@
 <template>
-  <section class="goods-page">
+  <section class="goods-page" v-show="!isLoading">
     <!-- 主滑块 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
@@ -18,26 +18,26 @@
     <!-- 商店信息 -->
     <div class="shop-info xa-bg-white xa-cell">
       <div class="img" :style="'backgroundImage:url('+info.shop_logo+')'"></div>
-      <div class="xa-flex">
+      <router-link :to="'/prodlist?type=SHOP&guid='+info.shop_guid" tag="div" class="xa-flex">
         <p class="name">{{info.shop_company_name}}</p>
         <p class="description">{{info.shop_description}}</p>
-      </div>
+      </router-link>
       <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
     </div>
     <!-- 富文本内容 -->
-    <div class="xa-bg-white html-detail" v-if="info.detail" style="padding:0 8px;" v-html="info.detail"></div>
+    <div class="xa-bg-white html-detail" v-if="info.detail" style="padding:16px;" v-html="info.detail"></div>
     <img style="width:100%;" src="../assets/notice.jpg" alt="">
     <!-- 返回顶部 -->
     <App2Top/>
     <GoodsNavTab :disable="info.buy!=1" :notice="info.buy_notice" @add="onTabAction('add')" @buy="onTabAction('buy')" class="app-fb-tab"/>
     <AppPopPanel v-show="isShowSku" @close="isShowSku=false">
-      <SkuPanel :changeAction="changeGoodsBySku" :buyType="buyType" :info="info" :guid="guid" :skus="skuInfo.skus" :params="skuInfo.params" :choice="skuInfo.choice"/>
+      <SkuPanel @close="isShowSku=false" :changeAction="changeGoodsBySku" :buyType="buyType" :info="info" :guid="guid" :skus="skuInfo.skus" :params="skuInfo.params" :choice="skuInfo.choice"/>
     </AppPopPanel>
   </section>
 </template>
 <script>
 import Swiper from 'swiper'
-import { getDetail_2 } from '@/controllers/good'
+import { getCacheDetail_2 as getDetail } from '@/controllers/good'
 import App2Top from '@/components/App2Top'
 import AppPopPanel from '@/components/AppPopPanel'
 import GoodsNavTab from '@/components/GoodsNavTab'
@@ -46,6 +46,7 @@ export default {
   name: 'Goods',
   data() {
     return {
+      isLoading: false,
       isShowSku: false,
       buyType: 1, // [1:加入购物车,2:立即购买]
       info: {},
@@ -73,10 +74,11 @@ export default {
       this.queryData()
     },
     async queryData() {
-      const data = await this.$actionWithLoading(getDetail_2({
+      const data = await this.$actionWithLoading(getDetail({
         guid: this.guid
       }))
       this.info = data
+      this.info.img = this.info.img || data.pics[0]
       this.skuInfo.params = data.params.length ? data.params : null
       this.skuInfo.choice = data.params.length ? data.param_choice : null
       this.skuInfo.skus = data.sku.length ? {
@@ -85,7 +87,10 @@ export default {
       } : null
     }
   },
-  mounted() {
+  async mounted() {
+    this.isLoading = true
+    this.guid = this.$route.query.guid
+    await this.queryData()
     new Swiper('.swiper-container', {
       autoplay: {
         delay: 5000
@@ -94,8 +99,7 @@ export default {
         el: '.swiper-pagination',
       }
     })
-    this.guid = this.$route.query.guid
-    this.queryData()
+    this.isLoading = false
   }
 }
 </script>

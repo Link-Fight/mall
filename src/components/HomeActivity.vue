@@ -1,25 +1,22 @@
 <template>
   <div class="activity-container">
     <div class="activity-title">{{title}}</div>
-    <div class="activity-box xa-cell type-1">
+    <div v-for="(item,index) in items" :key="index" class="activity-box xa-cell type-1">
       <div class="xa-flex xa-view">
-        <div class="xa-flex activity-item" :style="'backgroundImage:url('+items[0].img+')'">
-          <div class="activity-content">
-            <p class="title">{{items[0].title}}</p>
-            <p class="sub-title">{{items[0].subTitle}}</p>
-          </div>
-        </div>
-        <div class="xa-flex activity-item" v-if="items.length>=4" :style="'backgroundImage:url('+items[3].img+')'">
-          <contentItem :item="items[3]"/>
-        </div>
+        <router-link class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[0].img+')'" :to="'/promotions?guid='+item[0].guid">
+          <contentItem :item="item[0]" />
+        </router-link>
+        <router-link v-if="item.length>=4" class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[3].img+')'" :to="'/promotions?guid='+item[3].guid">
+          <contentItem :item="item[3]"/>
+        </router-link>
       </div>
-      <div class="xa-flex xa-view" v-if="items.length>=2">
-        <div class="xa-flex activity-item" :style="'backgroundImage:url('+items[1].img+')'">
-          <contentItem :item="items[1]"/>
-        </div>
-        <div class="xa-flex activity-item" v-if="items.length>=3" :style="'backgroundImage:url('+items[2].img+')'">
-          <contentItem :item="items[2]"/>
-        </div>
+      <div class="xa-flex xa-view" v-if="item.length>=2">
+        <router-link class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[1].img+')'" :to="'/promotions?guid='+item[1].guid">
+          <contentItem :item="item[1]"/>
+        </router-link>
+        <router-link class="xa-flex activity-item xa-img" v-if="item.length>=3"  tag="div" :style="'backgroundImage:url('+item[2].img+')'" :to="'/promotions?guid='+item[2].guid">
+          <contentItem :item="item[2]"/>
+        </router-link>
       </div>
     </div>
   </div>
@@ -32,7 +29,7 @@ export default {
       render(h) {
         return h('div', { class: 'activity-content' }, [
           h('p', { class: 'title' }, this.item.title),
-          h('p', { class: 'sub-title' }, this.item.subTitle)
+          h('p', { class: 'sub-title' }, this.item.sub_title)
         ])
       },
       props: {
@@ -67,6 +64,9 @@ export default {
   height: 203px;
   flex-wrap: wrap;
   text-align: center;
+  & + & {
+    margin-top: 8px;
+  }
   &.type-1 {
     align-items: stretch;
     > div + div {

@@ -1,10 +1,10 @@
 <template>
-  <div class="home-page">
+  <div class="home-page" v-if="!isLoading">
     <!-- 主滑块 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <template v-for="(img,index) in swipers">
-          <a :key="index" class="swiper-slide" :href="img.href">
+          <a :key="index" class="swiper-slide" :href="img.url">
             <img :src="img.img" alt="">
           </a>
         </template>
@@ -21,7 +21,7 @@
       </template>
     </div>
     <!-- 活动模块 -->
-    <HomeActivity class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
+    <HomeActivity v-if="activitys.length" class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
     <!-- 推荐商品 -->
     <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
     <!-- 返回顶部 -->
@@ -41,30 +41,22 @@ import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import App2Top from '@/components/App2Top'
-import { getMain } from '@/controllers/main'
-function queryM() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        goods: homeCfg.goods
-      })
-    }, 1000)
-  })
-}
+import { getMain, getRecommendProduct } from '@/controllers/main'
 export default {
   name: 'home',
   data() {
     return {
-      swipers: homeCfg.swipers,
-      navItms: homeCfg.items,
-      goods: homeCfg.goods,
+      isLoading: false,
+      swipers: [],
+      navItms: [] || homeCfg.items,
+      goods: [] || homeCfg.goods,
       activitysType: 1,
-      activitys: homeCfg.activitys,
+      activitys: [],
       isLoadingMore: false,
       canLoadingMore: true,
       pageQuery: {
-        num: 0,
-        size: 8
+        page_index: 1,
+        page_size: 8
       }
     }
   },
@@ -78,30 +70,58 @@ export default {
   methods: {
     async queryMore() {
       this.isLoadingMore = true
-      this.pageQuery.num++
-      const result = await queryM(this.pageQuery)
-      if (result.goods.length) {
-        this.goods = this.goods.concat(result.goods)
+      this.pageQuery.page_index++
+      const result = await getRecommendProduct(this.pageQuery)
+      if (result.length) {
+        this.goods = this.goods.concat(this.initGoods(result.goods))
       } else {
         this.canLoadingMore = false
       }
       this.isLoadingMore = false
+    },
+    initGoods(items) {
+      return items.map(item => {
+        return {
+          img: item.first_pic,
+          title: item.title,
+          subTitle: item.sub_title,
+          guid: item.guid,
+          tip: '',
+          price: item.price
+        }
+      })
+    },
+    initSwiper() {
+      new Swiper('.swiper-container', {
+        pagination: {
+          el: '.swiper-pagination',
+        }
+      })
+      let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+        if (entries[0].intersectionRatio) {
+          !this.isLoadingMore && this.queryMore()
+        }
+      })
+      LoadingMoreObserver.observe(this.$refs.footPoint)
+    },
+    spliceActivitys(activitys) {
+      let arrs = []
+      let arr
+      for (let i = 0; i < activitys.length; i++) {
+        if (i % 4 === 0) {
+          if (arr) {
+            arrs.push(arr)
+          }
+          arr = []
+        }
+        arr.push(activitys[i])
+      }
+      arr && arrs.push(arr)
+      return arrs
     }
   },
-  mounted() {
-    new Swiper('.swiper-container', {
-      pagination: {
-        el: '.swiper-pagination',
-      }
-    })
-    let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio) {
-        !this.isLoadingMore && this.queryMore()
-      }
-    })
-    LoadingMoreObserver.observe(this.$refs.footPoint)
-  },
   async beforeMount() {
+    this.isLoading = true
     const data = await this.$actionWithLoading(getMain())
     this.navItms = data.recommend_nav.map(item => {
       return {
@@ -109,6 +129,11 @@ export default {
         label: item.name
       }
     })
+    this.goods = this.initGoods(data.recommend_product)
+    this.swipers = data.banner
+    this.activitys = this.spliceActivitys(data.activity_new)
+    this.isLoading = false
+    this.$nextTick(() => this.initSwiper())
   }
 }
 </script>

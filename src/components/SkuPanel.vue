@@ -1,7 +1,7 @@
 <template>
   <section class="sku-panel xa-container xa-view">
     <div class="sku-info xa-cell xa-bg-white">
-      <div class="img" :style="'backgroundImage:url('+info.img+')'"></div>
+      <div class="img xa-img" :style="'backgroundImage:url('+info.img+')'"></div>
       <div class="content xa-flex">
         <p class="title">{{info.title}}</p>
         <p class="subTitle">{{info.sub_title}}</p>
@@ -33,8 +33,8 @@
       </div>
     </div>
     <div :class="{'disable':disable}">
-      <div v-if="buyType==1" class="add-btn" @click="onBuy">加入购物车</div>
-      <div v-if="buyType==2" class="buy-btn" @click="onBuy">立即购买</div>
+      <div v-if="buyType==1" class="add-btn" @click="onBuy(false)">加入购物车</div>
+      <div v-if="buyType==2" class="buy-btn" @click="onBuy(true)">立即购买</div>
     </div>
     <div v-show="isLoading" class="sku-loading">
       <img src="../assets/loading.svg" alt="">
@@ -42,8 +42,11 @@
   </section>
 </template>
 <script>
+import storage from '@/util/storage'
 import AppInputNum from '@/components/AppInputNum'
-import { addCart } from '@/controllers/good'
+import { addCart } from '@/controllers/cart'
+import { checkIFFEOrder } from '@/controllers/order'
+import { SESSION_CART_2_ORDER } from '@/storeKey'
 export default {
   name: 'skuPanel',
   components: {
@@ -138,19 +141,48 @@ export default {
     }
   },
   methods: {
-    async onBuy() {
+    async onBuy(isIFFE = false) {
       let selectResult = {}
       if (this.params) {
         selectResult = this.getParamsSelectResult(true)
         if (selectResult && selectResult.available_stock < this.num) {
           this.$appToast.showToast('该规格商品库存不足！')
+          return
+        } else if (!selectResult) {
+          return
         }
       }
-      this.$actionWithLoading(addCart({
+      const action = isIFFE ? checkIFFEOrder : addCart
+      const submitData = await this.$actionWithLoading(action({
         guid: this.guid,
         param_choice_guid: selectResult.guid,
         count: this.num
       }))
+      const shopInfo = {
+        name: this.info.shop_name,
+        shop_guid: this.info.shop_guid,
+        shop_logo: this.info.shop_logo
+      }
+      // console.log(submitData, shopInfo, orderList, this.info)
+      this.$emit('close')
+      if (isIFFE) {
+        submitData.product.product_param_choice_guid = selectResult.guid
+        storage.setStorage(SESSION_CART_2_ORDER, {
+          orderList: [submitData.product],
+          shopInfo,
+          orderTip: submitData
+        }, 'sessionStorage')
+        this.$router.push({
+          path: '/order',
+          query: {
+            invoice: submitData.invoice,
+            way: submitData.way,
+            type: 'quick'
+          }
+        })
+      } else {
+        this.$appToast.showToast('加入购物车成功')
+      }
     },
     async onChangeSku(sku) {
       this.isLoading = true
@@ -170,7 +202,7 @@ export default {
           this.$appToast.showToast('该规格商品暂时没库存！')
           this.disable = true
         } else {
-          selectResult.available_stock < 10 && (this.countMsg = '当前该规格商品库存还有:' + selectResult.available_stock)
+          selectResult.available_stock <= 10 && (this.countMsg = '当前该规格商品库存还有:' + selectResult.available_stock)
         }
       }
     },
@@ -292,13 +324,13 @@ export default {
   }
 }
 .count-tip {
-  padding: 8px 17px 0;
+  padding: 8px 0px 0;
   background-color: #fff;
   color: #ff6701;
   font-size: 12px;
 }
 .num-box {
-  padding: 20px 17px;
+  padding: 20px 0px;
   justify-content: space-between;
   color: #1d1d1d;
 }

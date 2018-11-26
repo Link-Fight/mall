@@ -52,7 +52,7 @@ import ShopInfo from '@/components/ShopInfo'
 import OrderProtectionSelect from '@/components/OrderProtectionSelect'
 import storage from '@/util/storage'
 import { getDefaultAddress } from '@/controllers/address'
-import { submitOrder } from '@/controllers/order'
+import { submitOrder, submitQuickOrder } from '@/controllers/order'
 import { SESSION_CART_2_ORDER, SESSION_ORDER_ADDRESS_SELECTED, SESSION_BILL_SUBMIT } from '@/storeKey'
 const logisticsSelectedMap = {
   0: '物流快递',
@@ -97,6 +97,7 @@ export default {
   },
   data() {
     return {
+      type: this.$route.query.type || 'normal',
       shopInfo: null, // 商店信息
       billData: null, // 发票信息
       billDataMsg: '', // 发票信息(显示用)
@@ -134,12 +135,21 @@ export default {
       if (msg) {
         this.$appToast.showToast(msg)
       } else {
-        const carts = this.orderList.map((it) => {
-          return { guid: it.guid, update_at: it.update_at }
-        })
-        const submit = {
-          carts,
-          memo: this.memo
+        let submit
+        if (this.type === 'normal') {
+          const carts = this.orderList.map((it) => {
+            return { guid: it.guid, update_at: it.update_at }
+          })
+          submit = {
+            carts,
+            memo: this.memo
+          }
+        } else if (this.type === 'quick') {
+          submit = {
+            product_guid: this.orderList[0].guid,
+            count: this.orderList[0].count,
+            product_param_choice_guid: this.orderList[0].product_param_choice_guid
+          }
         }
         if (this.logisticsSelected === 0) {
           submit.address_guid = this.deliveryAddress.guid
@@ -154,7 +164,8 @@ export default {
           submit.bill = billObj
         }
         try {
-          const result = await this.$actionWithLoading(submitOrder(submit))
+          let action = this.type === 'normal' ? submitOrder : submitQuickOrder
+          const result = await this.$actionWithLoading(action(submit))
           window.location.href = result.pay_page_url
         } catch (e) {
           this.$router.push('./order/read??action=cancel&guid=4001536546403283885')

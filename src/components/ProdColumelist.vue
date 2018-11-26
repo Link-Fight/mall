@@ -1,7 +1,7 @@
 <template>
   <section class="prodlist-container">
       <template v-for="(item,index) in items">
-        <div class="prod-item xa-cell" :key="index">
+        <router-link class="prod-item xa-cell" :key="index" tag="div" :to="'/goods?guid='+item.product_guid">
           <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
           <div class="content xa-flex">
             <div style="min-height:76px;">
@@ -10,7 +10,7 @@
             </div>
             <p class="price">￥&nbsp;{{item.price}}</p>
           </div>
-        </div>
+        </router-link>
       </template>
   </section>
 </template>

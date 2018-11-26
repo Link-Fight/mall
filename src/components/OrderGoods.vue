@@ -2,10 +2,10 @@
 <div>
   <div class="xa-cell goods-container" v-for="goods in items" :key="goods.guid">
     <!-- <router-link class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'" :to="'/goods?guid='+goods.guid" tag="div"></router-link> -->
-    <div class="goods-img xa-img" :style="'backgroundImage:url('+goods.img+')'"></div>
+    <div class="goods-img xa-img" :style="'backgroundImage:url('+(goods.img||goods.first_pic)+')'"></div>
     <div class="goods-info xa-flex">
       <p class="title xa-txt-16 xa-txt-bold">{{goods.title}}</p>
-      <p class="sku">{{goods.sku}}</p>
+      <p class="param">{{goods.param_choice}}</p>
       <div class="xa-cell price-box">
         <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
         <p>x{{goods.count}}</p>
@@ -41,7 +41,7 @@ export default {
     .title {
       min-height: 42px;
     }
-    .sku {
+    .param {
       color: #6d6d6d;
       font-size: 12px;
       min-height: 17px;

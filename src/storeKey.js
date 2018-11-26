@@ -7,5 +7,7 @@ export const SESSION_ORDER_ADDRESS_SELECTED = pre + 'OrderAddressSelected' // �
 export const SESSION_BILL_SUBMIT = pre + 'BillSubmitInfo' // 发票页面的内容:{发票类型，发票抬头，寄送地址}
 
 export const SESSION_LATLNG = pre + 'UserLatLng'
+export const SESSION_GOOD_DETAIL = pre + 'GoodDetail'
+
 
 export const LOCAL_SEARCH_HISTORY = pre + 'SearchHistory' // 搜索历史

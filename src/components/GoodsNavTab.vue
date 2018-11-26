@@ -3,10 +3,10 @@
     <div v-show="notice" class="tab-notice">
       {{notice}}
     </div>
-    <div class="icon xa-cell">
+    <router-link to="/main/cart" tag="div" class="icon xa-cell">
       <i class="iconfont icon-caigou-xianxing"></i>
       <span v-if="num" class="num">2</span>
-    </div>
+    </router-link>
     <div @click="onClick('add')" class="add-btn xa-cell xa-flex">加入购物车</div>
     <div @click="onClick('buy')" class="buy-btn xa-cell xa-flex">立即购买</div>
   </ul>

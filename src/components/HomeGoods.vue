@@ -3,11 +3,13 @@
     <div class="goods-title">{{title}}</div>
     <div class="goods-box xa-cell">
       <template v-for="(item,index) in items">
-        <router-link class="goods-item" tag="div" :key="index" :to="'/goods?guid='+index">
+        <router-link class="goods-item" tag="div" :key="index" :to="'/goods?guid='+item.guid">
           <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
-          <p class="title">{{item.title}}</p>
-          <p class="sub-title">{{item.subTitle}}</p>
-          <p class="tips">{{item.tip}}</p>
+          <div class="content">
+            <p class="title">{{item.title}}</p>
+            <p class="sub-title">{{item.subTitle}}</p>
+            <p class="tips">{{item.tip}}</p>
+          </div>
           <p class="price">￥&nbsp;{{item.price}}</p>
         </router-link>
       </template>
@@ -65,9 +67,14 @@ export default {
   img {
     display: block;
     height: 130px;
+    margin: 0 auto;
     max-width: 100%;
     border-radius: 4px;
     background-color: #eee;
+  }
+  .content {
+    height: 70px;
+    overflow: auto;
   }
   .title {
     margin-top: 12px;

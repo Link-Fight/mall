@@ -1,6 +1,6 @@
 <template>
   <section class="classify-page xa-view">
-    <router-link class="xa-cell search-bar-box" tag="div" to="/search">
+    <router-link class="xa-cell search-bar-box" tag="div" to="/prodlist?type=SEARCH">
       <div class="xa-flex xa-cell search-bar">
         <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<span>搜索</span>
       </div>
