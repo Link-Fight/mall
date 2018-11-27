@@ -12,7 +12,7 @@
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="page-flex-loading-point"></div>
     <AppLoadingMore v-show="prodList.length&&canLoadingMore"/>
-    <div v-if="!canLoadingMore&&prodList.length" class="xa-txt-center xa-txt-999 xa-txt-12" style="padding:16px">已加载全部输数据</div>
+    <div v-if="!canLoadingMore&&prodList.length" class="xa-txt-center xa-txt-999 xa-txt-12" style="padding:16px">已加载全部数据</div>
   </section>
 </template>
 <script>

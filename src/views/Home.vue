@@ -56,7 +56,7 @@ export default {
       canLoadingMore: true,
       pageQuery: {
         page_index: 1,
-        page_size: 8
+        page_size: 4
       }
     }
   },
@@ -98,6 +98,7 @@ export default {
         }
       })
       let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+        console.log('IntersectionObserver', entries[0])
         if (entries[0].intersectionRatio) {
           !this.isLoadingMore && this.queryMore()
         }

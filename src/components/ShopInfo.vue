@@ -6,7 +6,7 @@
       <div class="shop-title xa-txt-13 xa-txt-bold">{{config.name}}</div>
       <div class="shop-tip">{{config.tip||config.description||'主营极飞产品零部件'}}</div>
     </div>
-    <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i>
+    <!-- <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i> -->
   </div>
 </div>
 </template>
@@ -28,8 +28,8 @@ export default {
 <style lang="scss" scoped>
 .shop-info {
   .shop-img {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     margin-right: 12px;
   }
   .shop-title {

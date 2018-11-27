@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 function base(url, data = {}, type = 'get', config = {}) {
   config.url = url
   config.method = type
