@@ -38,7 +38,7 @@ export default new Router({
     {
       path: '/goods',
       name: 'Goods',
-      component: () => import('@/views/Goods')
+      component: () => import(/* webpackChunkName: "Goods" */ '@/views/Goods')
     },
     {
       path: '/order',
@@ -83,11 +83,15 @@ export default new Router({
     },
     {
       path: '/form/billInfo',
-      component: () => import('@/views/form/billInfo'),
+      component: () => import(/* webpackChunkName: "form" */'@/views/form/billInfo'),
     },
     {
       path: '/form/address',
-      component: () => import('@/views/form/address'),
+      component: () => import(/* webpackChunkName: "form" */'@/views/form/address'),
+    },
+    {
+      path: '/form/feedback',
+      component: () => import(/* webpackChunkName: "form" */'@/views/form/FeedBack'),
     }
   ]
 })

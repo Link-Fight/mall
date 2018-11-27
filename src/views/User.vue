@@ -17,11 +17,11 @@
         <span class="xa-flex">我的订单</span>
         <i class="iconfont icon-dingdan"></i>
       </router-link>
-      <!-- <router-link to="/billInfoList" tag="div" class="link-item xa-cell">
+      <router-link to="/form/feedback" tag="div" class="link-item xa-cell">
         <span class="xa-flex">意见反馈</span>
         <i class="iconfont icon-kefu"></i>
       </router-link>
-      <router-link to="/billInfoList" tag="div" class="link-item xa-cell">
+      <!-- <router-link to="/billInfoList" tag="div" class="link-item xa-cell">
         <span class="xa-flex">最近浏览</span>
         <i class="iconfont icon-leimu"></i>
       </router-link> -->

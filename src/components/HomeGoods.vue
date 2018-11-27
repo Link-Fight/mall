@@ -73,7 +73,7 @@ export default {
     background-color: #eee;
   }
   .content {
-    height: 70px;
+    height: 50px;
     overflow: auto;
   }
   .title {

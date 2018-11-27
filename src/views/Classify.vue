@@ -2,19 +2,30 @@
   <section class="classify-page xa-view">
     <router-link class="xa-cell search-bar-box" tag="div" to="/prodlist?type=SEARCH">
       <div class="xa-flex xa-cell search-bar">
-        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<span>搜索</span>
+        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;
+        <span>搜索</span>
       </div>
     </router-link>
     <section class="classify-content">
       <div class="classify-slide">
-        <div class="slide-item" v-for="(item,index) in slides" :class="{'active':curSide==item.guid}" :key="index" @click="curSide=item.guid">
-          {{item.name}}
-        </div>
+        <div
+          class="slide-item"
+          v-for="(item,index) in slides"
+          :class="{'active':curSide==item.guid}"
+          :key="index"
+          @click="curSide=item.guid"
+        >{{item.name}}</div>
       </div>
       <div class="classify-main">
-        <router-link class="main-item" v-for="(item,index) in classifyMap[curSide]" :key="index" tag="div" :to="'/prodList?guid='+item.guid">
-            <div class="xa-img" :style="'backgroundImage:url('+item.logo+')'"></div>
-            <p>{{item.name}}</p>
+        <router-link
+          class="main-item"
+          v-for="(item,index) in classifyMap[curSide]"
+          :key="index"
+          tag="div"
+          :to="'/prodList?guid='+item.guid"
+        >
+          <div class="xa-img" :style="'backgroundImage:url('+item.logo+')'"></div>
+          <p>{{item.name}}</p>
         </router-link>
       </div>
     </section>
@@ -57,6 +68,7 @@ export default {
 .search-bar-box {
   padding: 8px 17px;
   height: 44px;
+  // box-shadow: 0px 1px 6px #ccc;
 }
 .search-bar {
   justify-content: center;

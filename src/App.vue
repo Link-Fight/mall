@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive include="mainRoot">
+    <keep-alive include="mainRoot,prodList">
       <router-view/>
     </keep-alive>
     <AppAlert ref="alert"/>

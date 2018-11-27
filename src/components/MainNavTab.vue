@@ -54,7 +54,7 @@ export default {
     font-size: 22px;
   }
   p {
-    margin-top: 8px;
+    margin-top: 4px;
     font-size: 10px;
     line-height: 14px;
     height: 14px;

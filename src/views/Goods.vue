@@ -25,13 +25,36 @@
       <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
     </div>
     <!-- 富文本内容 -->
-    <div class="xa-bg-white html-detail" v-if="info.detail" style="padding:16px;" v-html="info.detail"></div>
-    <img style="width:100%;" src="../assets/notice.jpg" alt="">
+    <div
+      class="xa-bg-white html-detail"
+      v-if="info.detail"
+      style="padding:16px;"
+      v-html="info.detail"
+    ></div>
+    <div v-if="info.description_pics&&info.description_pics.length>0">
+      <img style="width:100%;" v-for="pic in info.description_pics" :key="pic" v-lazyLoad="pic" alt>
+    </div>
+    <img style="width:100%;" src="../assets/notice.jpg" alt>
     <!-- 返回顶部 -->
     <App2Top/>
-    <GoodsNavTab :disable="info.buy!=1" :notice="info.buy_notice" @add="onTabAction('add')" @buy="onTabAction('buy')" class="app-fb-tab"/>
+    <GoodsNavTab
+      :disable="info.buy!=1"
+      :notice="info.buy_notice"
+      @add="onTabAction('add')"
+      @buy="onTabAction('buy')"
+      class="app-fb-tab"
+    />
     <AppPopPanel v-show="isShowSku" @close="isShowSku=false">
-      <SkuPanel @close="isShowSku=false" :changeAction="changeGoodsBySku" :buyType="buyType" :info="info" :guid="guid" :skus="skuInfo.skus" :params="skuInfo.params" :choice="skuInfo.choice"/>
+      <SkuPanel
+        @close="isShowSku=false"
+        :changeAction="changeGoodsBySku"
+        :buyType="buyType"
+        :info="info"
+        :guid="guid"
+        :skus="skuInfo.skus"
+        :params="skuInfo.params"
+        :choice="skuInfo.choice"
+      />
     </AppPopPanel>
   </section>
 </template>
@@ -42,8 +65,12 @@ import App2Top from '@/components/App2Top'
 import AppPopPanel from '@/components/AppPopPanel'
 import GoodsNavTab from '@/components/GoodsNavTab'
 import SkuPanel from '@/components/SkuPanel'
+import lazyLoad from '@/directives/lazyLoad'
 export default {
   name: 'Goods',
+  directives: {
+    lazyLoad
+  },
   data() {
     return {
       isLoading: false,

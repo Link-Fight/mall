@@ -58,7 +58,7 @@ export default {
 .flex-toTop-icon {
   position: fixed;
   top: 75vh;
-  right: 4px;
+  right: 12px;
   width: 38px;
   height: 38px;
   border-radius: 50%;

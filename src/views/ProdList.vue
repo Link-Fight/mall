@@ -1,25 +1,51 @@
 <template>
   <section class="search-page">
-    <form class="xa-cell search-bar-box max-container" @onSearchQuery.prevent="()=> false" action="javascript:return true">
+    <form
+      class="xa-cell search-bar-box max-container"
+      @onSearchQuery.prevent="()=> false"
+      action="javascript:return true"
+    >
       <div class="xa-flex xa-cell search-bar">
-        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;<input @focus="onSearchFocus" @blur="onSearchBlur" v-model="keyword" type="search" placeholder="搜索" @keyup.enter.stop="onSearchQuery" ><i v-show="keyword" @click="keyword=''" class="iconfont icon-guanbi2fill" style="margin-right:4px"></i>
+        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;
+        <input
+          @focus="onSearchFocus"
+          @blur="onSearchBlur"
+          v-model="keyword"
+          type="search"
+          placeholder="搜索"
+          @keyup.enter.stop="onSearchQuery"
+        >
+        <i
+          v-show="keyword"
+          @click="keyword=''"
+          class="iconfont icon-guanbi2fill"
+          style="margin-right:4px"
+        ></i>
       </div>
-      <span class="cancel-btn" @click="onCancelClick">取消</span>
+      <span v-show="isShowCancel" class="cancel-btn" @click="onCancelClick">取消</span>
     </form>
     <App2Top/>
-    <SearchPrompt v-show="isShowSearchPrompt&&hotItems" @select="onSearchSelect" :hotItems="hotItems" :historyItems="historyItems"/>
+    <SearchPrompt
+      v-show="isShowSearchPrompt&&hotItems"
+      @select="onSearchSelect"
+      :hotItems="hotItems"
+      :historyItems="historyItems"
+    />
     <ProdColumelist :items="prodList"/>
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="page-flex-loading-point"></div>
     <AppLoadingMore v-show="prodList.length&&canLoadingMore"/>
-    <div v-if="!canLoadingMore&&prodList.length" class="xa-txt-center xa-txt-999 xa-txt-12" style="padding:16px">已加载全部数据</div>
+    <div
+      v-if="!canLoadingMore&&prodList.length"
+      class="xa-txt-center xa-txt-999 xa-txt-12"
+      style="padding:16px"
+    >已加载全部数据</div>
   </section>
 </template>
 <script>
 import storage from '@/util/storage'
 import ProdColumelist from '@/components/ProdColumelist'
 import App2Top from '@/components/App2Top'
-// import prodlist from '@/config/components/prodlist'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import SearchPrompt from '@/components/SearchPrompt'
 import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
@@ -27,9 +53,10 @@ import { getRecommendSearch } from '@/controllers/main'
 import { getProductList, getShopProductList } from '@/controllers/category'
 let mRecommendSearch = null
 export default {
+  name: 'prodList',
   data() {
     return {
-      type: this.$route.query.type || 'CATEGORY',
+      isShowCancel: false,
       keyword: '',
       hotItems: mRecommendSearch,
       historyItems: [],
@@ -40,7 +67,8 @@ export default {
       query: {
         page_index: 1,
         page_size: 10
-      }
+      },
+      fullPath: ''
     }
   },
   components: {
@@ -54,7 +82,7 @@ export default {
       this.isShowSearchPrompt = true
     },
     onSearchBlur() {
-      this.isShowSearchPrompt = false
+      this.$route.query.type === 'SEARCH' && (this.isShowSearchPrompt = false)
     },
     onCancelClick() {
       this.$router.go(-1)
@@ -64,7 +92,7 @@ export default {
       this.onSearchQuery()
     },
     async onSearchQuery() {
-      if (this.keyword) {
+      if (this.$route.query.guid || this.keyword) {
         this.isShowSearchPrompt = false
         if (this.historyItems.indexOf(this.keyword) === -1) {
           this.historyItems.unshift(this.keyword)
@@ -87,16 +115,17 @@ export default {
       }
     },
     async queryData() {
+      const type = this.$route.query.type || 'CATEGORY'
       let data = {}
       let action
       let query = {}
-      if (this.type === 'CATEGORY') {
+      if (type === 'CATEGORY') {
         action = getProductList
         query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
-      } else if (this.type === 'SHOP') {
+      } else if (type === 'SHOP') {
         action = getShopProductList
         query = { shop_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
-      } else if (this.type === 'SEARCH') {
+      } else if (type === 'SEARCH') {
         action = getProductList
         query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       }
@@ -114,29 +143,56 @@ export default {
         this.canLoadingMore = false
       }
       this.prodList = this.prodList.concat(data.items)
+    },
+    async initData() {
+      this.isShowCancel = false
+      this.keyword = ''
+      this.isLoadingMore = false
+      this.isShowSearchPrompt = false
+      this.canLoadingMore = true
+      this.prodList = []
+      this.query = {
+        page_index: 1,
+        page_size: 10
+      }
+      if (this.$route.query.type === 'SEARCH') {
+        this.isShowSearchPrompt = true
+        this.isShowCancel = true
+      } else {
+        const data = await this.queryData()
+        this.prodList = data.items
+        if (data.items.length === 0) {
+          this.$appToast.showToast('抱歉！没有相关内容！')
+          this.isShowSearchPrompt = true
+        }
+        if (data.items.length < this.query.page_size) {
+          this.canLoadingMore = false
+        }
+      }
     }
   },
   async mounted() {
+    this.fullPath = this.$route.fullPath
     let result = storage.getStorage(LOCAL_SEARCH_HISTORY)
     this.historyItems = result || []
-    if (this.$route.query.type === 'SEARCH') {
-      this.isShowSearchPrompt = true
-    } else {
-      const data = await this.queryData()
-      this.prodList = data.items
-      if (data.items.length === 0) {
-        this.$appToast.showToast('抱歉！没有相关内容！')
-      }
-    }
-    let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio) {
-        !this.isLoadingMore && this.queryMore()
-      }
-    })
-    LoadingMoreObserver.observe(this.$refs.footPoint)
+    await this.initData()
     const recommendSearchResult = await getRecommendSearch()
     this.hotItems = recommendSearchResult
     mRecommendSearch = recommendSearchResult
+    this.$nextTick(() => {
+      let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+        if (entries[0].intersectionRatio) {
+          !this.isLoadingMore && this.queryMore()
+        }
+      })
+      LoadingMoreObserver.observe(this.$refs.footPoint)
+    })
+  },
+  activated() {
+    if (this.$route.fullPath !== this.fullPath) {
+      this.fullPath = this.$route.fullPath
+      this.initData()
+    }
   }
 }
 </script>
@@ -162,6 +218,7 @@ export default {
   height: 44px;
   background-color: #fff;
   z-index: 10;
+  box-shadow: 0px 1px 6px #ccc;
   .cancel-btn {
     margin-left: 17px;
     color: #1d1d1d;
