@@ -1,36 +1,57 @@
 <template>
-    <div class="wrapper">
-        <div class="weui-cells">
-            <div class="weui-cell">
-                <div class="weui-cell__hd item-icon_select" @click="$emit('click','select',config.guid)"  v-if="selectable">
-                    <i class="xa-txt-22 iconfont icon-yuanxingweixuanzhong"
-                       :class="{'icon-yuanxingxuanzhongfill':selectState}"></i>
-                </div>
-                <div class="weui-cell__bd">
-                    <p v-if="config.default" class="item-icon_defalut xa-txt-red iconfont icon-moren"></p>
-                    <div @click="$emit('click','select',config.guid)">
-                        <slot><addressItem :config="config"/></slot>
-                    </div>
-                    <router-link v-if="config.enable!=1" :to="{ path: editPath+'guid='+guid}" class="item-btn xa-txt-red" tag='span'>
-                        <span class="xa-txt-12">信息需要重新确认</span>
-                    </router-link>
-                    <div class="xa-cell edit-btns">  
-                      <span class="item-btn item-btn_delete xa-txt-green" @click="toChangeType">
-                          <i class="item-icon_delete iconfont icon-shuaxin" ></i><span class="xa-txt-12">
-                              {{config.invoice_type==0?'转变为专票':'转变为普票'}}
-                          </span>
-                      </span>
-                      <span class="item-btn item-btn_delete xa-txt-red" @click="$emit('click','delete',config.guid)">
-                          <i class="item-icon_delete iconfont icon-shanchu" ></i><span class="xa-txt-12">删除</span>
-                      </span>
-                      <router-link :to="{ path: editPath+'guid='+guid}" class="item-btn xa-txt-blue" tag='span'>
-                          <i class="item-icon_edit iconfont icon-fankui"></i><span class="xa-txt-12">编辑</span>
-                      </router-link>
-                    </div>
-                </div>
-            </div>
+  <div class="wrapper">
+    <div class="xa-cells-box">
+      <div class="xa-cell-box">
+        <div
+          class="item-icon_select"
+          @click="$emit('click','select',config.guid)"
+          v-if="selectable"
+        >
+          <i
+            class="xa-txt-22 iconfont icon-yuanxingweixuanzhong"
+            :class="{'icon-yuanxingxuanzhongfill':selectState}"
+          ></i>
         </div>
+        <div class="xa-flex">
+          <p v-if="config.default" class="item-icon_defalut xa-txt-red iconfont icon-moren"></p>
+          <div @click="$emit('click','select',config.guid)">
+            <slot>
+              <addressItem :config="config"/>
+            </slot>
+          </div>
+          <router-link
+            v-if="config.enable!=1"
+            :to="{ path: editPath+'guid='+guid}"
+            class="item-btn xa-txt-red"
+            tag="span"
+          >
+            <span class="xa-txt-12">信息需要重新确认</span>
+          </router-link>
+          <div class="xa-cell edit-btns">
+            <span class="item-btn item-btn_delete xa-txt-green" @click="toChangeType">
+              <i class="item-icon_delete iconfont icon-shuaxin"></i>
+              <span class="xa-txt-12">{{config.invoice_type==0?'转变为专票':'转变为普票'}}</span>
+            </span>
+            <span
+              class="item-btn item-btn_delete xa-txt-red"
+              @click="$emit('click','delete',config.guid)"
+            >
+              <i class="item-icon_delete iconfont icon-shanchu"></i>
+              <span class="xa-txt-12">删除</span>
+            </span>
+            <router-link
+              :to="{ path: editPath+'guid='+guid}"
+              class="item-btn xa-txt-blue"
+              tag="span"
+            >
+              <i class="item-icon_edit iconfont icon-fankui"></i>
+              <span class="xa-txt-12">编辑</span>
+            </router-link>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 <script>
 import addressItem from '@/components/AddressInfoItem'
@@ -79,14 +100,7 @@ export default {
   border-radius: 4px;
 }
 
-.weui-cells {
-  margin-top: 0;
-}
-.weui-cell {
-  position: relative;
-  padding: 8px 15px;
-}
-.weui-cell__bd {
+.xa-flex {
   position: relative;
 }
 .item-icon_select {

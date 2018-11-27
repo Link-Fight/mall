@@ -1,45 +1,60 @@
 <template>
-<section v-show="!loading">
-  <div class="weui-cells weui-cells_form" style="margin-top:0">
-    <div class="weui-cell">
-      <div class="weui-cell__hd">
-        <label class="weui-label">收货人</label>
+  <section v-show="!loading">
+    <div class="xa-cells-box xa-cells-box_form" style="margin-top:0">
+      <div class="xa-cell-box">
+        <div class>
+          <label class="xa-label">收货人</label>
+        </div>
+        <div class="xa-flex">
+          <input class="xa-input" v-model="record.name" placeholder="姓名">
+        </div>
       </div>
-      <div class="weui-cell__bd">
-        <input class="weui-input" v-model="record.name" placeholder="姓名">
+      <div class="xa-cell-box">
+        <div class>
+          <label class="xa-label">联系方式</label>
+        </div>
+        <div class="xa-flex">
+          <input class="xa-input" type="tel" v-model="record.phone" placeholder="手机号码">
+        </div>
       </div>
-    </div>
-    <div class="weui-cell">
-      <div class="weui-cell__hd">
-        <label class="weui-label">联系方式</label>
-      </div>
-      <div class="weui-cell__bd">
-        <input class="weui-input" type="tel" v-model="record.phone" placeholder="手机号码">
-      </div>
-    </div>
-    <div class="weui-cell weui-cell_access">
-      <div class="weui-cell__hd">
-        <label class="weui-label">收货地区</label>
-      </div>
-      <div class="weui-cell__bd" @click="selectAreaClickFn"><span class="weui-input">{{record.area.name}}</span>
-      </div>
-      <div class="weui-cell__ft"></div>
-    </div>
-  </div>
-  <div class="weui-cells__title" style="margin-top:4px">详细地址</div>
-  <div class="weui-cells weui-cells_form">
-    <div class="weui-cell">
-      <div class="weui-cell__bd">
-        <textarea class="weui-textarea" placeholder="请输入详细地址" v-model="record.area_address" rows="3"></textarea>
+      <div class="xa-cell-box xa-cell-box_access">
+        <div class>
+          <label class="xa-label">收货地区</label>
+        </div>
+        <div class="xa-flex" @click="selectAreaClickFn">
+          <span class="xa-input">{{record.area.name}}</span>
+        </div>
+        <div class="xa-cell-box__ft"></div>
       </div>
     </div>
-  </div>
-  <label for="weuiAgree" class="weui-agree"><input id="weuiAgree" type="checkbox" v-model="record.default" class="weui-agree__checkbox">
-    <span class="weui-agree__text">设置为默认地址</span>
-  </label>
-  <div @click="submitFn" :class="{'disabled':checkStatus}" class="submit-btn xa-bg-red xa-txt-white">提交</div>
-  <AddressAreaSelect v-model="record.area" v-if="areaSelectCom.isShow" @close="areaSelectCom.isShow=false" />
-</section>
+    <div class="xa-cells-box__title" style="margin-top:4px">详细地址</div>
+    <div class="xa-cells-box xa-cells-box_form">
+      <div class="xa-cell-box">
+        <div class="xa-flex">
+          <textarea
+            class="xa-textarea"
+            placeholder="请输入详细地址"
+            v-model="record.area_address"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <label for="agreeChekbox" class="xa-cell-box xa-cell">
+      <input id="agreeChekbox" type="checkbox" v-model="record.default" class="xa-agree__checkbox">
+      <span class="xa-txt-999 xa-txt-12">设置为默认地址</span>
+    </label>
+    <div
+      @click="submitFn"
+      :class="{'disabled':checkStatus}"
+      class="submit-btn xa-bg-red xa-txt-white"
+    >提交</div>
+    <AddressAreaSelect
+      v-model="record.area"
+      v-if="areaSelectCom.isShow"
+      @close="areaSelectCom.isShow=false"
+    />
+  </section>
 </template>
 <script>
 import { getAddressDetail, saveAddress } from '@/controllers/address.js'
@@ -131,13 +146,13 @@ export default {
 }
 </script>
 <style scoped>
-.weui-label,
-.weui-input,
-.weui-textarea {
+.xa-label,
+.xa-input,
+.xa-textarea {
   font-size: 14px;
 }
 
-.weui-label {
+.xa-label {
   max-width: 6em;
 }
 .submit-btn {
@@ -147,5 +162,19 @@ export default {
 }
 .submit-btn.disabled {
   opacity: 0.3;
+}
+.xa-agree__checkbox {
+  appearance: none;
+  outline: 0;
+  font-size: 0;
+  margin-right: 4px;
+  border: 1px solid #d1d1d1;
+  background-color: #ffffff;
+  border-radius: 3px;
+  width: 13px;
+  height: 13px;
+  position: relative;
+  top: -1px;
+  vertical-align: 0;
 }
 </style>

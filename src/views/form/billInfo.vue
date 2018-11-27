@@ -1,76 +1,117 @@
 <template>
-    <section class="bill-page" v-show="!isLoading">
-        <p v-if="record.invoice_type==1" @click="noticeIsShow=true" style="line-height:44px;text-align:center;background:#fff;" class="xa-txt-red">一般纳税人资质证明示例</p>
-        <FormTitle>发票基本信息(必填)</FormTitle>
-        <FormCells>
-            <FormCell label="发票抬头">
-                <input class="weui-input" v-model="record.header" placeholder="必须填写发票抬头">
-            </FormCell>
-            <FormCell label="税号">
-                <input class="weui-input" v-model="record.taxpayer_no" placeholder="必须填写税号(15位以上)">
-            </FormCell>
-            <FormCell style="padding-top:4px;padding-bottom:4px;" v-if="record.taxpayer_no&&record.taxpayer_no.length<15" class="xa-bg-base">
-                <div class="xa-tip xa-txt-12">
-                    <span style="color: red;">请输入15位以上的税号 当前长度:{{record.taxpayer_no.length}}</span>
-                </div>
-            </FormCell>
-        </FormCells>
-        <div>
-            <div class="weui-cells__title xa-cell" style="margin-top:4px;">
-                <span class="xa-flex">{{record.invoice_type == 0?'更多信息':'专票信息(开设专票必填)'}}</span>
-                <i v-if="record.invoice_type == 0" @click="needMore=!needMore" class="iconfont" :class="!needMore?'icon-xiangxia2':'icon-xiangshang2'"></i>
-            </div>
-            <template v-if="needMore">
-                <FormCells>
-                    <FormCell label="银行名称"><input class="weui-input" v-model="record.bank_name" placeholder="请填写银行名称"></FormCell>
-                    <FormCell label="银行账号"><input class="weui-input" v-model="record.bank_account" placeholder="请填写银行账号"></FormCell>
-                    <FormCell label="公司联系方式"><input class="weui-input" v-model="record.company_phone" placeholder="请填写公司联系方式"></FormCell>
-                </FormCells>
-                <FormTitle>公司地址</FormTitle>
-                <FormCells>
-                    <div class="weui-cell"><div class="weui-cell__bd"><textarea class="weui-textarea" placeholder="请填写公司地址" v-model="record.company_address" rows="3"></textarea></div></div>
-                </FormCells>
-            </template>
-            <template v-if="record.invoice_type==1">
-                <FormTitle>一般纳税人资质证明（非营业执照）</FormTitle>
-                <FormCells>
-                    <UploadImgs v-model="record.st_img"/>
-                </FormCells>
-            </template>
+  <section class="bill-page" v-show="!isLoading">
+    <p
+      v-if="record.invoice_type==1"
+      @click="noticeIsShow=true"
+      style="line-height:44px;text-align:center;background:#fff;"
+      class="xa-txt-red"
+    >一般纳税人资质证明示例</p>
+    <div class="cell-title">发票基本信息(必填)</div>
+    <FormCells>
+      <FormCell label="发票抬头">
+        <input class="xa-input" v-model="record.header" placeholder="必须填写发票抬头">
+      </FormCell>
+      <FormCell label="税号">
+        <input class="xa-input" v-model="record.taxpayer_no" placeholder="必须填写税号(15位以上)">
+      </FormCell>
+      <FormCell
+        style="padding-top:4px;padding-bottom:4px;"
+        v-if="record.taxpayer_no&&record.taxpayer_no.length<15"
+        class="xa-bg-base"
+      >
+        <div class="xa-tip xa-txt-12">
+          <span style="color: red;">请输入15位以上的税号 当前长度:{{record.taxpayer_no.length}}</span>
         </div>
-        <label for="weuiAgree" class="weui-agree">
-            <input id="weuiAgree" type="checkbox" v-model="record.default" class="weui-agree__checkbox">
-            <span class="weui-agree__text">设置为默认</span>
-        </label>
+      </FormCell>
+    </FormCells>
+    <div>
+      <div class="cell-title xa-cell" style="margin-top:4px;">
+        <span class="xa-flex">{{record.invoice_type == 0?'更多信息':'专票信息(开设专票必填)'}}</span>
+        <i
+          v-if="record.invoice_type == 0"
+          @click="needMore=!needMore"
+          class="iconfont"
+          :class="!needMore?'icon-xiangxia2':'icon-xiangshang2'"
+        ></i>
+      </div>
+      <template v-if="needMore">
         <FormCells>
-            <FormCell class="xa-bg-base">
-                <div class="xa-tip xa-txt-12">
-                    <span>应国家税务总局要求，自2017年7月1曰 起，您若开具增值税普通发票，
-                    <span style="color: red;">须同时提供企业抬头及税号，</span>否则发票将无法用于企业报销。</span>
-                </div>
-            </FormCell>
+          <FormCell label="银行名称">
+            <input class="xa-input" v-model="record.bank_name" placeholder="请填写银行名称">
+          </FormCell>
+          <FormCell label="银行账号">
+            <input class="xa-input" v-model="record.bank_account" placeholder="请填写银行账号">
+          </FormCell>
+          <FormCell label="公司联系方式">
+            <input class="xa-input" v-model="record.company_phone" placeholder="请填写公司联系方式">
+          </FormCell>
         </FormCells>
-        <div @click="submitFn" :class="{'weui-btn_disabled':checkStatus}" class="submit-btn xa-bg-red xa-txt-white">提交</div>
-        <notice v-model="noticeIsShow" title="一般纳税人资质证明示例">
-            <div>
-                <img style="width: 100%;margin-bottom:8px;" src="http://agri-pub.static.xag.cn//image/v3/yibannashuiren-1.png" @click="previewImage">
-                <img style="width: 100%;" src="http://agri-pub.static.xag.cn//image/v3/yibannashuiren-2.png" @click="previewImage">
+        <p class="cell-title">公司地址</p>
+        <FormCells>
+          <div class="xa-cell-box">
+            <div class="xa-flex">
+              <textarea
+                class="xa-textarea"
+                placeholder="请填写公司地址"
+                v-model="record.company_address"
+                rows="3"
+              ></textarea>
             </div>
-        </notice>
-    </section>
+          </div>
+        </FormCells>
+      </template>
+      <template v-if="record.invoice_type==1">
+        <div class="cell-title">一般纳税人资质证明（非营业执照）</div>
+        <FormCells>
+          <UploadImgs v-model="record.st_img"/>
+        </FormCells>
+      </template>
+    </div>
+    <label for="agreeChekbox" class="xa-cell-box xa-cell">
+      <input id="agreeChekbox" type="checkbox" v-model="record.default" class="xa-agree__checkbox">
+      <span class="xa-txt-999 xa-txt-12">设置为默认</span>
+    </label>
+    <FormCells>
+      <FormCell class="xa-bg-base">
+        <div class="xa-tip xa-txt-12">
+          <span>
+            应国家税务总局要求，自2017年7月1曰 起，您若开具增值税普通发票，
+            <span style="color: red;">须同时提供企业抬头及税号，</span>否则发票将无法用于企业报销。
+          </span>
+        </div>
+      </FormCell>
+    </FormCells>
+    <div
+      @click="submitFn"
+      :class="{'btn_disabled':checkStatus}"
+      class="submit-btn xa-bg-red xa-txt-white"
+    >提交</div>
+    <notice v-model="noticeIsShow" title="一般纳税人资质证明示例">
+      <div>
+        <img
+          style="width: 100%;margin-bottom:8px;"
+          src="http://agri-pub.static.xag.cn//image/v3/yibannashuiren-1.png"
+          @click="previewImage"
+        >
+        <img
+          style="width: 100%;"
+          src="http://agri-pub.static.xag.cn//image/v3/yibannashuiren-2.png"
+          @click="previewImage"
+        >
+      </div>
+    </notice>
+  </section>
 </template>
 <script>
 import wxAction from '@/controllers/wx.js'
 import { saveBillInfo, getBillInfoList } from '@/controllers/bill.js'
 import UploadImgs from '@/components/UploadImgs.vue'
-import FormTitle from '@/components/FormTitle.vue'
 import FormCell from '@/components/FormCell.vue'
 import FormCells from '@/components/FormCells.vue'
 import notice from '@/components/notice/notice'
 export default {
   name: 'formBillinfo',
   components: {
-    FormTitle,
     FormCell,
     FormCells,
     notice,
@@ -159,18 +200,20 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .bill-page {
   overflow: auto;
   padding-bottom: 10px;
-}
-.weui-label,
-.weui-input,
-.weui-textarea {
-  font-size: 14px;
+  .cell-title {
+    padding-left: 15px;
+    padding-right: 15px;
+    line-height: 36px;
+    color: #999999;
+    font-size: 14px;
+  }
 }
 
-.weui-label {
+.xa-label {
   max-width: 7.5em;
 }
 .submit-btn {
@@ -179,6 +222,23 @@ export default {
   margin: 16px 17px 0;
 }
 .submit-btn.disabled {
+  opacity: 0.3;
+}
+.xa-agree__checkbox {
+  appearance: none;
+  outline: 0;
+  font-size: 0;
+  margin-right: 4px;
+  border: 1px solid #d1d1d1;
+  background-color: #ffffff;
+  border-radius: 3px;
+  width: 13px;
+  height: 13px;
+  position: relative;
+  top: -1px;
+  vertical-align: 0;
+}
+.btn_disabled {
   opacity: 0.3;
 }
 </style>

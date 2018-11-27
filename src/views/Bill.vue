@@ -29,7 +29,7 @@
       <h2 class="title" v-if="billType==0">发票寄送地址</h2>
       <div v-if="billType==0">
           <div class="xa-cell" @click="gotoSelectAddress">
-              <div v-if="address&&address.name" class="weui-cell__bd">
+              <div v-if="address&&address.name" class="xa-flex">
                   <p class="address-person xa-txt-14">
                       <span v-html='address.name'></span>&nbsp;<span class="xa-txt-999">{{address.phone}}</span>
                   </p>

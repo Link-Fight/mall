@@ -20,6 +20,7 @@ export default {
     if (_checkIsWeixin()) {
       if (hasConfig) {
         cb && cb()
+        return
       }
       try {
         let data = await base(wechatSignature.url, wechatSignature.data, wechatSignature.method)
@@ -66,7 +67,8 @@ export default {
       fun && fun(res)
     })
   },
-  chooseImage(options) {
+  async chooseImage(options) {
+    await this.config()
     var localIds = []
     var count = (options && options.count) ? options.count : 9
     var sizeType = (options && options.sizeType) ? options.sizeType : ['original', 'compressed']

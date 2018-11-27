@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
 
@@ -9,13 +8,12 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      redirect: '/main/home',
-      component: Home
+      redirect: '/main/home'
     },
     {
       path: '/vconsole',
       name: 'Vconsole',
-      component: () => import('@/views/Vconsole')
+      component: () => import(/* webpackChunkName: "Vconsole" */'@/views/Vconsole')
     },
     {
       path: '/prodList',
@@ -43,29 +41,24 @@ export default new Router({
       component: () => import('@/views/Goods')
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    },
-    {
       path: '/order',
       name: 'order',
-      component: () => import(/* webpackChunkName: "about" */ './views/Order.vue')
+      component: () => import(/* webpackChunkName: "order" */ './views/Order.vue')
     },
     {
       path: '/order/read',
       name: 'orderRead',
-      component: () => import(/* webpackChunkName: "about" */ './views/OrderRead.vue')
+      component: () => import(/* webpackChunkName: "orderRead" */ './views/OrderRead.vue')
     },
     {
       path: '/bill',
       name: 'Bill',
-      component: () => import(/* webpackChunkName: "about" */ './views/Bill.vue')
+      component: () => import(/* webpackChunkName: "Bill" */ './views/Bill.vue')
     },
     {
       path: '/promotions',
       name: 'Promotions',
-      component: () => import(/* webpackChunkName: "about" */ './views/Promotions.vue')
+      component: () => import(/* webpackChunkName: "promotions" */ './views/Promotions.vue')
     },
     {
       path: '/main',
@@ -75,7 +68,7 @@ export default new Router({
           path: '', redirect: 'home'
         },
         {
-          path: 'home', component: () => import('@/views/Home')
+          path: 'home', component: () => import(/* webpackChunkName: "home" */'@/views/Home')
         },
         {
           path: 'classify', component: () => import('@/views/Classify')

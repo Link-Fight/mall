@@ -23,7 +23,7 @@
     </div>
     <div class="order-info xa-bg-white">
       <selectItem label="发票">
-        <div class="weui-cell__ft xa-cell">
+        <div class="xa-cell-box__ft xa-cell">
             <input :checked="needInvoice" @change="needInvoice=!needInvoice" class="xa-switch" type="checkbox">
         </div>
       </selectItem>

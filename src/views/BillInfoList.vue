@@ -1,35 +1,56 @@
 <template>
-<section class="billinfolist-page">
+  <section class="billinfolist-page">
     <div class="xa-cell page-head">
-        <div class="xa-flex xa-txt-12" v-html='tip'></div>
-        <div v-if="dataList.length<10" class="xa-txt-blue" @click="clickFn('addNew')" style="padding:0 10px;">
-            <i class="iconfont icon-jiahao1" style="font-size:20px;font-weight:bold;"></i>
-        </div>
+      <div class="xa-flex xa-txt-12" v-html="tip"></div>
+      <div
+        v-if="dataList.length<10"
+        class="xa-txt-blue"
+        @click="clickFn('addNew')"
+        style="padding:0 10px;"
+      >
+        <i class="iconfont icon-jiahao1" style="font-size:20px;font-weight:bold;"></i>
+      </div>
     </div>
-     <section>
-        <div class="prod-list">
-            <template v-for='dataItem in dataList'>
-                <editItem @click="clickFn" :key='dataItem.guid' :guid='dataItem.guid' :config='dataItem' editPath="/form/billInfo?" :selectable='selectable&&dataItem.enable==1' :selectState='dataItem.guid==selectGuid'>
-                    <billInfo :config="dataItem"/>
-                </editItem>
-            </template>
-        </div>
-        <template v-if='dataList.length==0&&isLoadingState==false'>
-            <section class="xa-view page-empty">
-                <i style="font-size:80px;" class="iconfont icon-zanwujilu"></i>
-                <div>请点击 + 号添加记录</div>
-            </section>
+    <section>
+      <div class="prod-list">
+        <template v-for="dataItem in dataList">
+          <editItem
+            @click="clickFn"
+            :key="dataItem.guid"
+            :guid="dataItem.guid"
+            :config="dataItem"
+            editPath="/form/billInfo?"
+            :selectable="selectable&&dataItem.enable==1"
+            :selectState="dataItem.guid==selectGuid"
+          >
+            <billInfo :config="dataItem"/>
+          </editItem>
         </template>
+      </div>
+      <template v-if="dataList.length==0&&isLoadingState==false">
+        <section class="xa-view page-empty">
+          <i style="font-size:80px;" class="iconfont icon-zanwujilu"></i>
+          <div>请点击 + 号添加记录</div>
+        </section>
+      </template>
     </section>
-    <div v-show="actionsheet.isShow" class="xa-mask xa-cell page-mask" @click="actionsheet.isShow=false">
+    <div
+      v-show="actionsheet.isShow"
+      class="xa-mask xa-cell page-mask"
+      @click="actionsheet.isShow=false"
+    >
       <div class="btn-wrap">
         <p class="title">请选择发票信息类型</p>
-        <button class="weui-btn weui-btn_primary" style="background-color:#42bd56" @click="handlerAddInfo(0)">普通发票</button>
-        <button class="weui-btn weui-btn_warn" @click="handlerAddInfo(1)">增值税专用发票</button>
+        <button
+          class="xa-btn xa-bg-green"
+          style="background-color:#42bd56"
+          @click="handlerAddInfo(0)"
+        >普通发票</button>
+        <button class="xa-btn xa-bg-red" @click="handlerAddInfo(1)">增值税专用发票</button>
       </div>
     </div>
     <billInfoNotice v-model="noticeIsShow"/>
-</section>
+  </section>
 </template>
 <script>
 import storage from '@/util/storage'
@@ -150,6 +171,9 @@ export default {
       width: 80vw;
       max-width: 320px;
     }
+  }
+  .xa-btn + .xa-btn {
+    margin-top: 16px;
   }
 }
 </style>

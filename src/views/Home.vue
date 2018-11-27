@@ -14,7 +14,12 @@
     <!-- 快速导航  -->
     <div class="home-space nav-container xa-cell">
       <template v-for="item in navItms">
-        <router-link class="nav-item" :to="'/prodList?guid='+item.target_guid" tag="a" :key="item.label">
+        <router-link
+          class="nav-item"
+          :to="'/prodList?guid='+item.target_guid"
+          tag="a"
+          :key="item.label"
+        >
           <div class="xa-img" :style="'backgroundImage:url('+item.icon+')'"></div>
           <p>{{item.name}}</p>
         </router-link>
@@ -42,7 +47,7 @@
 </template>
 <script>
 import Swiper from 'swiper'
-import homeCfg from '@/config/views/Home'
+// import homeCfg from '@/config/views/Home'
 import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
@@ -55,8 +60,8 @@ export default {
     return {
       isLoading: false,
       swipers: [],
-      navItms: [] || homeCfg.items,
-      goods: [] || homeCfg.goods,
+      navItms: [],
+      goods: [],
       activitysType: 1,
       activitys: [],
       isLoadingMore: false,

@@ -139,7 +139,7 @@ export default {
     align-items: center;
   }
 }
-.address-wrap .weui-cells {
+.address-wrap .xa-cells-box {
   margin-top: 0;
 }
 

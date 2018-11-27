@@ -1,33 +1,45 @@
 <template>
-    <div class="wrapper">
-        <div class="weui-cells">
-            <div class="weui-cell">
-                <div class="weui-cell__hd address-icon" @click="$emit('click','select',config.guid)"  v-if="selectable">
-                    <i class="xa-txt-22 iconfont icon-yuanxingweixuanzhong"
-                       :class="{'icon-yuanxingxuanzhongfill':selectState}"></i>
-                </div>
-                <div class="weui-cell__bd">
-                    <p v-if="config.default" class="item-icon_defalut xa-txt-red iconfont icon-moren"></p>
-                    <div @click="$emit('click','select',config.guid)">
-                        <div class="xa-cell">
-                            <p class="xa-cell__hd xa-txt-14">{{config.name}}</p>&nbsp;<p class="xa-cell__bd xa-txt-14">{{config.phone}}</p>
-                        </div>
-                        <p class="xa-txt-12">{{config.area_name+config.area_address}}</p>
-                    </div>
-                    <div class="xa-cell">
-                        <div class="xa-cell__bd xa-cell__ft">
-                            <span class="item-btn item-btn_delete xa-txt-red" @click="$emit('click','delete',config.guid)">
-                                <i class="item-icon_delete iconfont icon-shanchu" ></i><span class="xa-txt-12">删除</span>
-                            </span>
-                            <router-link :to="{ path:'/form/address?guid='+guid}" class="item-btn xa-txt-blue" tag='span'>
-                                <i class="item-icon_edit iconfont icon-fankui"></i><span class="xa-txt-12">编辑</span>
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="wrapper">
+    <div class="xa-cells-box">
+      <div class="xa-cell-box">
+        <div class="address-icon" @click="$emit('click','select',config.guid)" v-if="selectable">
+          <i
+            class="xa-txt-22 iconfont icon-yuanxingweixuanzhong"
+            :class="{'icon-yuanxingxuanzhongfill':selectState}"
+          ></i>
         </div>
+        <div class="xa-flex">
+          <p v-if="config.default" class="item-icon_defalut xa-txt-red iconfont icon-moren"></p>
+          <div @click="$emit('click','select',config.guid)">
+            <div class="xa-cell">
+              <p class="xa-cell__hd xa-txt-14">{{config.name}}</p>&nbsp;
+              <p class="xa-cell__bd xa-txt-14">{{config.phone}}</p>
+            </div>
+            <p class="xa-txt-12">{{config.area_name+config.area_address}}</p>
+          </div>
+          <div class="xa-cell">
+            <div class="xa-cell__bd xa-cell__ft">
+              <span
+                class="item-btn item-btn_delete xa-txt-red"
+                @click="$emit('click','delete',config.guid)"
+              >
+                <i class="item-icon_delete iconfont icon-shanchu"></i>
+                <span class="xa-txt-12">删除</span>
+              </span>
+              <router-link
+                :to="{ path:'/form/address?guid='+guid}"
+                class="item-btn xa-txt-blue"
+                tag="span"
+              >
+                <i class="item-icon_edit iconfont icon-fankui"></i>
+                <span class="xa-txt-12">编辑</span>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 <script>
 export default {
@@ -64,16 +76,7 @@ export default {
   margin: 0 8px 4px;
   border-radius: 4px;
 }
-
-.wrapper .weui-cells {
-  margin-top: 0;
-  /*margin: 0 5px;*/
-}
-.wrapper .weui-cell {
-  position: relative;
-  padding: 8px 15px;
-}
-.wrapper .weui-cell__bd {
+.wrapper .xa-flex {
   position: relative;
 }
 .wrapper .address-icon {
