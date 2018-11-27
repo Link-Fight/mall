@@ -2,7 +2,9 @@
   <ul class="xa-cell nav-tab">
     <template v-for="item in items">
       <router-link class="xa-flex nav-tab-item" :to="item.herf" :key="item.href" tag="div">
-        <i class="iconfont" :class="item.icon"></i>
+        <div>
+          <i class="iconfont" :class="item.icon"></i>
+        </div>
         <p>{{item.label}}</p>
       </router-link>
     </template>
@@ -49,12 +51,18 @@ export default {
   text-align: center;
   color: #9d9d9d;
   .iconfont {
-    font-size: 20px;
+    font-size: 22px;
   }
   p {
-    margin-top: 4px;
+    margin-top: 8px;
     font-size: 10px;
     line-height: 14px;
+    height: 14px;
+  }
+}
+.nav-tab-item {
+  div {
+    height: 24px;
   }
 }
 .router-link-active {

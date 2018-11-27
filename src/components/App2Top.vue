@@ -5,6 +5,7 @@
 </template>
 <script>
 import startMove from '@/util/startMove'
+let curScrollTarget = ''
 export default {
   data() {
     return {
@@ -12,15 +13,28 @@ export default {
     }
   },
   methods: {
+    getCurScrollTarget() {
+      if (curScrollTarget) {
+        return document[curScrollTarget]
+      }
+      let target = document.documentElement.scrollTop ? document.documentElement : document.body
+      if (target.scrollTop === 0) {
+        document.documentElement.scrollTop = document.body.scrollTop = 1
+        return this.getCurScrollTarget()
+      } else {
+        curScrollTarget = target === document.documentElement ? 'documentElement' : 'body'
+        return target
+      }
+    },
     getCurScrollTop() {
-      return document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop
+      return this.getCurScrollTarget().scrollTop
     },
     moveTo(target) {
-      let targetEl = document.documentElement.scrollTop ? document.documentElement : document.body
+      let targetEl = this.getCurScrollTarget()
       targetEl.scrollTop = target
     },
     animateTo(target) {
-      let targetEl = document.documentElement.scrollTop ? document.documentElement : document.body
+      let targetEl = this.getCurScrollTarget()
       startMove(targetEl, { scrollTop: target })()
     },
     animateToTop() {

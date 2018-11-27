@@ -1,24 +1,46 @@
 <template>
-<section class="order-list-page">
-  <div class="page-head">
-    <AppTabs v-model="tabIndex" :items="tabItems"/>
-  </div>
-  <div class="page-content" v-show="!isLoading">
-    <div class="order-item" v-for="(data) in dataSoure[tabIndex]" :key="data.id">
-      {{data}}
+  <section class="order-list-page">
+    <div class="page-head">
+      <AppTabs v-model="tabIndex" :items="tabItems"/>
     </div>
-    <div v-show="dataSoure[tabIndex].length===0" class="page-empty xa-view xa-txt-999">
-      <i class="iconfont icon-caigou-xianxing" style="font-size: 80px;"></i>
-      <span>没有相关数据！</span>
+    <div class="page-content" v-show="!isLoading">
+      <div class="order-item" v-for="(data) in dataSoure[tabIndex]" :key="data.id">
+        <div class="xa-cell xa-txt-999">
+          <div class="xa-flex">金额：￥ {{data.price}}</div>
+          <div>{{data.time}}</div>
+        </div>
+        <div class="xa-cell xa-bg-f2">
+          <div
+            class="xa-img"
+            v-for="(img,index) in data.imgs"
+            :style="'backgroundImage:url('+img+')'"
+            :key="index"
+          ></div>
+          <div v-show="data.imgs.length==1">
+            <div class="xa-txt-16">{{data.title}}</div>
+            <div>{{data.tip}}</div>
+          </div>
+        </div>
+        <router-link class="xa-cell" tag="div" :to="'/order/read?guid='+data.order_no">
+          <div
+            class="xa-flex"
+            :class="data.status==0?'xa-txt-red':'xa-txt-666'"
+          >{{data.status==0?'继续支付':'查看详情'}}</div>
+          <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
+        </router-link>
+      </div>
+      <div v-show="dataSoure[tabIndex].length===0" class="page-empty xa-view xa-txt-999">
+        <i class="iconfont icon-caigou-xianxing" style="font-size: 80px;"></i>
+        <span>还没有相关订单！</span>
+      </div>
     </div>
-  </div>
-  <div ref="loadingMore"></div>
-  <div class="page-foot">
-    <AppLoadingMore v-if="dataSoure[tabIndex].length&&canLoadMore[tabIndex]"/>
-    <div v-else-if="dataSoure[tabIndex].length">已加载全部数据</div>
-  </div>
-  <App2Top ref="scroll"/>
-</section>  
+    <div ref="loadingMore"></div>
+    <div class="page-foot">
+      <AppLoadingMore v-if="dataSoure[tabIndex].length&&canLoadMore[tabIndex]"/>
+      <div v-else-if="dataSoure[tabIndex].length">已加载全部数据</div>
+    </div>
+    <App2Top ref="scroll"/>
+  </section>
 </template>
 <script>
 import AppTabs from '@/components/AppTabs'
@@ -61,13 +83,11 @@ export default {
   watch: {
     tabIndex(newIndex, oldIndex) {
       this.scrollTop[oldIndex] = this.$refs.scroll.getCurScrollTop()
+      this.tabIndex = newIndex
       if (this.dataSoure[newIndex].length === 0) {
         this.getQueryData()
       } else {
-        this.$nextTick(() => {
-          // document.documentElement.scrollTop = this.scrollTop[newIndex]
-          this.$refs.scroll.animateTo(this.scrollTop[newIndex])
-        })
+        this.$refs.scroll.animateTo(this.scrollTop[newIndex])
       }
     }
   },
@@ -118,14 +138,26 @@ export default {
   width: 100%;
   max-width: 640px;
   background-color: #fff;
+  z-index: 99;
 }
 .page-content {
   padding-top: 40px;
 }
 .order-item {
   margin-top: 10px;
-  padding: 8px 17px;
+  // margin: 10px;
+  border-radius: 4px;
   background-color: #fff;
+  .xa-img {
+    width: 60px;
+    height: 60px;
+    margin-right: 16px;
+  }
+  .xa-cell {
+    position: relative;
+    padding: 8px 8px 8px 0;
+    margin-left: 8px;
+  }
 }
 .page-empty {
   height: 70vh;

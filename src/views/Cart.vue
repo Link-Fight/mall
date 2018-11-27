@@ -1,20 +1,34 @@
 <template>
   <section class="cart-page">
-    <!-- <CartSwiperItem/> -->
     <div class="shop-container xa-bg-white" v-for="shop in prods" :key="shop.shop.shop_guid">
       <div class="shop-info xa-cell">
-        <i @click="onSelectShop(shop)" class="iconfont" :class="shop.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
+        <i
+          @click="onSelectShop(shop)"
+          class="iconfont"
+          :class="shop.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+        ></i>
         <div class="shop-img" :style="'backgroundImage:url('+shop.shop.shop_logo+')'"></div>
-        <router-link class="xa-txt-16 xa-flex" tag="div" :to="'/prodList?type=SHOP&guid='+shop.shop.shop_guid">
-          {{shop.shop.name}}
-        </router-link>
+        <router-link
+          class="xa-txt-16 xa-flex"
+          tag="div"
+          :to="'/prodList?type=SHOP&guid='+shop.shop.shop_guid"
+        >{{shop.shop.name}}</router-link>
         <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
       <template v-for="goods in shop.list">
         <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
           <div class="xa-cell shop-goods">
-            <i @click="onSelectGoods(shop,goods)" class="iconfont" :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
-            <router-link class="goods-img xa-img" :style="'backgroundImage:url('+goods.first_pic+')'" :to="'/goods?guid='+goods.guid" tag="div"></router-link>
+            <i
+              @click="onSelectGoods(shop,goods)"
+              class="iconfont"
+              :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+            ></i>
+            <router-link
+              class="goods-img xa-img"
+              :style="'backgroundImage:url('+goods.first_pic+')'"
+              :to="'/goods?guid='+goods.guid"
+              tag="div"
+            ></router-link>
             <div class="goods-info xa-flex">
               <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
               <p class="param">{{goods.param_choice}}</p>
@@ -27,7 +41,17 @@
         </CartSwiperItem>
       </template>
     </div>
-    <CarNavTab v-show="prods.length" @buy="onBuyClick" :num="totalNum" :total="totalPrice" class="app-fb-tab cart-fb-cart"/>
+    <CarNavTab
+      v-show="prods.length"
+      @buy="onBuyClick"
+      :num="totalNum"
+      :total="totalPrice"
+      class="app-fb-tab cart-fb-cart"
+    />
+    <div v-if="prods.length===0&&!isLoading" class="xa-view page-empty xa-txt-999">
+      <i style="font-size:80px;" class="iconfont icon-zanwujilu"></i>
+      <div>购物车空空如也，来点商品吧！</div>
+    </div>
   </section>
 </template>
 <script>
@@ -301,5 +325,10 @@ export default {
     padding-right: 17px;
     justify-content: space-between;
   }
+}
+.page-empty {
+  height: 70vh;
+  justify-content: center;
+  align-items: center;
 }
 </style>

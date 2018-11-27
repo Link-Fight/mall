@@ -31,9 +31,9 @@
       <div class="order-tip border-top" v-html="logistics_info"></div>
     </div>
     <div v-if="status==0" class="submit-btn-box">
-      <p class="app-fb-tab submit-btn xa-bg-red xa-txt-white xa-txt-16">
+      <a class="app-fb-tab submit-btn xa-bg-red xa-txt-white xa-txt-16" :href="payUrl">
         继续支付
-      </p>
+      </a>
     </div>
   </section>
 </template>

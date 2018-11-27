@@ -5,7 +5,7 @@
       <div class="swiper-wrapper">
         <template v-for="(img,index) in swipers">
           <a :key="index" class="swiper-slide" :href="img.url">
-            <img :src="img.img" alt="">
+            <img :src="img.img" alt>
           </a>
         </template>
       </div>
@@ -14,14 +14,20 @@
     <!-- 快速导航  -->
     <div class="home-space nav-container xa-cell">
       <template v-for="item in navItms">
-        <a class="nav-item" :key="item.label" :href="item.href">
-          <div class="xa-img" :style="'backgroundImage:url('+'http://192.168.11.85:8080/img/logo.fd6ca067.png'+')'"></div>
-          <p>{{item.label}}</p>
-        </a>
+        <router-link class="nav-item" :to="'/prodList?guid='+item.target_guid" tag="a" :key="item.label">
+          <div class="xa-img" :style="'backgroundImage:url('+item.icon+')'"></div>
+          <p>{{item.name}}</p>
+        </router-link>
       </template>
     </div>
     <!-- 活动模块 -->
-    <HomeActivity v-if="activitys.length" class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
+    <HomeActivity
+      v-if="activitys.length"
+      class="home-space xa-bg-white"
+      title="活动"
+      :type="activitysType"
+      :items="activitys"
+    />
     <!-- 推荐商品 -->
     <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
     <!-- 返回顶部 -->
@@ -29,10 +35,11 @@
     <!-- 加载更多触发点 -->
     <div ref="footPoint" class="home-flex-loading-point"></div>
     <AppLoadingMore v-if="canLoadingMore"/>
-    <div class="home-search max-container"><HomeSearchBar/></div>
+    <div class="home-search max-container">
+      <HomeSearchBar/>
+    </div>
   </div>
 </template>
-
 <script>
 import Swiper from 'swiper'
 import homeCfg from '@/config/views/Home'
@@ -73,7 +80,7 @@ export default {
       this.pageQuery.page_index++
       const result = await getRecommendProduct(this.pageQuery)
       if (result.length) {
-        this.goods = this.goods.concat(this.initGoods(result.goods))
+        this.goods = this.goods.concat(this.initGoods(result))
       } else {
         this.canLoadingMore = false
       }
@@ -98,7 +105,6 @@ export default {
         }
       })
       let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-        console.log('IntersectionObserver', entries[0])
         if (entries[0].intersectionRatio) {
           !this.isLoadingMore && this.queryMore()
         }
@@ -124,12 +130,7 @@ export default {
   async beforeMount() {
     this.isLoading = true
     const data = await this.$actionWithLoading(getMain())
-    this.navItms = data.recommend_nav.map(item => {
-      return {
-        img: item.icon,
-        label: item.name
-      }
-    })
+    this.navItms = data.recommend_nav
     this.goods = this.initGoods(data.recommend_product)
     this.swipers = data.banner
     this.activitys = this.spliceActivitys(data.activity_new)

@@ -23,7 +23,7 @@ export default new Router({
       component: () => import('@/views/ProdList')
     },
     {
-      path: '/orderList',
+      path: '/orderList/:type',
       name: 'OrderList',
       component: () => import('@/views/OrderList')
     },
