@@ -119,6 +119,7 @@ export default {
     }
   },
   async mounted() {
+    this.tabIndex = this.$route.params.type
     await this.getQueryData()
     let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
       if (entries[0].intersectionRatio) {
