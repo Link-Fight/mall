@@ -114,7 +114,7 @@ export default {
         }
       }
     },
-    async queryData() {
+    async queryData(getMore = false) {
       const type = this.$route.query.type || 'CATEGORY'
       let data = {}
       let action
@@ -129,7 +129,7 @@ export default {
         action = getProductList
         query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       }
-      data = await this.$actionWithLoading(action(query))
+      data = getMore ? await this.$actionWithAlert(action(query)) : await this.$actionWithLoading(action(query))
       this.query.page_index++
       return data
     },
@@ -137,7 +137,7 @@ export default {
       if (!this.canLoadingMore) return
       if (!this.prodList.length) return
       this.isLoadingMore = true
-      const data = await this.queryData()
+      const data = await this.queryData(true)
       this.isLoadingMore = false
       if (data.items.length < this.query.page_size) {
         this.canLoadingMore = false
