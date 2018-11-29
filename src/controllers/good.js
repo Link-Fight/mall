@@ -11,5 +11,23 @@ async function getCacheDetail_2(params = {}) {
     return data
   })
 }
+const Memory = {}
+async function getMemoryCacheDetail_2(params) {
+  const curTime = (new Date()).getTime()
+  const key = JSON.stringify(params)
+  const data = Memory[key]
+  if (data && data.time) {
+    if (Math.abs(data.time - curTime) < 60000) {
+      return JSON.parse(data.data)
+    }
+  }
+  return getDetail_2(params).then(data => {
+    Memory[key] = {
+      time: curTime,
+      data: JSON.stringify(data)
+    }
+    return data
+  })
+}
 function getMoreDetail(params) { return base('/test2/test_get', params) }
-export { getDetail, getDetail_2, getMoreDetail, getCacheDetail_2 }
+export { getDetail, getDetail_2, getMoreDetail, getCacheDetail_2, getMemoryCacheDetail_2 }

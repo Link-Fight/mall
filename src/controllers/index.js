@@ -27,10 +27,9 @@ function base(url, data = {}, type = 'get', config = {}) {
           case 8899:
             window.history.go(-1)
             break
-          case 4304:
-            break
-          case 4300:
-            break
+        }
+        if (status === 8888 || status === 8899) {
+          return new Promise(() => { })
         }
         if (status !== 200) {
           reject(respose.data)

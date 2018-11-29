@@ -4,7 +4,10 @@
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <template v-for="(img) in info.pics">
-          <div :key="img" class="swiper-slide" :style="'backgroundImage:url('+img+')'"></div>
+          <!-- <div :key="img" class="swiper-slide xa-img" :style="'backgroundImage:url('+img+')'"></div> -->
+          <a :key="img" class="swiper-slide xa-cell">
+            <img :src="img" alt style="width:100%">
+          </a>
         </template>
       </div>
       <div class="swiper-pagination"></div>
@@ -60,7 +63,7 @@
 </template>
 <script>
 import Swiper from 'swiper'
-import { getCacheDetail_2 as getDetail } from '@/controllers/good'
+import { getMemoryCacheDetail_2 as getDetail } from '@/controllers/good'
 import App2Top from '@/components/App2Top'
 import AppPopPanel from '@/components/AppPopPanel'
 import GoodsNavTab from '@/components/GoodsNavTab'
