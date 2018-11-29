@@ -1,7 +1,7 @@
 <template>
   <section class="user-page">
     <div class="xa-cell page-header" >
-      <div class="xa-txt-18 xa-flex">{{info.name}}</div>
+      <div class="xa-txt-24 xa-flex">{{info.name}}</div>
       <div class="xa-img" :style="'backgroundImage:url('+info.avatar_thumb+')'"></div>
     </div>
     <div class="page-content">
@@ -13,7 +13,7 @@
         <span class="xa-flex">发票抬头</span>
         <i class="iconfont icon-fapiaoguanli"></i>
       </router-link>
-      <router-link to="/orderList" tag="div" class="link-item xa-cell">
+      <router-link to="/orderList/0" tag="div" class="link-item xa-cell">
         <span class="xa-flex">我的订单</span>
         <i class="iconfont icon-dingdan"></i>
       </router-link>
@@ -58,12 +58,12 @@ export default {
     background-color: #ffffff;
   }
   .page-content {
-    margin-top: 8px;
+    // margin-top: 8px;
     padding: 0 17px;
     background-color: #ffffff;
   }
   .link-item {
-    padding: 12px 0;
+    padding: 24px 0;
     .iconfont {
       font-size: 18px;
       color: #da0126;
