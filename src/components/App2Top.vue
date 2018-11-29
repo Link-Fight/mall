@@ -13,14 +13,14 @@ export default {
     }
   },
   methods: {
-    getCurScrollTarget() {
+    getCurScrollTarget(deep = false) {
       if (curScrollTarget) {
         return document[curScrollTarget]
       }
       let target = document.documentElement.scrollTop ? document.documentElement : document.body
       if (target.scrollTop === 0) {
         document.documentElement.scrollTop = document.body.scrollTop = 1
-        return this.getCurScrollTarget()
+        return deep ? target : this.getCurScrollTarget(true)
       } else {
         curScrollTarget = target === document.documentElement ? 'documentElement' : 'body'
         return target
