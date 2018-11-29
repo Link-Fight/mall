@@ -155,7 +155,7 @@ export default {
       const action = isIFFE ? checkIFFEOrder : addCart
       const submitData = await this.$actionWithLoading(action({
         guid: this.guid,
-        param_choice_guid: selectResult.guid,
+        product_param_choice_guid: selectResult.guid,
         count: this.num
       }))
       const shopInfo = {
