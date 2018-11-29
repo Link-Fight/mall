@@ -2,7 +2,7 @@
   <section class="feedback-page">
     <div class="page-content">
       <div class="xa-txt-center">
-        <img style="max-width:120px;margin:16px auto;" src="../../assets/logo.png" alt>
+        <img style="max-width:120px;margin:8px auto;" src="../../assets/logo.png" alt>
       </div>
       <div class="title">问题类型</div>
       <div class="item-wrap xa-cell">
@@ -71,7 +71,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .feedback-page {
-  height: 100vh;
   box-sizing: border-box;
   padding: 16px;
   /deep/ .form-imgs__wrapper {
@@ -95,8 +94,11 @@ export default {
   .item + .item {
     margin-left: 16px;
   }
+  .xa-btn{
+    margin-top: 44px;
+  }
   .page-content {
-    height: calc(100% - 44px);
+    min-height: calc(100vh - 122px);
   }
 }
 </style>
