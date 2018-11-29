@@ -1,11 +1,14 @@
 <template>
   <section class="orderRead-page" v-show="!isLoading">
     <div class="xa-bg-white xa-cell cell-space" style="padding:17px 17px;">
-      <div class="address-icon">
-        <i class="iconfont icon-zuobiaofill xa-txt-24"></i>  
+      <div class="address-icon xa-cell">
+        <i class="iconfont icon-zuobiaofill xa-txt-24"></i>
       </div>
       <div class="xa-flex">
-        <p class="xa-txt-13"><span>{{addressInfo.name}}</span>&nbsp; <span class="xa-txt-999">{{addressInfo.phone}}</span></p>
+        <p class="xa-txt-13">
+          <span>{{addressInfo.name}}</span>&nbsp;
+          <span class="xa-txt-999">{{addressInfo.phone}}</span>
+        </p>
         <p>{{addressInfo.address}}</p>
       </div>
       <a v-if="addressInfo.phone" :href="'tel:'+ addressInfo.protection_phone">
@@ -16,13 +19,14 @@
       <ShopInfo class="border-bottom" :config="shopInfo"/>
       <OrderGoods class="order-goods xa-bg-white" :items="products"/>
       <div class="order-price xa-cell border-top">
-        <p class="xa-txt-14">合计:</p> <p class="xa-txt-18 xa-txt-red xa-txt-bold">￥ {{price}}</p>
+        <p class="xa-txt-14">合计:</p>
+        <p class="xa-txt-18 xa-txt-red xa-txt-bold">￥ {{price}}</p>
       </div>
     </div>
     <div class="xa-bg-white cell-space">
       <OrderStatus :items="orderStatus"/>
     </div>
-    <div v-if="expressStatus.length" class="xa-bg-white cell-space ">
+    <div v-if="expressStatus.length" class="xa-bg-white cell-space">
       <p class="border-bottom" style="line-height:50px;">物流信息</p>
       <OrderStatus :items="expressStatus"/>
     </div>
@@ -31,9 +35,7 @@
       <div class="order-tip border-top" v-html="logistics_info"></div>
     </div>
     <div v-if="status==0" class="submit-btn-box">
-      <a class="app-fb-tab submit-btn xa-bg-red xa-txt-white xa-txt-16" :href="payUrl">
-        继续支付
-      </a>
+      <a class="app-fb-tab submit-btn xa-bg-red xa-txt-white xa-txt-16" :href="payUrl">继续支付</a>
     </div>
   </section>
 </template>
@@ -202,6 +204,7 @@ export default {
     margin-right: 11px;
     border-radius: 50%;
     color: #fff;
+    justify-content: center;
   }
   .submit-btn-box {
     height: 80px;

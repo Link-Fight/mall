@@ -34,7 +34,7 @@
         <span>还没有相关订单！</span>
       </div>
     </div>
-    <div ref="loadingMore"></div>
+    <div class="loading-More-point" ref="loadingMore"></div>
     <div class="page-foot">
       <AppLoadingMore v-if="dataSoure[tabIndex].length&&canLoadMore[tabIndex]"/>
       <div v-else-if="dataSoure[tabIndex].length">已加载全部数据</div>
@@ -77,13 +77,12 @@ export default {
         2: 0,
         3: 0
       },
-      pageSize: 4
+      pageSize: 8
     }
   },
   watch: {
     tabIndex(newIndex, oldIndex) {
       this.scrollTop[oldIndex] = this.$refs.scroll.getCurScrollTop()
-      this.tabIndex = newIndex
       if (this.dataSoure[newIndex].length === 0) {
         this.getQueryData()
       } else {
@@ -122,6 +121,7 @@ export default {
     this.tabIndex = this.$route.params.type
     await this.getQueryData()
     let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+      console.log('IntersectionObserver')
       if (entries[0].intersectionRatio) {
         if (this.dataSoure[this.tabIndex].length && this.canLoadMore[this.tabIndex]) {
           this.getQueryMore()

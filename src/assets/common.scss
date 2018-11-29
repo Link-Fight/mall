@@ -542,3 +542,24 @@ body.hidden-scroll {
   line-height: inherit;
   outline: 0;
 }
+
+#app .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+}
+
+#app .swiper-pagination-bullet-active {
+  position: relative;
+  background-color: #fff;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    left: 2px;
+    background-color: #000;
+    border-radius: 50%;
+  }
+}

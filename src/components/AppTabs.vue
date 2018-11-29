@@ -1,8 +1,14 @@
 <template>
-<ul class="tabs-box  xa-cell">
-  <li class="tabs-item xa-flex"  v-for="(item,index) in items" :key="index" :class="{'active':value==index}" @click="$emit('input',index)">{{item}}</li>
-  <div class="tabs-line" :style="lineStyle"></div>
-</ul>
+  <ul class="tabs-box xa-cell">
+    <li
+      class="tabs-item xa-flex"
+      v-for="(item,index) in items"
+      :key="index"
+      :class="{'active':value==index}"
+      @click="onClick(index)"
+    >{{item}}</li>
+    <div class="tabs-line" :style="lineStyle"></div>
+  </ul>
 </template>
 <script>
 export default {
@@ -21,6 +27,12 @@ export default {
         width: 1 / this.items.length * 100 + '%',
         transform: `translate3d(${this.value * 100 + '%'},0,0)`
       }
+    }
+  },
+  methods: {
+    onClick(index) {
+      console.log('onClick')
+      this.$emit('input', index)
     }
   }
 }

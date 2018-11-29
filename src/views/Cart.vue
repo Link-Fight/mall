@@ -15,31 +15,33 @@
         >{{shop.shop.name}}</router-link>
         <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
-      <template v-for="goods in shop.list">
-        <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
-          <div class="xa-cell shop-goods">
-            <i
-              @click="onSelectGoods(shop,goods)"
-              class="iconfont"
-              :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
-            ></i>
-            <router-link
-              class="goods-img xa-img"
-              :style="'backgroundImage:url('+goods.first_pic+')'"
-              :to="'/goods?guid='+goods.guid"
-              tag="div"
-            ></router-link>
-            <div class="goods-info xa-flex">
-              <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
-              <p class="param">{{goods.param_choice}}</p>
-              <div class="xa-cell price-box">
-                <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
-                <AppInputNum v-model="goods.count"/>
+      <!-- <template v-if="!isLoading"> -->
+        <template v-for="goods in shop.list">
+          <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
+            <div class="xa-cell shop-goods">
+              <i
+                @click="onSelectGoods(shop,goods)"
+                class="iconfont"
+                :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+              ></i>
+              <router-link
+                class="goods-img xa-img"
+                :style="'backgroundImage:url('+goods.first_pic+')'"
+                :to="'/goods?guid='+goods.product_guid"
+                tag="div"
+              ></router-link>
+              <div class="goods-info xa-flex">
+                <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
+                <p class="param">{{goods.param_choice}}</p>
+                <div class="xa-cell price-box">
+                  <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
+                  <AppInputNum v-model="goods.count"/>
+                </div>
               </div>
             </div>
-          </div>
-        </CartSwiperItem>
-      </template>
+          </CartSwiperItem>
+        </template>
+      <!-- </template> -->
     </div>
     <CarNavTab
       v-show="prods.length"
@@ -49,7 +51,7 @@
       class="app-fb-tab cart-fb-cart"
     />
     <div v-if="prods.length===0&&!isLoading" class="xa-view page-empty xa-txt-999">
-      <i style="font-size:80px;" class="iconfont icon-zanwujilu"></i>
+      <i style="font-size:80px;margin-bottom:36px;" class="iconfont icon-zanwujilu"></i>
       <div>购物车空空如也，来点商品吧！</div>
     </div>
   </section>

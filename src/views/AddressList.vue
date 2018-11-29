@@ -14,7 +14,7 @@
         </div>
         <template v-if='addressList.length==0&&isLoadingState==false'>
             <div class="xa-view page-empty">
-                <i style="font-size:80px;" class="iconfont icon-zanwujilu"></i>
+                <i style="font-size:80px;margin-bottom:36px;" class="iconfont icon-zanwujilu"></i>
                 <div>请点击 + 号添加记录</div>
             </div>
         </template>
