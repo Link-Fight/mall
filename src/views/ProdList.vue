@@ -26,10 +26,11 @@
     </form>
     <App2Top/>
     <SearchPrompt
-      v-show="isShowSearchPrompt&&hotItems"
+      v-show="isShowSearchPrompt||prodList.length===0"
       @select="onSearchSelect"
       :hotItems="hotItems"
       :historyItems="historyItems"
+      @clear="historyItems=[]"
     />
     <ProdColumelist :items="prodList"/>
     <!-- 加载更多触发点 -->
@@ -56,19 +57,21 @@ export default {
   name: 'prodList',
   data() {
     return {
+      isLoading: false,
       isShowCancel: false,
+      isShowSearchPrompt: false,
       keyword: '',
       hotItems: mRecommendSearch,
       historyItems: [],
       prodList: [],
       isLoadingMore: false,
-      isShowSearchPrompt: false,
       canLoadingMore: true,
       query: {
         page_index: 1,
         page_size: 10
       },
-      fullPath: ''
+      fullPath: '', // 记录当前页面地址
+      pageHeight: 0 // 记录屏幕高度
     }
   },
   components: {
@@ -94,12 +97,14 @@ export default {
     async onSearchQuery() {
       if (this.$route.query.guid || this.keyword) {
         this.isShowSearchPrompt = false
-        if (this.historyItems.indexOf(this.keyword) === -1) {
-          this.historyItems.unshift(this.keyword)
-          if (this.historyItems.length >= 5) {
-            this.historyItems.pop()
+        if (this.keyword) {
+          if (this.historyItems.indexOf(this.keyword) === -1) {
+            this.historyItems.unshift(this.keyword)
+            if (this.historyItems.length >= 6) {
+              this.historyItems.pop()
+            }
+            storage.setStorage(LOCAL_SEARCH_HISTORY, this.historyItems)
           }
-          storage.setStorage(LOCAL_SEARCH_HISTORY, this.historyItems)
         }
         this.query.page_index = 1
         const data = await this.$actionWithLoading(this.queryData())
@@ -169,9 +174,18 @@ export default {
           this.canLoadingMore = false
         }
       }
+    },
+    onResize() {
+      const docH = Math.max(document.documentElement.clientHeight, document.body.clientHeight)
+      if (this.pageHeight - docH < 100) {
+        if (this.prodList.length > 0 && this.isShowSearchPrompt) {
+          this.isShowSearchPrompt = false
+        }
+      }
     }
   },
   async mounted() {
+    this.isLoading = true
     this.fullPath = this.$route.fullPath
     let result = storage.getStorage(LOCAL_SEARCH_HISTORY)
     this.historyItems = result || []
@@ -186,13 +200,19 @@ export default {
         }
       })
       LoadingMoreObserver.observe(this.$refs.footPoint)
+      this.pageHeight = Math.max(document.documentElement.clientHeight, document.body.clientHeight)
+      window.addEventListener('resize', this.onResize)
     })
+    this.isLoading = false
   },
   activated() {
     if (this.$route.fullPath !== this.fullPath) {
       this.fullPath = this.$route.fullPath
       this.initData()
     }
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize)
   }
 }
 </script>

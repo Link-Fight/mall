@@ -1,55 +1,76 @@
 <template>
-<section class="bill-page">
-  <div><p class="bill-head xa-txt-red" @click="isNoticeShow=true">发票须知</p></div>
-  <div class="bill-content">
-    <div class="bill-cell">
-      <h2 class="title">发票类型</h2>
-      <div class="xa-cell">
-          <div class="xa-cell xa-flex" :class="{'action-disable':!invoicePaper}" @click="changeBillType(0)">
-              <i :class="[billType==0?'icon-yuanxingxuanzhong xa-txt-red':'icon-yuanxingweixuanzhong']" class="xa-txt-22 iconfont"></i>
-              <div style="text-indent:10px" class="xa-txt-12">纸质</div>
-          </div>
-          <div class="xa-cell xa-flex" :class="{'action-disable':!invoiceElectronic}"  @click="changeBillType(1)">
-              <i :class="[billType==1?'icon-yuanxingxuanzhong xa-txt-red':'icon-yuanxingweixuanzhong']" class="xa-txt-22 iconfont"></i>
-              <div style="text-indent:10px" class="xa-txt-12">电子 (暂不支持专票)</div>
-          </div>
-      </div>
+  <section class="bill-page">
+    <div>
+      <p class="bill-head xa-txt-red" @click="isNoticeShow=true">发票须知</p>
     </div>
-    <div class="bill-cell">
-      <h2 class="title">发票信息</h2>
-      <div class="xa-cell" @click="gotoSelectBillInfo">
+    <div class="bill-content">
+      <div class="bill-cell">
+        <h2 class="title">发票类型</h2>
+        <div class="xa-cell">
+          <div
+            class="xa-cell xa-flex"
+            :class="{'action-disable':!invoicePaper}"
+            @click="changeBillType(0)"
+          >
+            <i
+              :class="[billType==0?'icon-yuanxingxuanzhong xa-txt-red':'icon-yuanxingweixuanzhong']"
+              class="xa-txt-22 iconfont"
+            ></i>
+            <div style="text-indent:10px" class="xa-txt-12">纸质</div>
+          </div>
+          <div
+            class="xa-cell xa-flex"
+            :class="{'action-disable':!invoiceElectronic}"
+            @click="changeBillType(1)"
+          >
+            <i
+              :class="[billType==1?'icon-yuanxingxuanzhong xa-txt-red':'icon-yuanxingweixuanzhong']"
+              class="xa-txt-22 iconfont"
+            ></i>
+            <div style="text-indent:10px" class="xa-txt-12">电子 (暂不支持专票)</div>
+          </div>
+        </div>
+      </div>
+      <div class="bill-cell">
+        <h2 class="title">发票信息</h2>
+        <div class="xa-cell" @click="gotoSelectBillInfo">
           <BillInfoItem class="xa-flex" v-if="billInfo.guid" :config="billInfo"/>
           <template v-else>
             <div class="xa-flex xa-txt-999">请添加发票或选择发票信息</div>
           </template>
           <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
+        </div>
       </div>
-    </div>
-    <div class="bill-cell">
-      <h2 class="title" v-if="billType==0">发票寄送地址</h2>
-      <div v-if="billType==0">
+      <div class="bill-cell">
+        <h2 class="title" v-if="billType==0">发票寄送地址</h2>
+        <div v-if="billType==0">
           <div class="xa-cell" @click="gotoSelectAddress">
-              <div v-if="address&&address.name" class="xa-flex">
-                  <p class="address-person xa-txt-14">
-                      <span v-html='address.name'></span>&nbsp;<span class="xa-txt-999">{{address.phone}}</span>
-                  </p>
-                  <p class="address-where xa-txt-12">{{address.area_name}}{{address.area_address}}</p>
-              </div>
-              <template v-else>
-                <div class="xa-flex xa-txt-999">请选择地址</div>
-              </template>
-              <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
+            <div v-if="address&&address.name" class="xa-flex">
+              <p class="address-person xa-txt-14">
+                <span v-html="address.name"></span>&nbsp;
+                <span class="xa-txt-999">{{address.phone}}</span>
+              </p>
+              <p class="address-where xa-txt-12">{{address.area_name}}{{address.area_address}}</p>
+            </div>
+            <template v-else>
+              <div class="xa-flex xa-txt-999">请选择地址</div>
+            </template>
+            <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
           </div>
-      </div>
-      <div style="padding-top:17px;" class="xa-txt-10 xa-txt-gray">
-          <p> 公司发票<span class="xa-txt-red">抬头请务必准确填写</span>，一旦确认提交，不能修改</p>
-          <p> 发票将于<span class="xa-txt-red">20个工作日</span>内开具。</p>
+        </div>
+        <div style="padding-top:17px;" class="xa-txt-10 xa-txt-gray">
+          <p>公司发票
+            <span class="xa-txt-red">抬头请务必准确填写</span>，一旦确认提交，不能修改
+          </p>
+          <p>发票将于
+            <span class="xa-txt-red">20个工作日</span>内开具。
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-  <div @click="submitFn" class="bill-submit xa-bg-red xa-txt-white xa-txt-18">确定</div>
-  <notice v-model="isNoticeShow"/>
-</section>
+    <div @click="submitFn" class="bill-submit xa-bg-red xa-txt-white xa-txt-18">确定</div>
+    <notice v-model="isNoticeShow"/>
+  </section>
 </template>
 <script>
 import storage from '@/util/storage'
@@ -77,8 +98,10 @@ export default {
   methods: {
     setBillMsg() {
       const submit = {
-        type: this.billType,
-        billInfo: this.billInfo
+        billInfo: {
+          ...this.billInfo,
+          type: this.billType,
+        },
       }
       if (this.billType === 0) {
         submit.address = this.address

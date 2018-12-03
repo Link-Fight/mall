@@ -1,21 +1,27 @@
 <template>
   <section class="prodlist-container">
-      <template v-for="(item,index) in items">
-        <router-link class="prod-item xa-cell" :key="index" tag="div" :to="'/goods?guid='+item.product_guid">
-          <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
-          <div class="content xa-flex">
-            <div style="min-height:76px;">
-              <p class="title xa-txt-ellipsis-2">{{item.title}}</p>
-              <p class="sub-title xa-txt-ellipsis-2">{{item.sub_title}}</p>
-            </div>
-            <p class="price">￥&nbsp;{{item.price}}</p>
+    <template v-for="(item,index) in items">
+      <router-link
+        class="prod-item xa-cell"
+        :key="index"
+        tag="div"
+        :to="'/goods?guid='+item.product_guid"
+      >
+        <div v-lazyLoad="item.img" class="xa-img"></div>
+        <div class="content xa-flex">
+          <div style="min-height:76px;">
+            <p class="title xa-txt-ellipsis-2">{{item.title}}</p>
+            <p class="sub-title xa-txt-ellipsis-2">{{item.sub_title}}</p>
           </div>
-        </router-link>
-      </template>
+          <p class="price">￥&nbsp;{{item.price}}</p>
+        </div>
+      </router-link>
+    </template>
   </section>
 </template>
 <script>
-import lazyLoad from '@/directives/lazyLoad'
+import { lazyLoadConfig } from '@/directives/lazyLoad'
+const lazyLoad = lazyLoadConfig('div', { loadingClass: 'loading-img' })
 export default {
   directives: {
     lazyLoad
@@ -39,7 +45,7 @@ export default {
       border: none;
     }
   }
-  img {
+  .xa-img {
     display: block;
     flex-shrink: 0;
     width: 80px;
@@ -48,6 +54,12 @@ export default {
     margin-right: 11px;
     border-radius: 4px;
     background-color: #eee;
+    background-size: contain;
+    background-image: url(../assets/logo.png);
+  }
+  .loading-img {
+    background-size: 80%;
+    opacity: 0.3;
   }
   .content {
     align-self: stretch;

@@ -1,18 +1,31 @@
 <template>
-<div>
-  <div class="prompt-cell">
-    <p class="prompt-title">热门搜索</p>
-    <div class="prompt-item-box xa-cell">
-      <div class="prompt-item" v-for="item in hotItems" :key="item" @click="onSelected(item)">{{item}}</div>
+  <div>
+    <div class="prompt-cell" v-if="hotItems&&hotItems.length">
+      <p class="prompt-title">热门搜索</p>
+      <div class="prompt-item-box xa-cell">
+        <div
+          class="prompt-item"
+          v-for="item in hotItems"
+          :key="item"
+          @click="onSelected(item)"
+        >{{item}}</div>
+      </div>
+    </div>
+    <div class="prompt-cell" v-if="historyItems.length">
+      <div class="prompt-title xa-cell">
+        <div class="xa-flex">搜索记录</div>
+        <div class="iconfont icon-guanbi1" @click="$emit('clear')"></div>
+      </div>
+      <div class="prompt-item-box xa-cell">
+        <div
+          class="prompt-item"
+          v-for="item in historyItems"
+          :key="item"
+          @click="onSelected(item)"
+        >{{item}}</div>
+      </div>
     </div>
   </div>
-  <div class="prompt-cell" v-if="historyItems.length">
-    <p class="prompt-title">搜索记录</p>
-    <div class="prompt-item-box xa-cell">
-      <div class="prompt-item" v-for="item in historyItems" :key="item" @click="onSelected(item)">{{item}}</div>
-    </div>
-  </div>
-</div>
 </template>
 <script>
 export default {

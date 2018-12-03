@@ -4,7 +4,8 @@
     <div class="goods-box xa-cell">
       <template v-for="(item,index) in items">
         <router-link class="goods-item" tag="div" :key="index" :to="'/goods?guid='+item.guid">
-          <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
+          <!-- <img v-lazyLoad="item.img" src="../assets/logo.png" alt=""> -->
+          <div v-lazyLoad="item.img" class="xa-img"></div>
           <div class="content">
             <p class="title">{{item.title}}</p>
             <p class="sub-title">{{item.subTitle}}</p>
@@ -17,7 +18,8 @@
   </div>
 </template>
 <script>
-import lazyLoad from '@/directives/lazyLoad'
+import { lazyLoadConfig } from '@/directives/lazyLoad'
+const lazyLoad = lazyLoadConfig('div', { loadingClass: 'loading-img' })
 export default {
   directives: {
     lazyLoad
@@ -64,13 +66,18 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  img {
+  .xa-img {
     display: block;
     height: 130px;
     margin: 0 auto;
     max-width: 100%;
     border-radius: 4px;
     background-color: #eee;
+    background-image: url(../assets/logo.png);
+  }
+  .loading-img {
+    background-size: 50%;
+    opacity: 0.3;
   }
   .content {
     height: 50px;
