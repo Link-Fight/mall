@@ -22,11 +22,11 @@
           style="margin-right:4px"
         ></i>
       </div>
-      <span v-show="isShowCancel" class="cancel-btn" @click="onCancelClick">取消</span>
+      <span class="cancel-btn" @click="onCancelClick">取消</span>
     </form>
     <App2Top/>
     <SearchPrompt
-      v-show="isShowSearchPrompt||prodList.length===0"
+      v-show="canShowSearchPrompt"
       @select="onSearchSelect"
       :hotItems="hotItems"
       :historyItems="historyItems"
@@ -74,6 +74,11 @@ export default {
       pageHeight: 0 // 记录屏幕高度
     }
   },
+  computed: {
+    canShowSearchPrompt() {
+      return (this.isShowSearchPrompt || this.prodList.length === 0) && !this.isLoading
+    }
+  },
   components: {
     App2Top,
     AppLoadingMore,
@@ -88,7 +93,11 @@ export default {
       this.$route.query.type === 'SEARCH' && (this.isShowSearchPrompt = false)
     },
     onCancelClick() {
-      this.$router.go(-1)
+      if (this.isShowCancel) {
+        this.$router.go(-1)
+      } else {
+        this.keyword && this.onSearchSelect('')
+      }
     },
     onSearchSelect(keyword) {
       this.keyword = keyword
@@ -253,6 +262,7 @@ export default {
   border-radius: 4px;
   input {
     flex: 1;
+    padding-left: 4px;
     width: 100%;
     outline: none;
     border: none;

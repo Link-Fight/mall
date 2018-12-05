@@ -18,6 +18,7 @@ new Vue({
   async created() {
     this.latlng = storage.getStorage(SESSION_LATLNG, 'sessionStorage')
     await wxAction.config()
+    wxAction.toShareConfig()
     wxAction.getLocation({
       success: (res) => {
         this.latlng = storage.setStorage(SESSION_LATLNG, res, 'sessionStorage') || this.latlng

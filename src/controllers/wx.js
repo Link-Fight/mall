@@ -242,10 +242,18 @@ export default {
   },
   getShareOption() {
     return {
-      title: document.title.replace(' - 极飞商城', ''),
-      desc: `极飞科技旗下的保障商城`,
-      link: window.location.href,
-      imgUrl: window.location.origin + '/pm/images/share_logo.png'
+      title: '极飞商城',
+      desc: `一站购物，方便快捷 你身边的配件百宝箱`,
+      // link: window.location.href,
+      imgUrl: window.location.origin + window.location.pathname + '/logo.png'
     }
+  },
+  toShareConfig(config) {
+    config = this.getShareOption()
+    wx.onMenuShareTimeline(config)
+    wx.onMenuShareAppMessage(config)
+    wx.onMenuShareQQ(config)
+    wx.onMenuShareWeibo(config)
+    wx.onMenuShareQZone(config)
   }
 }

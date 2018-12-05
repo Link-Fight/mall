@@ -38,7 +38,7 @@ export default {
 .prod-item {
   padding: 8px 0 8px 17px;
   box-sizing: border-box;
-  font-family: PingFang-SC-Medium;
+  // font-family: PingFang-SC-Medium;
   background-color: #fff;
   &:last-of-type {
     .content {

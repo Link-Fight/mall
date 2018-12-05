@@ -16,31 +16,33 @@
         <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
       <!-- <template v-if="!isLoading"> -->
-        <template v-for="goods in shop.list">
-          <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
-            <div class="xa-cell shop-goods">
-              <i
-                @click="onSelectGoods(shop,goods)"
-                class="iconfont"
-                :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
-              ></i>
-              <router-link
-                class="goods-img xa-img"
-                :style="'backgroundImage:url('+goods.first_pic+')'"
-                :to="'/goods?guid='+goods.product_guid"
-                tag="div"
-              ></router-link>
-              <div class="goods-info xa-flex">
-                <p class="title xa-txt-16 xa-txt-bold xa-txt-ellipsis-2">{{goods.title}}</p>
+      <template v-for="goods in shop.list">
+        <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
+          <div class="xa-cell shop-goods">
+            <i
+              @click="onSelectGoods(shop,goods)"
+              class="iconfont"
+              :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+            ></i>
+            <router-link
+              class="goods-img xa-img"
+              :style="'backgroundImage:url('+goods.first_pic+')'"
+              :to="'/goods?guid='+goods.product_guid"
+              tag="div"
+            ></router-link>
+            <div class="goods-info xa-flex">
+              <div class="content">
+                <p class="title xa-txt-16 xa-txt-ellipsis-2">{{goods.title}}</p>
                 <p class="param">{{goods.param_choice}}</p>
-                <div class="xa-cell price-box">
-                  <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
-                  <AppInputNum v-model="goods.count"/>
-                </div>
+              </div>
+              <div class="xa-cell price-box">
+                <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
+                <AppInputNum v-model="goods.count"/>
               </div>
             </div>
-          </CartSwiperItem>
-        </template>
+          </div>
+        </CartSwiperItem>
+      </template>
       <!-- </template> -->
     </div>
     <CarNavTab
@@ -48,7 +50,7 @@
       @buy="onBuyClick"
       :num="totalNum"
       :total="totalPrice"
-      class="app-fb-tab cart-fb-cart"
+      class="app-fb-tab"
     />
     <div v-if="prods.length===0&&!isLoading" class="xa-view page-empty xa-txt-999">
       <i style="font-size:80px;margin-bottom:36px;" class="iconfont icon-zanwujilu"></i>
@@ -264,10 +266,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .cart-page {
-  padding-bottom: 108px;
-}
-#app .cart-fb-cart {
-  bottom: 48px;
+  padding-bottom: 88px;
 }
 .shop-container {
   & + & {
@@ -281,8 +280,7 @@ export default {
   .shop-info {
     position: relative;
     box-sizing: border-box;
-    padding: 6px 0;
-    // border-bottom: 1px solid #e4e4e4;
+    padding: 7px 0;
     ::after {
       content: "";
       position: absolute;
@@ -298,6 +296,12 @@ export default {
     margin-right: 8px;
   }
 }
+/deep/ .swpier-container:last-of-type {
+  .shop-goods::after {
+    content: "";
+    display: none;
+  }
+}
 .goods-img,
 .shop-img {
   width: 30px;
@@ -307,16 +311,32 @@ export default {
   background-repeat: no-repeat;
 }
 .shop-goods {
-  padding: 10px 0;
+  position: relative;
+  padding: 14px 0;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 17px;
+    left: 50px;
+    height: 1px;
+    transform: scaleY(0.5);
+    background-color: #e4e4e4;
+  }
   .goods-img {
     width: 80px;
     height: 80px;
     margin-right: 11px;
+    border-radius: 5px;
   }
 }
 .goods-info {
+  .content {
+    min-height: 61px;
+  }
   .title {
-    min-height: 42px;
+    font-weight: 550;
+    margin-bottom: 5px;
   }
   .param {
     color: #6d6d6d;

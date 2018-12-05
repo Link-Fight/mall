@@ -3,20 +3,20 @@
     <div class="activity-title">{{title}}</div>
     <div v-for="(item,index) in items" :key="index" class="activity-box xa-cell type-1">
       <div class="xa-flex xa-view">
-        <router-link class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[0].img+')'" :to="'/promotions?guid='+item[0].guid">
+        <a class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[0].img+')'" :href="item[0].url">
           <contentItem :item="item[0]" />
-        </router-link>
-        <router-link v-if="item.length>=4" class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[3].img+')'" :to="'/promotions?guid='+item[3].guid">
+        </a>
+        <a v-if="item.length>=4" class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[3].img+')'" :href="item[3].url">
           <contentItem :item="item[3]"/>
-        </router-link>
+        </a>
       </div>
       <div class="xa-flex xa-view" v-if="item.length>=2">
-        <router-link class="xa-flex activity-item xa-img" tag="div" :style="'backgroundImage:url('+item[1].img+')'" :to="'/promotions?guid='+item[1].guid">
+        <a class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[1].img+')'" :href="item[1].url">
           <contentItem :item="item[1]"/>
-        </router-link>
-        <router-link class="xa-flex activity-item xa-img" v-if="item.length>=3"  tag="div" :style="'backgroundImage:url('+item[2].img+')'" :to="'/promotions?guid='+item[2].guid">
+        </a>
+        <a class="xa-flex activity-item xa-img" v-if="item.length>=3"  :style="'backgroundImage:url('+item[2].img+')'" :href="item[2].url">
           <contentItem :item="item[2]"/>
-        </router-link>
+        </a>
       </div>
     </div>
   </div>

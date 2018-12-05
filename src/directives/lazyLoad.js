@@ -16,6 +16,9 @@ export function lazyLoadConfig(type = 'img', cfg = {}) {
   return {
     inserted(el, { value }) {
       loadingClass && (el.className += ' ' + loadingClass)
+      if (!value) {
+        return
+      }
       let observer = new IntersectionObserver((entries) => {
         if (entries[0].intersectionRatio) {
           observer.unobserve(el)

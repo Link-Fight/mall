@@ -54,7 +54,7 @@ export default {
   width: 50%;
   padding-bottom: 15px;
   box-sizing: border-box;
-  font-family: PingFang-SC-Medium;
+  // font-family: PingFang-SC-Medium;
   &:nth-child(even) {
     padding-left: 4px;
   }

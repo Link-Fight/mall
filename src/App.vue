@@ -23,6 +23,15 @@ export default {
     AppLoading
   },
   mounted() {
+    Vue.prototype.$gotoUrl = function (url) {
+      if (url) {
+        if (url.indexOf('/') === 0) {
+          this.$router.push(url)
+        } else {
+          window.location.href = url
+        }
+      }
+    }
     Vue.prototype.$appAlert = this.$refs.alert
     Vue.prototype.$appLoading = this.$refs.loading
     Vue.prototype.$appToast = this.$refs.toast
@@ -52,12 +61,13 @@ export default {
 body {
   background-color: black;
 }
+
 #app {
   position: relative;
   min-height: 100vh;
   max-width: 640px;
   margin: 0 auto;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: "PingFang-SC-Medium", "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #1d1d1d;
@@ -74,5 +84,20 @@ body {
   width: 100%;
   border-top: 1px solid #e5e5e5;
   box-shadow: 0 0 8px #ccc;
+}
+@media screen and (min-height: 760px) and (max-width: 414px) {
+  .app-fb-tab {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .app-fb-tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 18px;
+    background-color: #f6f6f9;
+  }
 }
 </style>

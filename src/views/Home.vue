@@ -1,12 +1,13 @@
 <template>
+<section>
   <div class="home-page" v-if="!isLoading">
     <!-- 主滑块 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <template v-for="(img,index) in swipers">
-          <a :key="index" class="swiper-slide" :href="img.url">
+          <div :key="index" class="swiper-slide" @click="$gotoUrl(img.url)">
             <img :src="img.img" alt>
-          </a>
+          </div>
         </template>
       </div>
       <div class="swiper-pagination"></div>
@@ -44,10 +45,12 @@
       <HomeSearchBar/>
     </div>
   </div>
+  <SkeletonHome v-else/>
+</section>
 </template>
 <script>
 import Swiper from 'swiper'
-// import homeCfg from '@/config/views/Home'
+import SkeletonHome from '@/components/SkeletonHome'
 import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
@@ -68,11 +71,12 @@ export default {
       canLoadingMore: true,
       pageQuery: {
         page_index: 1,
-        page_size: 4
+        page_size: 10
       }
     }
   },
   components: {
+    SkeletonHome,
     AppLoadingMore,
     App2Top,
     HomeSearchBar,
@@ -81,12 +85,16 @@ export default {
   },
   methods: {
     async queryMore() {
+      if (!this.canLoadingMore || this.isLoadingMore) {
+        return
+      }
       this.isLoadingMore = true
       this.pageQuery.page_index++
       const result = await getRecommendProduct(this.pageQuery)
       if (result.length) {
         this.goods = this.goods.concat(this.initGoods(result))
-      } else {
+      }
+      if (result.length < this.pageQuery.page_size) {
         this.canLoadingMore = false
       }
       this.isLoadingMore = false
@@ -134,7 +142,7 @@ export default {
   },
   async beforeMount() {
     this.isLoading = true
-    const data = await this.$actionWithLoading(getMain())
+    const data = await this.$actionWithAlert(getMain())
     this.navItms = data.recommend_nav
     this.goods = this.initGoods(data.recommend_product)
     this.swipers = data.banner

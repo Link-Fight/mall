@@ -139,6 +139,9 @@ export default {
 <style lang="scss" scoped>
 .goods-page {
   padding-bottom: 63px;
+  /deep/ img {
+    max-width: 100%;
+  }
 }
 .swiper-container {
   width: 100%;

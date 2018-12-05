@@ -4,6 +4,16 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      if (from.meta.keepAlive) {
+        from.meta.savedPosition = document.body.scrollTop || document.documentElement.scrollTop;
+      }
+      return { x: 0, y: to.meta.savedPosition || 0 }
+    }
+  },
   routes: [
     {
       path: '/',
@@ -68,13 +78,14 @@ export default new Router({
           path: '', redirect: 'home'
         },
         {
+          meta: { keepAlive: true, savedPosition: 0 },
           path: 'home', component: () => import(/* webpackChunkName: "home" */'@/views/Home')
         },
         {
           path: 'classify', component: () => import('@/views/Classify')
         },
         {
-          path: 'cart', component: () => import('@/views/Cart')
+          path: 'cart', name: 'cart', component: () => import('@/views/Cart')
         },
         {
           path: 'user', component: () => import('@/views/User')

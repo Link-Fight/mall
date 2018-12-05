@@ -92,6 +92,9 @@ export default {
     padding-left: 16px;
     height: 50px;
     line-height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     &.active {
       position: relative;
       font-size: 15px;
