@@ -1,52 +1,52 @@
 <template>
-<section>
-  <div class="home-page" v-if="!isLoading">
-    <!-- 主滑块 -->
-    <div class="swiper-container">
-      <div class="swiper-wrapper">
-        <template v-for="(img,index) in swipers">
-          <div :key="index" class="swiper-slide" @click="$gotoUrl(img.url)">
-            <img :src="img.img" alt>
-          </div>
+  <section>
+    <div class="home-page" v-if="!isLoading">
+      <!-- 主滑块 -->
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <template v-for="(img,index) in swipers">
+            <div :key="index" class="swiper-slide" @click="$gotoUrl(img.url)">
+              <img :src="img.img" alt>
+            </div>
+          </template>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <!-- 快速导航  -->
+      <div class="home-space nav-container xa-cell">
+        <template v-for="item in navItms">
+          <router-link
+            class="nav-item"
+            :to="'/prodList?guid='+item.target_guid"
+            tag="a"
+            :key="item.label"
+          >
+            <div class="xa-img" :style="'backgroundImage:url('+item.icon+')'"></div>
+            <p>{{item.name}}</p>
+          </router-link>
         </template>
       </div>
-      <div class="swiper-pagination"></div>
+      <!-- 活动模块 -->
+      <HomeActivity
+        v-if="activitys.length"
+        class="home-space xa-bg-white"
+        title="活动"
+        :type="activitysType"
+        :items="activitys"
+      />
+      <!-- 推荐商品 -->
+      <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
+      <!-- 返回顶部 -->
+      <App2Top/>
+      <!-- 加载更多触发点 -->
+      <div ref="footPoint" class="home-flex-loading-point"></div>
+      <AppLoadingMore v-if="canLoadingMore"/>
+      <div class="home-search max-container">
+        <HomeSearchBar/>
+      </div>
     </div>
-    <!-- 快速导航  -->
-    <div class="home-space nav-container xa-cell">
-      <template v-for="item in navItms">
-        <router-link
-          class="nav-item"
-          :to="'/prodList?guid='+item.target_guid"
-          tag="a"
-          :key="item.label"
-        >
-          <div class="xa-img" :style="'backgroundImage:url('+item.icon+')'"></div>
-          <p>{{item.name}}</p>
-        </router-link>
-      </template>
-    </div>
-    <!-- 活动模块 -->
-    <HomeActivity
-      v-if="activitys.length"
-      class="home-space xa-bg-white"
-      title="活动"
-      :type="activitysType"
-      :items="activitys"
-    />
-    <!-- 推荐商品 -->
-    <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
-    <!-- 返回顶部 -->
-    <App2Top/>
-    <!-- 加载更多触发点 -->
-    <div ref="footPoint" class="home-flex-loading-point"></div>
-    <AppLoadingMore v-if="canLoadingMore"/>
-    <div class="home-search max-container">
-      <HomeSearchBar/>
-    </div>
-  </div>
-  <SkeletonHome v-else/>
-</section>
+    <SkeletonHome v-else/>
+  </section>
 </template>
 <script>
 import Swiper from 'swiper'
@@ -198,8 +198,9 @@ export default {
 }
 .swiper-container {
   width: 100%;
-  height: 49.3vw;
+  height: 46vw;
   max-height: 320px;
+  background: #fff;
 }
 .swiper-slide {
   position: relative;

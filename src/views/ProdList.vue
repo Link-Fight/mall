@@ -22,9 +22,10 @@
           style="margin-right:4px"
         ></i>
       </div>
-      <span class="cancel-btn" @click="onCancelClick">取消</span>
+      <span class="cancel-btn" v-show="isShowCancelBtn" @click="onCancelClick">取消</span>
     </form>
     <App2Top/>
+    <SkeletonProd v-if="isShowSkeleton"/>
     <SearchPrompt
       v-show="canShowSearchPrompt"
       @select="onSearchSelect"
@@ -45,6 +46,7 @@
 </template>
 <script>
 import storage from '@/util/storage'
+import SkeletonProd from '@/components/SkeletonProd'
 import ProdColumelist from '@/components/ProdColumelist'
 import App2Top from '@/components/App2Top'
 import AppLoadingMore from '@/components/AppLoadingMore'
@@ -52,16 +54,16 @@ import SearchPrompt from '@/components/SearchPrompt'
 import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
 import { getRecommendSearch } from '@/controllers/main'
 import { getProductList, getShopProductList } from '@/controllers/category'
-let mRecommendSearch = null
 export default {
   name: 'prodList',
   data() {
     return {
+      isShowSkeleton: false,
       isLoading: false,
-      isShowCancel: false,
+      isShowCancelBtn: false,
       isShowSearchPrompt: false,
       keyword: '',
-      hotItems: mRecommendSearch,
+      hotItems: [],
       historyItems: [],
       prodList: [],
       isLoadingMore: false,
@@ -70,30 +72,38 @@ export default {
         page_index: 1,
         page_size: 10
       },
-      fullPath: '', // 记录当前页面地址
-      pageHeight: 0 // 记录屏幕高度
+      fullPath: '' // 记录当前页面地址
     }
   },
   computed: {
     canShowSearchPrompt() {
-      return (this.isShowSearchPrompt || this.prodList.length === 0) && !this.isLoading
+      return (this.isShowSearchPrompt || this.prodList.length === 0) && !this.isLoading && !this.isShowSkeleton
     }
   },
   components: {
     App2Top,
     AppLoadingMore,
     SearchPrompt,
-    ProdColumelist
+    ProdColumelist,
+    SkeletonProd
   },
   methods: {
     onSearchFocus() {
       this.isShowSearchPrompt = true
+      this.isShowCancelBtn = true
     },
     onSearchBlur() {
-      this.$route.query.type === 'SEARCH' && (this.isShowSearchPrompt = false)
+      if (this.prodList.length > 0 && this.isShowSearchPrompt) {
+        this.isShowSearchPrompt = false
+      }
+      if (this.$route.query.type === 'SEARCH') {
+        this.isShowSearchPrompt = false
+      } else {
+        this.isShowCancelBtn = false
+      }
     },
     onCancelClick() {
-      if (this.isShowCancel) {
+      if (this.$route.query.type === 'SEARCH') {
         this.$router.go(-1)
       } else {
         this.keyword && this.onSearchSelect('')
@@ -120,7 +130,7 @@ export default {
         this.prodList = data.items
         if (data.items.length === 0) {
           this.isShowSearchPrompt = true
-          this.$appToast.showToast('抱歉！没有相关内容！')
+          this.$appToast.showToast('抱歉！没有相关内容！', 2000, 'top')
         } else if (data.items.length < this.query.page_size) {
           this.canLoadingMore = false
         } else {
@@ -128,7 +138,7 @@ export default {
         }
       }
     },
-    async queryData(getMore = false) {
+    async queryData() {
       const type = this.$route.query.type || 'CATEGORY'
       let data = {}
       let action
@@ -143,7 +153,7 @@ export default {
         action = getProductList
         query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
       }
-      data = getMore ? await this.$actionWithAlert(action(query)) : await this.$actionWithLoading(action(query))
+      data = await this.$actionWithAlert(action(query))
       this.query.page_index++
       return data
     },
@@ -159,7 +169,7 @@ export default {
       this.prodList = this.prodList.concat(data.items)
     },
     async initData() {
-      this.isShowCancel = false
+      this.isShowCancelBtn = false
       this.keyword = ''
       this.isLoadingMore = false
       this.isShowSearchPrompt = false
@@ -171,9 +181,11 @@ export default {
       }
       if (this.$route.query.type === 'SEARCH') {
         this.isShowSearchPrompt = true
-        this.isShowCancel = true
+        this.isShowCancelBtn = true
       } else {
+        this.isShowSkeleton = true
         const data = await this.queryData()
+        this.isShowSkeleton = false
         this.prodList = data.items
         if (data.items.length === 0) {
           this.$appToast.showToast('抱歉！没有相关内容！')
@@ -183,25 +195,20 @@ export default {
           this.canLoadingMore = false
         }
       }
-    },
-    onResize() {
-      const docH = Math.max(document.documentElement.clientHeight, document.body.clientHeight)
-      if (this.pageHeight - docH < 100) {
-        if (this.prodList.length > 0 && this.isShowSearchPrompt) {
-          this.isShowSearchPrompt = false
-        }
-      }
     }
   },
+  /**
+   * 页面只触发一次`mounted`
+   * 从浏览器本地缓存初始历史搜索记录
+   * 通过接口获取热门推荐
+   * 初始化`加载更多`的触发点
+   */
   async mounted() {
     this.isLoading = true
     this.fullPath = this.$route.fullPath
-    let result = storage.getStorage(LOCAL_SEARCH_HISTORY)
-    this.historyItems = result || []
+    this.historyItems = storage.getStorage(LOCAL_SEARCH_HISTORY) || []
     await this.initData()
-    const recommendSearchResult = await getRecommendSearch()
-    this.hotItems = recommendSearchResult
-    mRecommendSearch = recommendSearchResult
+    this.hotItems = await getRecommendSearch() || []
     this.$nextTick(() => {
       let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
         if (entries[0].intersectionRatio) {
@@ -209,8 +216,6 @@ export default {
         }
       })
       LoadingMoreObserver.observe(this.$refs.footPoint)
-      this.pageHeight = Math.max(document.documentElement.clientHeight, document.body.clientHeight)
-      window.addEventListener('resize', this.onResize)
     })
     this.isLoading = false
   },
@@ -219,9 +224,6 @@ export default {
       this.fullPath = this.$route.fullPath
       this.initData()
     }
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.onResize)
   }
 }
 </script>

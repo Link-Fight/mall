@@ -42,10 +42,10 @@ export default {
   padding: 0 17px 0px;
 }
 .goods-title {
-  padding: 16px 0 16px;
+  padding: 12px 0 12px;
   line-height: 25px;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  // font-weight: bold;
 }
 .goods-box {
   flex-wrap: wrap;

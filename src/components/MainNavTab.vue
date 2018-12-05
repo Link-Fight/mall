@@ -24,7 +24,7 @@ export default {
           },
           {
             icon: 'icon-leimu',
-            label: '类目',
+            label: '分类',
             herf: '/main/classify'
           },
           {
@@ -66,6 +66,6 @@ export default {
   }
 }
 .router-link-active {
-  color: #1d1d1d;
+  color: #db0226;
 }
 </style>
