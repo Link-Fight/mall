@@ -53,7 +53,7 @@ export default {
     margin-bottom: 10px;
     margin-right: 11px;
     border-radius: 4px;
-    background-color: #eee;
+    // background-color: #eee;
     background-size: contain;
     background-image: url(../assets/logo.png);
   }

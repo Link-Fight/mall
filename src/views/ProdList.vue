@@ -15,12 +15,12 @@
           placeholder="搜索"
           @keyup.enter.stop="onSearchQuery"
         >
-        <i
+        <!-- <i
           v-show="keyword"
           @click="keyword=''"
           class="iconfont icon-guanbi2fill"
           style="margin-right:4px"
-        ></i>
+        ></i> -->
       </div>
       <span class="cancel-btn" v-show="isShowCancelBtn" @click="onCancelClick">取消</span>
     </form>

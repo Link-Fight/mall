@@ -7,6 +7,7 @@ Vue.config.productionTip = false
 import wxAction from '@/controllers/wx.js'
 import storage from '@/util/storage'
 import { SESSION_LATLNG } from '@/storeKey'
+import './registerServiceWorker'
 new Vue({
   data() {
     return {

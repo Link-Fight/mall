@@ -121,7 +121,6 @@ export default {
     this.tabIndex = this.$route.params.type
     await this.getQueryData()
     let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-      console.log('IntersectionObserver')
       if (entries[0].intersectionRatio) {
         if (this.dataSoure[this.tabIndex].length && this.canLoadMore[this.tabIndex]) {
           this.getQueryMore()

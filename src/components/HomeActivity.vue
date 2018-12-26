@@ -1,7 +1,11 @@
 <template>
   <div class="activity-container">
     <div class="activity-title">{{title}}</div>
-    <div v-for="(item,index) in items" :key="index" class="activity-box xa-cell type-1">
+    <a v-if="items.length===1&&items[0].length===1" class="activity-box" :href="items[0][0].url" style="display: block;font-size: 0;height: auto;position: relative;">
+      <img style="width:100%;border-radius: 4px;" :src="items[0][0].img" alt="">
+      <contentItem :item="items[0][0]" />
+    </a>
+    <div v-else v-for="(item,index) in items" :key="index" class="activity-box xa-cell type-1">
       <div class="xa-flex xa-view">
         <a class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[0].img+')'" :href="item[0].url">
           <contentItem :item="item[0]" />

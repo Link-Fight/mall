@@ -34,7 +34,7 @@
       style="padding:16px;"
       v-html="info.detail"
     ></div>
-    <div v-if="info.description_pics&&info.description_pics.length>0">
+    <div v-if="info.description_pics&&info.description_pics.length>0" class="xa-bg-white" style="padding:8px 16px;">
       <img style="width:100%;" v-for="pic in info.description_pics" :key="pic" v-lazyLoad="pic" alt>
     </div>
     <img style="width:100%;" src="../assets/notice.jpg" alt>
