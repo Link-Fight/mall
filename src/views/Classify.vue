@@ -89,12 +89,11 @@ export default {
   flex-shrink: 0;
   font-size: 14px;
   .slide-item {
+    display: flex;
+    align-items: center;
     padding-left: 16px;
-    height: 50px;
-    line-height: 50px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    min-height: 50px;
+    line-height: 1.1;
     &.active {
       position: relative;
       font-size: 15px;

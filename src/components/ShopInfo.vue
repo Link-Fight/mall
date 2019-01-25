@@ -4,7 +4,7 @@
     <div class="shop-img xa-img" :style="'backgroundImage:url('+(config.shop_logo||config.logo)+')'"></div>
     <div class="shop-content xa-flex">
       <div class="shop-title xa-txt-13 xa-txt-bold">{{config.name}}</div>
-      <div class="shop-tip">{{config.tip||config.description||'主营极飞产品零部件'}}</div>
+      <div class="shop-tip">{{config.tip||config.shop_description||'主营极飞产品零部件'}}</div>
     </div>
     <!-- <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i> -->
   </div>
