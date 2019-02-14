@@ -59,10 +59,12 @@
           </div>
         </div>
         <div style="padding-top:17px;" class="xa-txt-10 xa-txt-gray">
-          <p>公司发票
+          <p>
+            公司发票
             <span class="xa-txt-red">抬头请务必准确填写</span>，一旦确认提交，不能修改
           </p>
-          <p>发票将于
+          <p>
+            发票将于
             <span class="xa-txt-red">20个工作日</span>内开具。
           </p>
         </div>
@@ -123,7 +125,7 @@ export default {
     submitFn() {
       if (!this.billInfo.guid) {
         this.$appAlert.showAlert('请选择发票信息')
-      } else if (this.billType === 0 && !this.address) {
+      } else if (this.billType === 0 && JSON.stringify(this.address).length <= 4) {
         this.$appAlert.showAlert('请选择寄送地址')
       } else {
         this.setBillMsg()
