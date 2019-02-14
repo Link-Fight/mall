@@ -10,26 +10,35 @@
     </div>
     <div class="sku-content xa-bg-white xa-container xa-flex">
       <div v-if="skus" class="sku-cell">
-          <p class="title">{{skus.title}}</p>
-          <ul class="xa-cell">
-            <li class="item" v-for="sku in skus.option" :class="{'active':sku.is_choose}" :key="sku.sku_name" @click="onChangeSku(sku)">
-              {{sku.sku_name}}
-            </li>
-          </ul>
+        <p class="title">{{skus.title}}</p>
+        <ul class="xa-cell sku-items">
+          <li
+            class="item"
+            v-for="sku in skus.option"
+            :class="{'active':sku.is_choose}"
+            :key="sku.sku_name"
+            @click="onChangeSku(sku)"
+          >{{sku.sku_name}}</li>
+        </ul>
       </div>
       <template v-for="item in params">
         <div :key="item.key" class="sku-cell" :class="{'disable':disable}">
           <p class="title">{{item.title}}</p>
-          <ul class="xa-cell">
-            <li class="item" v-for="sku in item.option" :key="sku" :class="{'active':result[item.title]&&result[item.title]==sku}" @click="onChangeParams(item, sku)">
-              {{sku}}
-            </li>
+          <ul class="xa-cell sku-items">
+            <li
+              class="item"
+              v-for="sku in item.option"
+              :key="sku"
+              :class="{'active':result[item.title]&&result[item.title]==sku}"
+              @click="onChangeParams(item, sku)"
+            >{{sku}}</li>
           </ul>
         </div>
       </template>
       <p class="count-tip">{{countMsg}}</p>
       <div class="num-box xa-cell xa-bg-white">
-        <span class="title">购买数量</span><AppInputNum v-model="num"/>
+        <span class="title">购买数量</span>
+        <AppInputNum v-model="num"/>
       </div>
     </div>
     <div :class="{'disable':disable}">
@@ -37,7 +46,7 @@
       <div v-if="buyType==2" class="buy-btn" @click="onBuy(true)">立即购买</div>
     </div>
     <div v-show="isLoading" class="sku-loading">
-      <img src="../assets/loading.svg" alt="">
+      <img src="../assets/loading.svg" alt>
     </div>
   </section>
 </template>
@@ -293,6 +302,9 @@ export default {
   .sku-cell {
     padding-bottom: 20px;
     border-bottom: 1px solid #f2f2f2;
+  }
+  .sku-items {
+    flex-wrap: wrap;
   }
 
   .title {
