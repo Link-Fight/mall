@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     onClick(index) {
-      console.log('onClick')
       this.$emit('input', index)
     }
   }

@@ -3,7 +3,7 @@
     <template v-for="(item,index) in items">
       <router-link
         class="prod-item xa-cell"
-        :key="index"
+        :key="index+item.product_guid"
         tag="div"
         :to="'/goods?guid='+item.product_guid"
       >

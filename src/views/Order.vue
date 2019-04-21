@@ -48,7 +48,7 @@
         <selectItem v-if="!billData" label="发票信息"/>
         <selectItem v-else label="发票信息">
           <div class="xa-flex xa-txt-right">
-            <p>{{billData.type?'电子发票':'纸质发票'}}</p>
+            <p>{{billData&&billData.billInfo.type?'电子发票':'纸质发票'}}</p>
             <p>{{billDataMsg}}</p>
           </div>
           <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i>
@@ -172,6 +172,7 @@ export default {
           }
         } else if (this.type === 'quick') {
           submit = {
+            memo: this.memo,
             product_guid: this.orderList[0].guid,
             count: this.orderList[0].count,
             product_param_choice_guid: this.orderList[0].product_param_choice_guid

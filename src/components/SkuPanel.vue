@@ -170,7 +170,8 @@ export default {
       const shopInfo = {
         name: this.info.shop_name,
         shop_guid: this.info.shop_guid,
-        shop_logo: this.info.shop_logo
+        shop_logo: this.info.shop_logo,
+        shop_description: this.info.shop_description
       }
       // console.log(submitData, shopInfo, orderList, this.info)
       this.$emit('close')

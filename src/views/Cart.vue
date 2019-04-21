@@ -214,7 +214,8 @@ export default {
           shopInfo: {
             name: orderList[0].shop,
             shop_guid: orderList[0].shop_guid,
-            shop_logo: orderList[0].shop_logo
+            shop_logo: orderList[0].shop_logo,
+            shop_description: orderList[0].shop_description
           },
           orderTip: data
         }, 'sessionStorage')
