@@ -1,52 +1,83 @@
 <template>
-  <section class="sku-panel">
+  <section class="sku-panel xa-container xa-view">
     <div class="sku-info xa-cell xa-bg-white">
-      <div class="img" :style="'backgroundImage:url('+info.img+')'"></div>
+      <div class="img xa-img" :style="'backgroundImage:url('+info.img+')'"></div>
       <div class="content xa-flex">
         <p class="title">{{info.title}}</p>
         <p class="subTitle">{{info.sub_title}}</p>
         <p class="price">￥ {{info.price}}</p>
       </div>
     </div>
-    <div class="sku-content xa-bg-white">
-      <template v-for="item in skus">
-        <div :key="item.key" class="sku-cell">
+    <div class="sku-content xa-bg-white xa-container xa-flex">
+      <div v-if="skus" class="sku-cell">
+        <p class="title">{{skus.title}}</p>
+        <ul class="xa-cell sku-items">
+          <li
+            class="item"
+            v-for="sku in skus.option"
+            :class="{'active':sku.is_choose}"
+            :key="sku.sku_name"
+            @click="onChangeSku(sku)"
+          >{{sku.sku_name}}</li>
+        </ul>
+      </div>
+      <template v-for="item in params">
+        <div :key="item.key" class="sku-cell" :class="{'disable':disable}">
           <p class="title">{{item.title}}</p>
-          <ul class="xa-cell">
-            <li class="item" v-for="sku in item.items" :key="sku.key" :class="{'active':skuResult[item.key]==sku.key}" @click="onChangeSku(sku)">
-              {{sku.title}}
-            </li>
+          <ul class="xa-cell sku-items">
+            <li
+              class="item"
+              v-for="sku in item.option"
+              :key="sku"
+              :class="{'active':result[item.title]&&result[item.title]==sku}"
+              @click="onChangeParams(item, sku)"
+            >{{sku}}</li>
           </ul>
         </div>
       </template>
+      <p class="count-tip">{{countMsg}}</p>
+      <div class="num-box xa-cell xa-bg-white">
+        <span class="title">购买数量</span>
+        <AppInputNum v-model="num"/>
+      </div>
     </div>
-    <div class="num-box xa-cell xa-bg-white">
-      <span class="title">购买数量</span><AppInputNum v-model="num"/>
+    <div :class="{'disable':disable}">
+      <div v-if="buyType==1" class="add-btn" @click="onBuy(false)">加入购物车</div>
+      <div v-if="buyType==2" class="buy-btn" @click="onBuy(true)">立即购买</div>
     </div>
-    <div v-if="buyAction==1" class="add-btn">加入购物车</div>
-    <div v-if="buyAction==2" class="buy-btn">立即购买</div>
     <div v-show="isLoading" class="sku-loading">
-      <img src="../assets/loading.svg" alt="">
+      <img src="../assets/loading.svg" alt>
     </div>
   </section>
 </template>
 <script>
+import storage from '@/util/storage'
 import AppInputNum from '@/components/AppInputNum'
+import { addCart } from '@/controllers/cart'
+import { checkIFFEOrder } from '@/controllers/order'
+import { SESSION_CART_2_ORDER } from '@/storeKey'
 export default {
+  name: 'skuPanel',
   components: {
     AppInputNum
   },
   data() {
     return {
       isLoading: false,
-      num: 1
+      num: 1,
+      result: {},
+      disable: false,
+      countMsg: ''
     }
   },
   props: {
+    guid: {
+      type: String
+    },
     changeAction: {
       type: Function
     },
-    buyAction: {
+    buyType: {
       type: [Number, String],
       default: 1
     },
@@ -58,56 +89,153 @@ export default {
           title: 'P30 2018款 折叠桨（正桨）',
           sub_title: '1个',
           price: 420
-        }
-      }
-    },
-    skuResult: {
-      type: Object,
-      default() {
-        return {
-          version: '2017',
-          color: 'red'
-        }
+        } || null
       }
     },
     skus: {
+      type: Object,
+      default() {
+        return {
+          title: '无穷大鸡翅',
+          option: [{
+            'guid': '383E78484DC106F78D8E7E9E30E669BE',
+            'sku_name': '2019',
+            'is_choose': 0
+          },
+          {
+            'guid': 'A81013381F6FE03A15FA8DBE0A9930F6',
+            'sku_name': '2018',
+            'is_choose': 1
+          }]
+        } && null
+      }
+    },
+    choice: {
+      type: Object,
+      default() {
+        return {
+          '香辣,雄': {
+            'guid': '313203230948CA449ADDE5BE00BC7579',
+            'available_stock': 14
+          },
+          '五香,雄': {
+            'guid': 'FCAA735F78CB81827ABF4D46B5997F33',
+            'available_stock': 2
+          },
+          '香辣,雌': {
+            'guid': '5B081AE08636A3C95A20F1001A9FEA47',
+            'available_stock': 3
+          },
+          '五香,雌': {
+            'guid': 'A3714B54E0ECF1DA9F4BF18AF488BDD5',
+            'available_stock': 0
+          }
+        } || null
+      }
+    },
+    params: {
       type: Array,
       default() {
         return [
           {
-            key: 'version',
-            title: '版本',
-            items: [{
-              title: '2017款',
-              key: '2017'
-            }, {
-              title: '2018款',
-              key: '2018'
-            }]
+            title: '口味',
+            option: ['香辣', '五香']
           },
           {
-            key: 'color',
-            title: '颜色',
-            items: [
-              {
-                title: '黑色',
-                key: 'black'
-              },
-              {
-                title: '红色',
-                key: 'red'
-              }
-            ]
+            title: '性别',
+            option: ['雄', '雌']
           }
-        ]
+        ] && null
       }
     }
   },
   methods: {
+    async onBuy(isIFFE = false) {
+      let selectResult = {}
+      if (this.params) {
+        selectResult = this.getParamsSelectResult(true)
+        if (selectResult && selectResult.available_stock < this.num) {
+          this.$appToast.showToast('该规格商品库存不足！')
+          return
+        } else if (!selectResult) {
+          return
+        }
+      }
+      const action = isIFFE ? checkIFFEOrder : addCart
+      const submitData = await this.$actionWithLoading(action({
+        guid: this.guid,
+        product_param_choice_guid: selectResult.guid,
+        count: this.num
+      }))
+      const shopInfo = {
+        name: this.info.shop_name,
+        shop_guid: this.info.shop_guid,
+        shop_logo: this.info.shop_logo,
+        shop_description: this.info.shop_description
+      }
+      // console.log(submitData, shopInfo, orderList, this.info)
+      this.$emit('close')
+      if (isIFFE) {
+        submitData.product.product_param_choice_guid = selectResult.guid
+        storage.setStorage(SESSION_CART_2_ORDER, {
+          orderList: [submitData.product],
+          shopInfo,
+          orderTip: submitData
+        }, 'sessionStorage')
+        this.$router.push({
+          path: '/order',
+          query: {
+            invoice: submitData.invoice,
+            way: submitData.way,
+            type: 'quick'
+          }
+        })
+      } else {
+        this.$appToast.showToast('加入购物车成功')
+      }
+    },
     async onChangeSku(sku) {
       this.isLoading = true
-      await this.changeAction()
+      await this.changeAction(sku.guid)
       this.isLoading = false
+    },
+    onChangeParams(item, key) {
+      this.result = {
+        ...this.result,
+        [item.title]: key
+      }
+      const selectResult = this.getParamsSelectResult()
+      this.countMsg = ''
+      this.disable = false
+      if (selectResult) {
+        if (selectResult.available_stock <= 0) {
+          this.$appToast.showToast('该规格商品暂时没库存！')
+          this.disable = true
+        } else {
+          selectResult.available_stock <= 10 && (this.countMsg = '当前该规格商品库存还有:' + selectResult.available_stock)
+        }
+      }
+    },
+    getParamsSelectResult(needToast = false) {
+      let key = ''
+      let hasFinishSelect = true
+      let msg = ''
+      this.params.forEach(item => {
+        if (!this.result[item.title]) {
+          hasFinishSelect = false
+          msg = '请选择:' + item.title
+        } else {
+          key += (key ? ',' : '') + this.result[item.title]
+        }
+      })
+      if (hasFinishSelect) {
+        return {
+          key,
+          ...this.choice[key]
+        }
+      } else if (needToast) {
+        this.$appToast.showToast(msg)
+      }
     }
   }
 }
@@ -116,6 +244,9 @@ export default {
 .sku-panel {
   position: relative;
   background-color: #f2f2f2;
+  max-height: 90%;
+  max-height: 90vh;
+  overflow: auto;
 }
 .sku-loading {
   display: flex;
@@ -167,10 +298,16 @@ export default {
 .sku-content {
   padding: 0 17px;
   color: #1d1d1d;
+  max-height: 70vh;
+  overflow: auto;
   .sku-cell {
     padding-bottom: 20px;
     border-bottom: 1px solid #f2f2f2;
   }
+  .sku-items {
+    flex-wrap: wrap;
+  }
+
   .title {
     padding-top: 17px;
     padding-bottom: 10px;
@@ -178,6 +315,7 @@ export default {
     line-height: 20px;
   }
   .item {
+    box-sizing: border-box;
     margin-top: 6px;
     padding: 0 12px;
     margin-right: 12px;
@@ -185,16 +323,27 @@ export default {
     line-height: 40px;
     background-color: #f2f2f2;
     border-radius: 2px;
+    border: 1px solid #fff;
     &.active {
-      box-sizing: border-box;
       color: #da0126;
       background-color: #fbe5e9;
       border: 1px solid #ff3366;
     }
   }
+  .disable {
+    .item.active {
+      opacity: 0.3;
+    }
+  }
+}
+.count-tip {
+  padding: 8px 0px 0;
+  background-color: #fff;
+  color: #ff6701;
+  font-size: 12px;
 }
 .num-box {
-  padding: 20px 17px;
+  padding: 20px 0px;
   justify-content: space-between;
   color: #1d1d1d;
 }

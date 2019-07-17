@@ -2,25 +2,60 @@
   <section class="cart-page">
     <div class="shop-container xa-bg-white" v-for="shop in prods" :key="shop.shop.shop_guid">
       <div class="shop-info xa-cell">
-        <i @click="onSelectShop(shop)" class="iconfont" :class="shop.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
+        <i
+          @click="onSelectShop(shop)"
+          class="iconfont"
+          :class="shop.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+        ></i>
         <div class="shop-img" :style="'backgroundImage:url('+shop.shop.shop_logo+')'"></div>
-        <div class="xa-txt-16">{{shop.shop.name}}</div>
+        <router-link
+          class="xa-txt-16 xa-flex"
+          tag="div"
+          :to="'/prodList?type=SHOP&guid='+shop.shop.shop_guid"
+        >{{shop.shop.name}}</router-link>
         <i style="opacity:0.5" class="iconfont icon-xiangyou1"></i>
       </div>
-      <div class="xa-cell shop-goods" v-for="goods in shop.list" :key="goods.guid">
-        <i @click="onSelectGoods(shop,goods)" class="iconfont" :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"></i>
-        <div class="goods-img" :style="'backgroundImage:url('+goods.img+')'"></div>
-        <div class="goods-info xa-flex">
-          <p class="title xa-txt-16 xa-txt-bold">{{goods.title}}</p>
-          <p class="sku">{{goods.sku}}</p>
-          <div class="xa-cell price-box">
-            <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
-            <AppInputNum v-model="goods.count"/>
+      <!-- <template v-if="!isLoading"> -->
+      <template v-for="goods in shop.list">
+        <CartSwiperItem :key="goods.guid" @delete="onDelete(shop,goods)">
+          <div class="xa-cell shop-goods">
+            <i
+              @click="onSelectGoods(shop,goods)"
+              class="iconfont"
+              :class="goods.selected?'icon-yuanxingxuanzhongfill xa-txt-red':'icon-yuanxingweixuanzhong'"
+            ></i>
+            <router-link
+              class="goods-img xa-img"
+              :style="'backgroundImage:url('+goods.first_pic+')'"
+              :to="'/goods?guid='+goods.product_guid"
+              tag="div"
+            ></router-link>
+            <div class="goods-info xa-flex">
+              <div class="content">
+                <p class="title xa-txt-16 xa-txt-ellipsis-2">{{goods.title}}</p>
+                <p class="param">{{goods.param_choice}}</p>
+              </div>
+              <div class="xa-cell price-box">
+                <p class="xa-txt-16 xa-txt-bold xa-txt-red">￥ {{goods.price}}</p>
+                <AppInputNum v-model="goods.count"/>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </CartSwiperItem>
+      </template>
+      <!-- </template> -->
     </div>
-    <CarNavTab v-show="prods.length" @buy="onBuyClick" :num="totalNum" :total="totalPrice" class="app-fb-tab cart-fb-cart"/>
+    <CarNavTab
+      v-show="prods.length"
+      @buy="onBuyClick"
+      :num="totalNum"
+      :total="totalPrice"
+      class="app-fb-tab"
+    />
+    <div v-if="prods.length===0&&!isLoading" class="xa-view page-empty xa-txt-999">
+      <i style="font-size:80px;margin-bottom:36px;" class="iconfont icon-zanwujilu"></i>
+      <div>购物车空空如也，来点商品吧！</div>
+    </div>
   </section>
 </template>
 <script>
@@ -29,17 +64,19 @@ import debounce from '@/util/debounce'
 import CarNavTab from '@/components/CarNavTab'
 import CartConfig from '@/config/views/Cart'
 import AppInputNum from '@/components/AppInputNum'
-import { getCartList, addCart } from '@/controllers/cart'
+import CartSwiperItem from '@/components/CartSwiperItem'
+import { getCartList, addCart, deletCartProd } from '@/controllers/cart'
 import { checkOrder } from '@/controllers/order'
-const storageKey = '/Mall3.0/Cart/prods'
-const storageProdsSelectedKey = '/Mall3.0/Cart/prodsSelected'
+import { SESSION_CART_2_ORDER, SESSION_CAER_SELECTED } from '@/storeKey'
 export default {
   components: {
     AppInputNum,
-    CarNavTab
+    CarNavTab,
+    CartSwiperItem
   },
   data() {
     return {
+      isLoading: false,
       isTest: false,
       selectedShopGuid: '',
       selectedGoodsMap: {},
@@ -57,6 +94,21 @@ export default {
     }
   },
   methods: {
+    async onDelete(shop, goods) {
+      try {
+        await this.$appConfirm.showConfirm('确定要移除该商品？')
+        await deletCartProd({ guids: [goods.guid] })
+        let index = shop.list.indexOf(goods)
+        shop.list.splice(index, 1)
+        if (shop.list.length === 0) {
+          index = this.prods.indexOf(shop)
+          this.prods.splice(index, 1)
+        }
+        this.$appToast.showToast('删除成功！')
+      } catch (error) {
+        return error
+      }
+    },
     checkGoodsSelected() {
       const prodsSelectedMap = {}
       this.prods.forEach(shop => shop.list.forEach(goods => {
@@ -71,6 +123,7 @@ export default {
             this.prodsNumMap[goods.guid] = goods.count
             addCart({
               guid: goods.product_guid,
+              product_param_choice_guid: goods.product_param_choice_guid,
               count: goods.count
             }).then(result => {
               goods.update_at = result.update_at
@@ -111,9 +164,12 @@ export default {
       }
     },
     async init() {
+      if (this.isLoading) {
+        return
+      }
+      this.isLoading = true
       this.selectedShopGuid = ''
-      this.$appLoading.showLoading()
-      const data = this.isTest ? await CartConfig() : await getCartList()
+      const data = await this.$actionWithLoading(this.isTest ? CartConfig() : getCartList())
       let prodsNumMap = {}
       data.forEach(shop => {
         shop.list.forEach(goods => {
@@ -125,7 +181,7 @@ export default {
       })
       this.prodsNumMap = prodsNumMap
       this.prods = data
-      this.$appLoading.hiddenLoading()
+      this.isLoading = false
     },
     async onBuyClick() {
       if (this.totalNum > 0) {
@@ -147,14 +203,20 @@ export default {
           })
         } catch (error) {
           this.$appLoading.hiddenLoading()
-          await this.$alert.showAlert(error.message)
+          await this.$appAlert.showAlert(error.message)
           this.checkGoodsSelected()
           this.init()
           return
         }
         this.$appLoading.hiddenLoading()
-        storage.setStorage(storageKey, {
+        storage.setStorage(SESSION_CART_2_ORDER, {
           orderList: orderList,
+          shopInfo: {
+            name: orderList[0].shop,
+            shop_guid: orderList[0].shop_guid,
+            shop_logo: orderList[0].shop_logo,
+            shop_description: orderList[0].shop_description
+          },
           orderTip: data
         }, 'sessionStorage')
         this.$router.push({
@@ -189,22 +251,23 @@ export default {
       return totalNum
     }
   },
-  beforeDestroy() {
+  deactivated() {
     this.checkGoodsSelected()
-    storage.setStorage(storageProdsSelectedKey, this.prodsSelectedMap)
+    storage.setStorage(SESSION_CAER_SELECTED, this.prodsSelectedMap, 'sessionStorage')
+  },
+  activated() {
+    this.prodsSelectedMap = storage.getStorage(SESSION_CAER_SELECTED, 'sessionStorage') || {}
+    this.init()
   },
   mounted() {
-    this.prodsSelectedMap = storage.getStorage(storageProdsSelectedKey) || {}
-    this.init()
+    // this.prodsSelectedMap = storage.getStorage(SESSION_CAER_SELECTED, 'sessionStorage') || {}
+    // this.init()
   }
 }
 </script>
 <style lang="scss" scoped>
 .cart-page {
-  padding-bottom: 108px;
-}
-#app .cart-fb-cart {
-  bottom: 48px;
+  padding-bottom: 88px;
 }
 .shop-container {
   & + & {
@@ -216,12 +279,28 @@ export default {
     padding-right: 15px;
   }
   .shop-info {
+    position: relative;
     box-sizing: border-box;
-    padding: 5px 0;
-    border-bottom: 1px solid #e4e4e4;
+    padding: 7px 0;
+    ::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 18px;
+      height: 1px;
+      transform: scaleY(0.5);
+      background-color: #e4e4e4;
+    }
   }
   .shop-img {
     margin-right: 8px;
+  }
+}
+/deep/ .swpier-container:last-of-type {
+  .shop-goods::after {
+    content: "";
+    display: none;
   }
 }
 .goods-img,
@@ -233,18 +312,34 @@ export default {
   background-repeat: no-repeat;
 }
 .shop-goods {
-  padding: 20px 0;
+  position: relative;
+  padding: 14px 0;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 17px;
+    left: 50px;
+    height: 1px;
+    transform: scaleY(0.5);
+    background-color: #e4e4e4;
+  }
   .goods-img {
     width: 80px;
     height: 80px;
     margin-right: 11px;
+    border-radius: 5px;
   }
 }
 .goods-info {
-  .title {
-    min-height: 42px;
+  .content {
+    min-height: 61px;
   }
-  .sku {
+  .title {
+    font-weight: 550;
+    margin-bottom: 5px;
+  }
+  .param {
     color: #6d6d6d;
     font-size: 12px;
     min-height: 17px;
@@ -253,5 +348,10 @@ export default {
     padding-right: 17px;
     justify-content: space-between;
   }
+}
+.page-empty {
+  height: 70vh;
+  justify-content: center;
+  align-items: center;
 }
 </style>

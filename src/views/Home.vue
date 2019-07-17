@@ -1,73 +1,82 @@
 <template>
-  <div class="home-page">
-    <!-- 主滑块 -->
-    <div class="swiper-container">
-      <div class="swiper-wrapper">
-        <template v-for="(img,index) in swipers">
-          <a :key="index" class="swiper-slide" :href="img.href">
-            <img :src="img.img" alt="">
-          </a>
+  <section>
+    <div class="home-page" v-if="!isLoading">
+      <!-- 主滑块 -->
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <template v-for="(img,index) in swipers">
+            <div :key="index" class="swiper-slide" @click="$gotoUrl(img.url)">
+              <img :src="img.img" alt>
+            </div>
+          </template>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <!-- 快速导航  -->
+      <div class="home-space nav-container xa-cell">
+        <template v-for="item in navItms">
+          <router-link
+            class="nav-item"
+            :to="'/prodList?guid='+item.target_guid"
+            tag="a"
+            :key="item.label"
+          >
+            <div class="xa-img" :style="'backgroundImage:url('+item.icon+')'"></div>
+            <p>{{item.name}}</p>
+          </router-link>
         </template>
       </div>
-      <div class="swiper-pagination"></div>
+      <!-- 活动模块 -->
+      <HomeActivity
+        v-if="activitys.length"
+        class="home-space xa-bg-white"
+        title="活动"
+        :type="activitysType"
+        :items="activitys"
+      />
+      <!-- 推荐商品 -->
+      <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
+      <!-- 返回顶部 -->
+      <App2Top/>
+      <!-- 加载更多触发点 -->
+      <div ref="footPoint" class="home-flex-loading-point"></div>
+      <AppLoadingMore v-if="canLoadingMore"/>
+      <div class="home-search max-container">
+        <HomeSearchBar/>
+      </div>
     </div>
-    <!-- 快速导航  -->
-    <div class="home-space nav-container xa-cell">
-      <template v-for="item in navItms">
-        <a class="nav-item" :key="item.label" :href="item.href">
-          <img :src="item.img" alt="">
-          <p>{{item.label}}</p>
-        </a>
-      </template>
-    </div>
-    <!-- 活动模块 -->
-    <HomeActivity class="home-space xa-bg-white" title="活动" :type="activitysType" :items="activitys"/>
-    <!-- 推荐商品 -->
-    <HomeGoods class="home-space xa-bg-white" title="精选产品" :items="goods"/>
-    <!-- 返回顶部 -->
-    <App2Top/>
-    <!-- 加载更多触发点 -->
-    <div ref="footPoint" class="home-flex-loading-point"></div>
-    <AppLoadingMore v-if="canLoadingMore"/>
-    <div class="home-search max-container"><HomeSearchBar/></div>
-  </div>
+    <SkeletonHome v-else/>
+  </section>
 </template>
-
 <script>
 import Swiper from 'swiper'
-import homeCfg from '@/config/views/Home'
+import SkeletonHome from '@/components/SkeletonHome'
 import HomeSearchBar from '@/components/HomeSearchBar'
 import HomeActivity from '@/components/HomeActivity'
 import HomeGoods from '@/components/HomeGoods'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import App2Top from '@/components/App2Top'
-function queryM() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        goods: homeCfg.goods
-      })
-    }, 1000)
-  })
-}
+import { getMain, getRecommendProduct } from '@/controllers/main'
 export default {
   name: 'home',
   data() {
     return {
-      swipers: homeCfg.swipers,
-      navItms: homeCfg.items,
-      goods: homeCfg.goods,
+      isLoading: false,
+      swipers: [],
+      navItms: [],
+      goods: [],
       activitysType: 1,
-      activitys: homeCfg.activitys,
+      activitys: [],
       isLoadingMore: false,
       canLoadingMore: true,
       pageQuery: {
-        num: 0,
-        size: 8
+        page_index: 1,
+        page_size: 10
       }
     }
   },
   components: {
+    SkeletonHome,
     AppLoadingMore,
     App2Top,
     HomeSearchBar,
@@ -76,29 +85,70 @@ export default {
   },
   methods: {
     async queryMore() {
+      if (!this.canLoadingMore || this.isLoadingMore) {
+        return
+      }
       this.isLoadingMore = true
-      this.pageQuery.num++
-      const result = await queryM(this.pageQuery)
-      if (result.goods.length) {
-        this.goods = this.goods.concat(result.goods)
-      } else {
+      this.pageQuery.page_index++
+      const result = await getRecommendProduct(this.pageQuery)
+      if (result.length) {
+        this.goods = this.goods.concat(this.initGoods(result))
+      }
+      if (result.length < this.pageQuery.page_size) {
         this.canLoadingMore = false
       }
       this.isLoadingMore = false
+    },
+    initGoods(items) {
+      return items.map(item => {
+        return {
+          img: item.first_pic,
+          title: item.title,
+          subTitle: item.sub_title,
+          guid: item.guid,
+          tip: '',
+          price: item.price
+        }
+      })
+    },
+    initSwiper() {
+      new Swiper('.swiper-container', {
+        pagination: {
+          el: '.swiper-pagination',
+        }
+      })
+      let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
+        if (entries[0].intersectionRatio) {
+          !this.isLoadingMore && this.queryMore()
+        }
+      })
+      LoadingMoreObserver.observe(this.$refs.footPoint)
+    },
+    spliceActivitys(activitys) {
+      let arrs = []
+      let arr
+      for (let i = 0; i < activitys.length; i++) {
+        if (i % 4 === 0) {
+          if (arr) {
+            arrs.push(arr)
+          }
+          arr = []
+        }
+        arr.push(activitys[i])
+      }
+      arr && arrs.push(arr)
+      return arrs
     }
   },
-  mounted() {
-    new Swiper('.swiper-container', {
-      pagination: {
-        el: '.swiper-pagination',
-      }
-    })
-    let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio) {
-        !this.isLoadingMore && this.queryMore()
-      }
-    })
-    LoadingMoreObserver.observe(this.$refs.footPoint)
+  async beforeMount() {
+    this.isLoading = true
+    const data = await this.$actionWithAlert(getMain())
+    this.navItms = data.recommend_nav
+    this.goods = this.initGoods(data.recommend_product)
+    this.swipers = data.banner
+    this.activitys = this.spliceActivitys(data.activity_new)
+    this.isLoading = false
+    this.$nextTick(() => this.initSwiper())
   }
 }
 </script>
@@ -148,8 +198,9 @@ export default {
 }
 .swiper-container {
   width: 100%;
-  height: 49.3vw;
+  height: 46vw;
   max-height: 320px;
+  background: #fff;
 }
 .swiper-slide {
   position: relative;
@@ -171,7 +222,7 @@ export default {
   text-align: center;
   background-color: #fff;
   font-size: 12px;
-  img {
+  .xa-img {
     width: 44px;
     height: 44px;
     border-radius: 50%;

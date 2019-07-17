@@ -50,15 +50,18 @@ export default {
 <style scoped>
 .input-num {
   background-color: #f2f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+
 }
 .xa-Number__value {
-  width: 30px;
+  width: 24px;
   text-align: center;
   line-height: 24px;
-  font-size: 16px;
+  font-size: 14px;
 }
 .xa-Number__input {
-  padding: 3px;
+  padding: 2px;
   width: 24px;
   background: #f2f2f2;
   text-align: center;

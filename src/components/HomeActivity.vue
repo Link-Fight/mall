@@ -1,25 +1,26 @@
 <template>
   <div class="activity-container">
     <div class="activity-title">{{title}}</div>
-    <div class="activity-box xa-cell type-1">
+    <a v-if="items.length===1&&items[0].length===1" class="activity-box" :href="items[0][0].url" style="display: block;font-size: 0;height: auto;position: relative;">
+      <img style="width:100%;border-radius: 4px;" :src="items[0][0].img" alt="">
+      <contentItem :item="items[0][0]" />
+    </a>
+    <div v-else v-for="(item,index) in items" :key="index" class="activity-box xa-cell type-1">
       <div class="xa-flex xa-view">
-        <div class="xa-flex activity-item" :style="'backgroundImage:url('+items[0].img+')'">
-          <div class="activity-content">
-            <p class="title">{{items[0].title}}</p>
-            <p class="sub-title">{{items[0].subTitle}}</p>
-          </div>
-        </div>
-        <div class="xa-flex activity-item" v-if="items.length>=4" :style="'backgroundImage:url('+items[3].img+')'">
-          <contentItem :item="items[3]"/>
-        </div>
+        <a class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[0].img+')'" :href="item[0].url">
+          <contentItem :item="item[0]" />
+        </a>
+        <a v-if="item.length>=4" class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[3].img+')'" :href="item[3].url">
+          <contentItem :item="item[3]"/>
+        </a>
       </div>
-      <div class="xa-flex xa-view" v-if="items.length>=2">
-        <div class="xa-flex activity-item" :style="'backgroundImage:url('+items[1].img+')'">
-          <contentItem :item="items[1]"/>
-        </div>
-        <div class="xa-flex activity-item" v-if="items.length>=3" :style="'backgroundImage:url('+items[2].img+')'">
-          <contentItem :item="items[2]"/>
-        </div>
+      <div class="xa-flex xa-view" v-if="item.length>=2">
+        <a class="xa-flex activity-item xa-img" :style="'backgroundImage:url('+item[1].img+')'" :href="item[1].url">
+          <contentItem :item="item[1]"/>
+        </a>
+        <a class="xa-flex activity-item xa-img" v-if="item.length>=3"  :style="'backgroundImage:url('+item[2].img+')'" :href="item[2].url">
+          <contentItem :item="item[2]"/>
+        </a>
       </div>
     </div>
   </div>
@@ -32,7 +33,7 @@ export default {
       render(h) {
         return h('div', { class: 'activity-content' }, [
           h('p', { class: 'title' }, this.item.title),
-          h('p', { class: 'sub-title' }, this.item.subTitle)
+          h('p', { class: 'sub-title' }, this.item.sub_title)
         ])
       },
       props: {
@@ -58,15 +59,18 @@ export default {
   padding: 0 17px 20px;
 }
 .activity-title {
-  padding: 16px 0 16px;
+  padding: 12px 0 12px;
   line-height: 25px;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  // font-weight: bold;
 }
 .activity-box {
   height: 203px;
   flex-wrap: wrap;
   text-align: center;
+  & + & {
+    margin-top: 8px;
+  }
   &.type-1 {
     align-items: stretch;
     > div + div {

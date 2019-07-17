@@ -3,7 +3,7 @@ export default {
     window[type].setItem(key, typeof value === 'object' ? JSON.stringify(value) : value)
   },
   getStorage(key, type = 'localStorage') {
-    var value = window[type].getItem(key)
+    const value = window[type].getItem(key)
     if (value) {
       try {
         return JSON.parse(value)

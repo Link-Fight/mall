@@ -2,7 +2,9 @@
   <ul class="xa-cell nav-tab">
     <template v-for="item in items">
       <router-link class="xa-flex nav-tab-item" :to="item.herf" :key="item.href" tag="div">
-        <i class="iconfont" :class="item.icon"></i>
+        <div>
+          <i class="iconfont" :class="item.icon"></i>
+        </div>
         <p>{{item.label}}</p>
       </router-link>
     </template>
@@ -22,7 +24,7 @@ export default {
           },
           {
             icon: 'icon-leimu',
-            label: '类目',
+            label: '分类',
             herf: '/main/classify'
           },
           {
@@ -44,21 +46,26 @@ export default {
 <style lang="scss" scoped>
 .nav-tab {
   box-sizing: border-box;
-  padding-top: 8px;
   height: 48px;
   background-color: #ffffff;
   text-align: center;
   color: #9d9d9d;
   .iconfont {
-    font-size: 20px;
+    font-size: 22px;
   }
   p {
     margin-top: 4px;
     font-size: 10px;
     line-height: 14px;
+    height: 14px;
+  }
+}
+.nav-tab-item {
+  div {
+    height: 24px;
   }
 }
 .router-link-active {
-  color: #1d1d1d;
+  color: #db0226;
 }
 </style>

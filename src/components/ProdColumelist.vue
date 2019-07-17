@@ -1,20 +1,27 @@
 <template>
   <section class="prodlist-container">
-      <template v-for="(item,index) in items">
-        <div class="prod-item xa-cell" :key="index">
-          <img v-lazyLoad="item.img" src="../assets/logo.png" alt="">
-          <div class="content xa-flex">
-            <p class="title">{{item.title}}</p>
-            <p class="sub-title">{{item.subTitle}}</p>
-            <p class="tips">{{item.tip}}</p>
-            <p class="price">￥&nbsp;{{item.price}}</p>
+    <template v-for="(item,index) in items">
+      <router-link
+        class="prod-item xa-cell"
+        :key="index+item.product_guid"
+        tag="div"
+        :to="'/goods?guid='+item.product_guid"
+      >
+        <div v-lazyLoad="item.img" class="xa-img"></div>
+        <div class="content xa-flex">
+          <div style="min-height:76px;">
+            <p class="title xa-txt-ellipsis-2">{{item.title}}</p>
+            <p class="sub-title xa-txt-ellipsis-2">{{item.sub_title}}</p>
           </div>
+          <p class="price">￥&nbsp;{{item.price}}</p>
         </div>
-      </template>
+      </router-link>
+    </template>
   </section>
 </template>
 <script>
-import lazyLoad from '@/directives/lazyLoad'
+import { lazyLoadConfig } from '@/directives/lazyLoad'
+const lazyLoad = lazyLoadConfig('div', { loadingClass: 'loading-img' })
 export default {
   directives: {
     lazyLoad
@@ -29,30 +36,37 @@ export default {
 </script>
 <style lang="scss" scoped>
 .prod-item {
-  margin: 8px 0;
+  padding: 8px 0 8px 17px;
   box-sizing: border-box;
-  font-family: PingFang-SC-Medium;
-  p {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  // font-family: PingFang-SC-Medium;
+  background-color: #fff;
+  &:last-of-type {
+    .content {
+      border: none;
+    }
   }
-  img {
+  .xa-img {
     display: block;
     flex-shrink: 0;
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     margin-bottom: 10px;
-    margin-right: 8px;
+    margin-right: 11px;
     border-radius: 4px;
-    background-color: #eee;
+    // background-color: #eee;
+    background-size: contain;
+    background-image: url(../assets/logo.png);
+  }
+  .loading-img {
+    background-size: 80%;
+    opacity: 0.3;
   }
   .content {
     align-self: stretch;
     border-bottom: 1px solid #e4e4e4;
   }
   .title {
-    height: 48px;
+    // height: 42px;
     font-size: 15px;
     font-weight: 600;
     color: #1d1d1d;
@@ -60,22 +74,16 @@ export default {
     line-height: 24px;
   }
   .sub-title {
-    height: 34px;
+    min-height: 34px;
     font-size: 12px;
-    color: #1d1d1d;
-    line-height: 17px;
-  }
-  .tips {
-    margin-top: 6px;
-    font-size: 12px;
-    color: rgba(109, 109, 109, 1);
+    color: #6d6d6d;
     line-height: 17px;
   }
   .price {
-    margin-top: 4px;
-    font-weight: 600;
+    margin-bottom: 4px;
+    font-weight: 700;
     color: #da0126;
-    line-height: 20px;
+    line-height: 25px;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 function base(url, data = {}, type = 'get', config = {}) {
   config.url = url
   config.method = type
@@ -27,10 +27,9 @@ function base(url, data = {}, type = 'get', config = {}) {
           case 8899:
             window.history.go(-1)
             break
-          case 4304:
-            break
-          case 4300:
-            break
+        }
+        if (status === 8888 || status === 8899) {
+          return new Promise(() => { })
         }
         if (status !== 200) {
           reject(respose.data)
@@ -42,5 +41,21 @@ function base(url, data = {}, type = 'get', config = {}) {
       reject(respose)
     })
   })
+}
+function copy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+const storage = {}
+window.S = storage
+export async function cache(url, data = {}) {
+  const paramsData = copy(data)
+  delete paramsData.fromUrl
+  const storageKey = url + JSON.stringify(paramsData)
+  if (storage[storageKey]) {
+    return storage[storageKey]
+  }
+  const result = await base.apply(this, arguments)
+  storage[storageKey] = copy(result)
+  return result
 }
 export default base

@@ -1,10 +1,11 @@
 <template>
-  <div v-show="isShowToTopPoint" @click="moveToTop" class="flex-toTop-icon xa-cell">
+  <div v-show="isShowToTopPoint" @click="animateToTop" class="flex-toTop-icon xa-cell">
     <i class="iconfont icon-dingbu xa-txt-20"></i>
   </div>
 </template>
 <script>
 import startMove from '@/util/startMove'
+let curScrollTarget = ''
 export default {
   data() {
     return {
@@ -12,9 +13,32 @@ export default {
     }
   },
   methods: {
-    moveToTop() {
-      let target = document.documentElement || document.body
-      startMove(target, { scrollTop: 0 })()
+    getCurScrollTarget(deep = false) {
+      if (curScrollTarget) {
+        return document[curScrollTarget]
+      }
+      let target = document.documentElement.scrollTop ? document.documentElement : document.body
+      if (target.scrollTop === 0) {
+        document.documentElement.scrollTop = document.body.scrollTop = 1
+        return deep ? target : this.getCurScrollTarget(true)
+      } else {
+        curScrollTarget = target === document.documentElement ? 'documentElement' : 'body'
+        return target
+      }
+    },
+    getCurScrollTop() {
+      return this.getCurScrollTarget().scrollTop
+    },
+    moveTo(target) {
+      let targetEl = this.getCurScrollTarget()
+      targetEl.scrollTop = target
+    },
+    animateTo(target) {
+      let targetEl = this.getCurScrollTarget()
+      startMove(targetEl, { scrollTop: target })()
+    },
+    animateToTop() {
+      this.animateTo(0)
     },
     handleScroll() {
       let clientHeight = document.documentElement.clientHeight || document.body.clientHeight
@@ -34,9 +58,9 @@ export default {
 .flex-toTop-icon {
   position: fixed;
   top: 75vh;
-  right: 0px;
-  width: 36px;
-  height: 36px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background-color: #000;
   opacity: 0.6;
