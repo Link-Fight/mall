@@ -63,7 +63,7 @@
       <template v-if="record.invoice_type==1">
         <div class="cell-title">一般纳税人资质证明（非营业执照）</div>
         <FormCells>
-          <UploadImgs v-model="record.st_img"/>
+          <UploadImgs v-model="record.st_img" max="6"/>
         </FormCells>
       </template>
     </div>
