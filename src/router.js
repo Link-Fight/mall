@@ -9,7 +9,8 @@ export default new Router({
       return savedPosition
     } else {
       if (from.meta.keepAlive) {
-        from.meta.savedPosition = document.body.scrollTop || document.documentElement.scrollTop;
+        from.meta.savedPosition =
+          document.body.scrollTop || document.documentElement.scrollTop
       }
       return { x: 0, y: to.meta.savedPosition || 0 }
     }
@@ -23,7 +24,8 @@ export default new Router({
     {
       path: '/vconsole',
       name: 'Vconsole',
-      component: () => import(/* webpackChunkName: "Vconsole" */'@/views/Vconsole')
+      component: () =>
+        import(/* webpackChunkName: "Vconsole" */ '@/views/Vconsole')
     },
     {
       path: '/prodList',
@@ -53,12 +55,14 @@ export default new Router({
     {
       path: '/order',
       name: 'order',
-      component: () => import(/* webpackChunkName: "order" */ './views/Order.vue')
+      component: () =>
+        import(/* webpackChunkName: "order" */ './views/Order.vue')
     },
     {
       path: '/order/read',
       name: 'orderRead',
-      component: () => import(/* webpackChunkName: "orderRead" */ './views/OrderRead.vue')
+      component: () =>
+        import(/* webpackChunkName: "orderRead" */ './views/OrderRead.vue')
     },
     {
       path: '/bill',
@@ -68,41 +72,61 @@ export default new Router({
     {
       path: '/promotions',
       name: 'Promotions',
-      component: () => import(/* webpackChunkName: "promotions" */ './views/Promotions.vue')
+      component: () =>
+        import(/* webpackChunkName: "promotions" */ './views/Promotions.vue')
     },
     {
       path: '/main',
       component: () => import('@/views/MainRoute'),
       children: [
         {
-          path: '', redirect: 'home'
+          path: '',
+          redirect: 'home'
         },
         {
           meta: { keepAlive: true, savedPosition: 0 },
-          path: 'home', component: () => import(/* webpackChunkName: "home" */'@/views/Home')
+          path: 'home',
+          component: () => import(/* webpackChunkName: "home" */ '@/views/Home')
         },
         {
-          path: 'classify', component: () => import('@/views/Classify')
+          path: 'classify',
+          component: () => import('@/views/Classify')
         },
         {
-          path: 'cart', name: 'cart', component: () => import('@/views/Cart')
+          path: 'cart',
+          name: 'cart',
+          component: () => import('@/views/Cart')
         },
         {
-          path: 'user', component: () => import('@/views/User')
+          path: 'user',
+          component: () => import('@/views/User')
         }
       ]
     },
     {
+      path: '/coupon/index',
+      component: () =>
+        import(/* webpackChunkName: "coupon" */ '@/views/coupon/index')
+    },
+    {
+      path: '/coupon/select',
+      component: () =>
+        import(/* webpackChunkName: "coupon" */ '@/views/coupon/select')
+    },
+    {
       path: '/form/billInfo',
-      component: () => import(/* webpackChunkName: "form" */'@/views/form/billInfo'),
+      component: () =>
+        import(/* webpackChunkName: "form" */ '@/views/form/billInfo')
     },
     {
       path: '/form/address',
-      component: () => import(/* webpackChunkName: "form" */'@/views/form/address'),
+      component: () =>
+        import(/* webpackChunkName: "form" */ '@/views/form/address')
     },
     {
       path: '/form/feedback',
-      component: () => import(/* webpackChunkName: "form" */'@/views/form/FeedBack'),
+      component: () =>
+        import(/* webpackChunkName: "form" */ '@/views/form/FeedBack')
     }
   ]
 })

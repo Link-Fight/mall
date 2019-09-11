@@ -1,8 +1,8 @@
 <template>
   <section class="order-page">
     <div class="order-info xa-bg-white">
-      <ShopInfo v-if="shopInfo" :config="shopInfo"/>
-      <OrderGoods :items="orderList"/>
+      <ShopInfo v-if="shopInfo" :config="shopInfo" />
+      <OrderGoods :items="orderList" />
       <selectItem
         label="配送方式"
         @click="onSelectDelivery"
@@ -20,7 +20,7 @@
           </div>
           <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i>
         </div>
-        <selectItem v-else label="收货地址"/>
+        <selectItem v-else label="收货地址" />
       </router-link>
       <template v-if="logisticsSelected==1">
         <selectItem
@@ -30,7 +30,7 @@
         />
       </template>
       <selectItem label="备注信息">
-        <input class="memo-input xa-flex" type="text" v-model="memo" placeholder="如有备注信息，请输入">
+        <input class="memo-input xa-flex" type="text" v-model="memo" placeholder="如有备注信息，请输入" />
       </selectItem>
     </div>
     <div class="order-info xa-bg-white">
@@ -41,11 +41,11 @@
             @change="needInvoice=!needInvoice"
             class="xa-switch"
             type="checkbox"
-          >
+          />
         </div>
       </selectItem>
       <router-link v-if="needInvoice" tag="div" :to="'/bill?invoice='+$route.query.invoice">
-        <selectItem v-if="!billData" label="发票信息"/>
+        <selectItem v-if="!billData" label="发票信息" />
         <selectItem v-else label="发票信息">
           <div class="xa-flex xa-txt-right">
             <p>{{billData&&billData.billInfo.type?'电子发票':'纸质发票'}}</p>
@@ -54,9 +54,14 @@
           <i class="iconfont icon-xiangyou1" style="opacity:0.6"></i>
         </selectItem>
       </router-link>
+      <selectItem v-if="canSelectCoupon" label="优惠券" @click="onSelectCoupon">
+        <template slot="value">
+          <span :class="{'xa-txt-red':coupon_price>0}">{{coupon_price?'优惠￥'+coupon_price:'请选择'}}</span>
+        </template>
+      </selectItem>
       <div class="tip-container" v-html="orderTip.logistics_info"></div>
     </div>
-    <OrderNavTab class="app-fb-tab" :total="totalPrice" @buy="onSubmit"/>
+    <OrderNavTab class="app-fb-tab" :total="totalPrice" @buy="onSubmit" />
     <OrderDelivery
       v-model="logisticsSelected"
       v-if="isShowOrderDelivery"
@@ -68,18 +73,37 @@
       @close="isShowOrderProtectionSelect=false"
       :query="shopInfo"
     />
+    <AppPopPanel v-if="isShowCoupon" @close="isShowCoupon=false">
+      <section style="height:80vh">
+        <CouponSelect :controller="couponSelectController" />
+      </section>
+    </AppPopPanel>
   </section>
 </template>
 <script>
+import AppPopPanel from '@/components/AppPopPanel'
 import OrderDelivery from '@/components/OrderDelivery'
+import CouponSelect from '@/views/coupon/select'
 import OrderNavTab from '@/components/OrderNavTab'
 import OrderGoods from '@/components/OrderGoods'
 import ShopInfo from '@/components/ShopInfo'
+import selectItem from '@/components/AppCell'
 import OrderProtectionSelect from '@/components/OrderProtectionSelect'
 import storage from '@/util/storage'
-import { getDefaultAddress } from '@/controllers/address'
+import { getDefaultAddressFormStorageOrNetwork } from '@/controllers/address'
 import { submitOrder, submitQuickOrder } from '@/controllers/order'
-import { SESSION_CART_2_ORDER, SESSION_ORDER_ADDRESS_SELECTED, SESSION_BILL_SUBMIT } from '@/storeKey'
+import {
+  getProductCoupon,
+  getCurProductCanUse,
+  getCurProductNoUse,
+  getCouponDesc,
+  updateProductByCoupon
+} from '@/controllers/coupon'
+import {
+  SESSION_CART_2_ORDER,
+  SESSION_ORDER_ADDRESS_SELECTED,
+  SESSION_BILL_SUBMIT
+} from '@/storeKey'
 const logisticsSelectedMap = {
   0: '物流快递',
   1: '上门自提'
@@ -91,38 +115,20 @@ let warehouse = null
 export default {
   name: 'order',
   components: {
+    AppPopPanel,
     OrderNavTab,
     OrderDelivery,
     OrderGoods,
     OrderProtectionSelect,
+    CouponSelect,
     ShopInfo,
-    selectItem: {
-      render(h) {
-        let that = this
-        return h('div', { 'class': 'select-item xa-cell' }, [
-          h('div', { 'class': 'label' }, this.label),
-          that.$slots.default || h('div', {
-            'class': 'content',
-            on: {
-              click() {
-                that.$emit('click')
-              }
-            }
-          }, [this.value || '请选择', that.access && h('i', { 'class': 'iconfont icon-xiangyou1', style: 'opacity:0.5' })])
-        ])
-      },
-      props: {
-        label: String,
-        value: String,
-        access: {
-          type: Boolean,
-          default: true
-        }
-      }
-    }
+    selectItem
   },
   data() {
     return {
+      canSelectCoupon: false, //
+      isShowCoupon: false, // 优惠券信息
+      couponSelectController: null, //处理优惠券的逻辑
       type: this.$route.query.type || 'normal',
       shopInfo: null, // 商店信息
       billData: null, // 发票信息
@@ -138,10 +144,52 @@ export default {
       orderTip: {},
       needInvoice, // 是否需要发票
       totalPrice: 0,
+      coupon_guid: [], // 选中的优惠券
+      coupon_price: '', // 优惠的价格
+      originTotalPrice: '', // 原来的价格
       memo // 备注信息
     }
   },
   methods: {
+    onSelectCoupon() {
+      let vm = this
+      this.couponSelectController = function() {
+        return {
+          getDesc: getCouponDesc,
+          query({ type }) {
+            return {
+              0: getCurProductCanUse,
+              1: getCurProductNoUse
+            }[type]()
+          },
+          submit(couponList) {
+            vm.isShowCoupon = false
+            vm.updatePriceByCoupon(couponList)
+          }
+        }
+      }
+      this.isShowCoupon = true
+    },
+    async updatePriceByCoupon(couponList) {
+      if (couponList.length === 0) {
+        this.totalPrice = this.originTotalPrice
+        this.coupon_price = 0
+        return
+      }
+      this.coupon_guid = couponList.map(({ coupon_guid }) => coupon_guid)
+      const product = this.orderList.map(({ product_guid, count }) => {
+        return {
+          guid: product_guid,
+          count
+        }
+      })
+      const { total_price, coupon_price } = await updateProductByCoupon(
+        product,
+        this.coupon_guid
+      )
+      this.coupon_price = coupon_price || 0
+      this.totalPrice = total_price
+    },
     onSelectDelivery() {
       this.canSelectelogistics && (this.isShowOrderDelivery = true)
     },
@@ -163,19 +211,22 @@ export default {
       } else {
         let submit
         if (this.type === 'normal') {
-          const carts = this.orderList.map((it) => {
+          const carts = this.orderList.map(it => {
             return { guid: it.guid, update_at: it.update_at }
           })
           submit = {
+            coupon_guids: this.coupon_guid,
             carts,
             memo: this.memo
           }
         } else if (this.type === 'quick') {
           submit = {
+            coupon_guids: this.coupon_guid,
             memo: this.memo,
             product_guid: this.orderList[0].guid,
             count: this.orderList[0].count,
-            product_param_choice_guid: this.orderList[0].product_param_choice_guid
+            product_param_choice_guid: this.orderList[0]
+              .product_param_choice_guid
           }
         }
         if (this.logisticsSelected === 0) {
@@ -186,29 +237,43 @@ export default {
         if (this.needInvoice) {
           let billObj = {
             ...this.billData.billInfo,
-            address_guid: this.billData.address ? this.billData.address.guid : ''
+            address_guid: this.billData.address
+              ? this.billData.address.guid
+              : ''
           }
           submit.bill = billObj
         }
         let action = this.type === 'normal' ? submitOrder : submitQuickOrder
         const result = await this.$actionWithLoading(action(submit))
-        window.location.href = result.pay_page_url
+        this.$gotoUrl(result.pay_page_url)
       }
     },
     async initDeliveryAddress() {
-      const orderAddress = storage.getStorage(SESSION_ORDER_ADDRESS_SELECTED, 'sessionStorage')
-      if (orderAddress) {
-        this.deliveryAddress = orderAddress
-      } else {
-        const asyncAddress = await getDefaultAddress()
-        asyncAddress instanceof Object && (this.deliveryAddress = asyncAddress)
+      const address = await getDefaultAddressFormStorageOrNetwork(
+        SESSION_ORDER_ADDRESS_SELECTED
+      )
+      if (address && address instanceof Object) {
+        this.deliveryAddress = address
       }
     },
     initBillInfo() {
       this.billData = storage.getStorage(SESSION_BILL_SUBMIT, 'sessionStorage')
       if (this.billData && this.billData.billInfo) {
-        this.billDataMsg = this.billData.billInfo.header + ' - ' + this.billData.billInfo.taxpayer_no + ''
+        this.billDataMsg =
+          this.billData.billInfo.header +
+          ' - ' +
+          this.billData.billInfo.taxpayer_no +
+          ''
       }
+    },
+    /**
+     * 判断这些商品能不能使用优惠券
+     */
+    async getCouponInfo() {
+      const couponList = await getProductCoupon(
+        this.orderList.map(({ product_guid }) => product_guid)
+      )
+      this.canSelectCoupon = couponList.length > 0
     }
   },
   async mounted() {
@@ -220,11 +285,17 @@ export default {
       this.shopInfo = cartData.shopInfo
       this.orderTip = cartData.orderTip
       this.totalPrice = cartData.orderTip.total_price
+      this.originTotalPrice = this.totalPrice
+      this.getCouponInfo()
     } else {
       this.$router.replace('/main/cart')
     }
     if (this.$route.query.way) {
-      const way = parseInt(Array.isArray(this.$route.query.way) ? this.$route.query.way.join('') : this.$route.query.way)
+      const way = parseInt(
+        Array.isArray(this.$route.query.way)
+          ? this.$route.query.way.join('')
+          : this.$route.query.way
+      )
       if (way === 1) {
         this.canSelectelogistics = false
         this.logisticsSelected = 0
@@ -250,15 +321,6 @@ export default {
   padding: 0 17px;
   & + & {
     margin-top: 10px;
-  }
-  /deep/ .select-item {
-    padding: 17px 0;
-    justify-content: space-between;
-    line-height: 20px;
-    .label {
-      padding-right: 0.5em;
-      flex-shrink: 0;
-    }
   }
   .address-item {
     padding: 17px 0;

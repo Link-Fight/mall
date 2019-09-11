@@ -1,15 +1,18 @@
 <template>
   <section class="order-list-page">
     <div class="page-head">
-      <AppTabs v-model="tabIndex" :items="tabItems"/>
+      <AppTabs v-model="tabIndex" :items="tabItems" />
     </div>
-    <div class="page-content" v-show="!isLoading">
+    <div class="page-content" v-if="isLoading">
+      <SkeletonProd />
+    </div>
+    <div class="page-content" v-if="!isLoading">
       <div class="order-item" v-for="(data) in dataSoure[tabIndex]" :key="data.id">
-        <div class="xa-cell xa-txt-999">
-          <div class="xa-flex">金额：￥ {{data.price}}</div>
-          <div>{{data.time}}</div>
+        <div class="xa-cell">
+          <div class="xa-flex xa-txt-333">金额：￥ {{data.price}}</div>
+          <div class="xa-txt-12 xa-txt-999">{{data.time}}</div>
         </div>
-        <div class="xa-cell xa-bg-f2">
+        <div class="xa-cell">
           <div
             class="xa-img"
             v-for="(img,index) in data.imgs"
@@ -34,25 +37,27 @@
         <span>还没有相关订单！</span>
       </div>
     </div>
-    <div class="loading-More-point" ref="loadingMore"></div>
-    <div class="page-foot">
-      <AppLoadingMore v-if="dataSoure[tabIndex].length&&canLoadMore[tabIndex]"/>
-      <div v-else-if="dataSoure[tabIndex].length">已加载全部数据</div>
-    </div>
-    <App2Top ref="scroll"/>
+    <AppFootLoadingMore
+      :count="dataSoure[tabIndex].length"
+      :canLoadMore="canLoadMore[tabIndex]"
+      @loadMore="onLoadMore"
+    />
+    <App2Top ref="scroll" />
   </section>
 </template>
 <script>
 import AppTabs from '@/components/AppTabs'
 import App2Top from '@/components/App2Top'
-import AppLoadingMore from '@/components/AppLoadingMore'
+import AppFootLoadingMore from '@/components/AppFootLoadingMore'
+import SkeletonProd from '@/components/SkeletonProd'
 import { getOrderList } from '@/controllers/order'
 const tabs = ['待付款', '待收货', '已完成', '已取消']
 export default {
   components: {
     AppTabs,
     App2Top,
-    AppLoadingMore
+    AppFootLoadingMore,
+    SkeletonProd
   },
   data() {
     return {
@@ -91,6 +96,14 @@ export default {
     }
   },
   methods: {
+    onLoadMore() {
+      if (
+        this.dataSoure[this.tabIndex].length > 0 &&
+        this.canLoadMore[this.tabIndex]
+      ) {
+        this.getQueryMore()
+      }
+    },
     async queryData(params = {}) {
       return getOrderList({
         status: this.tabIndex,
@@ -100,7 +113,7 @@ export default {
     },
     async getQueryData() {
       this.isLoading = true
-      let data = await this.$actionWithLoading(this.queryData())
+      let data = await this.$actionWithAlert(this.queryData())
       this.isLoading = false
       this.dataSoure[this.tabIndex] = data.items
       if (data.items.length < this.pageSize) {
@@ -111,23 +124,17 @@ export default {
       const items = this.dataSoure[this.tabIndex]
       const pid = items[items.length - 1].id
       let data = await this.$actionWithAlert(this.queryData({ pid }))
-      this.dataSoure[this.tabIndex] = this.dataSoure[this.tabIndex].concat(data.items)
+      this.dataSoure[this.tabIndex] = this.dataSoure[this.tabIndex].concat(
+        data.items
+      )
       if (data.items.length < this.pageSize) {
         this.canLoadMore[this.tabIndex] = false
       }
     }
   },
   async mounted() {
-    this.tabIndex = this.$route.params.type
+    this.tabIndex = parseInt(this.$route.params.type || 0)
     await this.getQueryData()
-    let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio) {
-        if (this.dataSoure[this.tabIndex].length && this.canLoadMore[this.tabIndex]) {
-          this.getQueryMore()
-        }
-      }
-    })
-    LoadingMoreObserver.observe(this.$refs.loadingMore)
   }
 }
 </script>

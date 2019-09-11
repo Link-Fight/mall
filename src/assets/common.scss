@@ -1,15 +1,15 @@
 /* 重置、默认 */
 
-$color-blue: #3399FF;
-$color-red:#DA0126;
-$color-green:#42bd56;
-$color-yellow:#ff9900;
+$color-blue: #3399ff;
+$color-red: #da0126;
+$color-green: #42bd56;
+$color-yellow: #ff9900;
 
 * {
   margin: 0;
   padding: 0;
   -webkit-overflow-scrolling: touch;
-  -webkit-tap-highlight-color: transparent
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -26,14 +26,14 @@ html {
 
 body {
   font-size: 14px;
-  color: #333
+  color: #333;
 }
 
 li,
 ul {
   margin: 0;
   padding: 0;
-  list-style: none
+  list-style: none;
 }
 
 textarea,
@@ -48,7 +48,7 @@ input::-webkit-search-cancel-button {
 }
 
 textarea {
-  padding: 0
+  padding: 0;
 }
 
 input:-webkit-autofill {
@@ -62,30 +62,30 @@ input::-webkit-input-placeholder {
 }
 
 input {
-  -webkit-tap-highlight-color: transparent
+  -webkit-tap-highlight-color: transparent;
 }
 
 input:focus {
-  -webkit-tap-highlight-color: transparent
+  -webkit-tap-highlight-color: transparent;
 }
 
 .fr {
-  float: right
+  float: right;
 }
 
 .fl {
-  float: left
+  float: left;
 }
 
 .clearfix {
-  zoom: 1
+  zoom: 1;
 }
 
 .clearfix:after {
-  content: "";
+  content: '';
   display: block;
   clear: both;
-  height: 0
+  height: 0;
 }
 
 .xa-cell {
@@ -98,51 +98,51 @@ input:focus {
 .xa-view {
   box-sizing: border-box;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 .xa-txt-10 {
-  font-size: 10px !important
+  font-size: 10px !important;
 }
 
 .xa-txt-12 {
-  font-size: 12px !important
+  font-size: 12px !important;
 }
 
 .xa-txt-13 {
-  font-size: 13px !important
+  font-size: 13px !important;
 }
 
 .xa-txt-14 {
-  font-size: 14px !important
+  font-size: 14px !important;
 }
 
 .xa-txt-16 {
-  font-size: 16px !important
+  font-size: 16px !important;
 }
 
 .xa-txt-18 {
-  font-size: 18px !important
+  font-size: 18px !important;
 }
 
 .xa-txt-20 {
-  font-size: 20px !important
+  font-size: 20px !important;
 }
 
 .xa-txt-24 {
-  font-size: 24px !important
+  font-size: 24px !important;
 }
 
 .xa-txt-32 {
-  font-size: 32px !important
+  font-size: 32px !important;
 }
 
 .xa-txt-bold {
-  font-weight: 700
+  font-weight: 700;
 }
 
 .xa-txt-white {
-  color: #fff
+  color: #fff;
 }
 
 .xa-txt-center {
@@ -159,7 +159,7 @@ input:focus {
 }
 
 .xa-bg-white {
-  background: #fff
+  background: #fff;
 }
 
 .xa-bg-33 {
@@ -215,7 +215,7 @@ input:focus {
 }
 
 .xa-txt-333 {
-  color: #333
+  color: #333;
 }
 
 .xa-txt-bf {
@@ -223,15 +223,15 @@ input:focus {
 }
 
 .xa-txt-666 {
-  color: #666
+  color: #666;
 }
 
 .xa-txt-888 {
-  color: #888
+  color: #888;
 }
 
 .xa-txt-999 {
-  color: #999
+  color: #999;
 }
 
 .xa-txt-ccc {
@@ -244,11 +244,11 @@ input:focus {
 
 .xa-txt--nowrap {
   word-break: break-all;
-  white-space: nowrap
+  white-space: nowrap;
 }
 
 .xa-txt--wrap {
-  word-wrap: break-word
+  word-wrap: break-word;
 }
 
 .xa-txt-ellipsis,
@@ -264,14 +264,14 @@ input:focus {
 .xa-txt-ellipsis-2 {
   word-wrap: break-word;
   -webkit-line-clamp: 2;
-  word-break: break-all
+  word-break: break-all;
 }
 
 .xa-container {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 100%
+  height: 100%;
 }
 
 .hidden-scroll {
@@ -285,11 +285,9 @@ body.hidden-scroll {
   right: 0;
 }
 
-
 .xa-flex {
   flex: 1;
 }
-
 
 .xa-flex-wrap {
   -ms-flex-wrap: wrap;
@@ -326,17 +324,17 @@ body.hidden-scroll {
 /* 一个转圈圈的loading */
 
 .xa-isloading {
-  position: relative
+  position: relative;
 }
 
 .xa-isloading:after {
-  -webkit-animation: spinAround .5s infinite linear;
-  animation: spinAround .5s infinite linear;
+  -webkit-animation: spinAround 0.5s infinite linear;
+  animation: spinAround 0.5s infinite linear;
   border: 2px solid$color-green;
   border-radius: 290486px;
   border-right-color: transparent;
   border-top-color: transparent;
-  content: "";
+  content: '';
   display: block;
   height: 16px;
   width: 16px;
@@ -350,21 +348,21 @@ body.hidden-scroll {
 
 @keyframes spinAround {
   0% {
-    transform: rotate(0)
+    transform: rotate(0);
   }
 
   to {
-    transform: rotate(359deg)
+    transform: rotate(359deg);
   }
 }
 
 @-webkit-keyframes spinAround {
   0% {
-    -webkit-transform: rotate(0)
+    -webkit-transform: rotate(0);
   }
 
   to {
-    -webkit-transform: rotate(359deg)
+    -webkit-transform: rotate(359deg);
   }
 }
 
@@ -378,8 +376,8 @@ body.hidden-scroll {
   position: relative;
   height: 23px;
   width: 40px;
-  background-color: #DFDFDF;
-  border: 1px solid #DFDFDF;
+  background-color: #dfdfdf;
+  border: 1px solid #dfdfdf;
   outline: 0;
   border-radius: 16px;
   box-sizing: border-box;
@@ -394,15 +392,16 @@ body.hidden-scroll {
   }
 
   &:before {
-    content: " ";
+    content: ' ';
     position: absolute;
     top: 0;
     left: 0;
     height: 20px;
     width: 20px;
     border-radius: 15px;
-    background-color: #Fdfdfd;
-    transition: transform 0.35s cubic-bezier(0.45, 1, 0.4, 1), -webkit-transform 0.35s cubic-bezier(0.45, 1, 0.4, 1);
+    background-color: #fdfdfd;
+    transition: transform 0.35s cubic-bezier(0.45, 1, 0.4, 1),
+      -webkit-transform 0.35s cubic-bezier(0.45, 1, 0.4, 1);
   }
 
   &:checked:before {
@@ -410,15 +409,16 @@ body.hidden-scroll {
   }
 
   &:after {
-    content: " ";
+    content: ' ';
     position: absolute;
     top: 0;
     left: 0;
     height: 20px;
     width: 20px;
     border-radius: 15px;
-    background-color: #FFFFFF;
-    transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35), -webkit-transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
+    background-color: #ffffff;
+    transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35),
+      -webkit-transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
   }
 
   &:checked:after {
@@ -434,7 +434,7 @@ body.hidden-scroll {
 }
 
 .xa-cells-box {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   line-height: 1.47058824;
   font-size: 17px;
   overflow: hidden;
@@ -442,7 +442,7 @@ body.hidden-scroll {
 }
 
 .xa-cells-box:before {
-  content: " ";
+  content: ' ';
   position: absolute;
   left: 0;
   top: 0;
@@ -458,7 +458,7 @@ body.hidden-scroll {
 }
 
 .xa-cells-box:after {
-  content: " ";
+  content: ' ';
   position: absolute;
   left: 0;
   bottom: 0;
@@ -493,9 +493,12 @@ body.hidden-scroll {
   border-radius: 5px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   overflow: hidden;
-
+  &--mini {
+    font-size: 14px;
+    line-height: 2.5714;
+  }
   &::after {
-    content: " ";
+    content: ' ';
     width: 200%;
     height: 200%;
     position: absolute;
@@ -553,7 +556,7 @@ body.hidden-scroll {
   background-color: #fff;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 2px;
     right: 2px;

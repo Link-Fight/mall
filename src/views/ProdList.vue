@@ -14,18 +14,11 @@
           type="search"
           placeholder="搜索"
           @keyup.enter.stop="onSearchQuery"
-        >
-        <!-- <i
-          v-show="keyword"
-          @click="keyword=''"
-          class="iconfont icon-guanbi2fill"
-          style="margin-right:4px"
-        ></i> -->
+        />
       </div>
       <span class="cancel-btn" v-show="isShowCancelBtn" @click="onCancelClick">取消</span>
     </form>
-    <App2Top/>
-    <SkeletonProd v-if="isShowSkeleton"/>
+    <SkeletonProd v-if="isShowSkeleton" />
     <SearchPrompt
       v-show="canShowSearchPrompt"
       @select="onSearchSelect"
@@ -33,15 +26,15 @@
       :historyItems="historyItems"
       @clear="historyItems=[]"
     />
-    <ProdColumelist :items="prodList"/>
-    <!-- 加载更多触发点 -->
-    <div ref="footPoint" class="page-flex-loading-point"></div>
-    <AppLoadingMore v-show="prodList.length&&canLoadingMore"/>
-    <div
-      v-if="!canLoadingMore&&prodList.length"
-      class="xa-txt-center xa-txt-999 xa-txt-12"
-      style="padding:16px"
-    >已加载全部数据</div>
+    <ProdColumelist :items="prodList" />
+    <div v-show="prodList.length">
+      <AppFootLoadingMore
+        :count="prodList.length"
+        :canLoadMore="canLoadingMore"
+        @loadMore="onLoadMore"
+      />
+    </div>
+    <App2Top ref="scroll" />
   </section>
 </template>
 <script>
@@ -49,7 +42,7 @@ import storage from '@/util/storage'
 import SkeletonProd from '@/components/SkeletonProd'
 import ProdColumelist from '@/components/ProdColumelist'
 import App2Top from '@/components/App2Top'
-import AppLoadingMore from '@/components/AppLoadingMore'
+import AppFootLoadingMore from '@/components/AppFootLoadingMore'
 import SearchPrompt from '@/components/SearchPrompt'
 import { LOCAL_SEARCH_HISTORY } from '@/storeKey'
 import { getRecommendSearch } from '@/controllers/main'
@@ -77,18 +70,26 @@ export default {
   },
   computed: {
     canShowSearchPrompt() {
-      return (this.isShowSearchPrompt || this.prodList.length === 0) && !this.isLoading && !this.isShowSkeleton
+      return (
+        (this.isShowSearchPrompt || this.prodList.length === 0) &&
+        !this.isLoading &&
+        !this.isShowSkeleton
+      )
     }
   },
   components: {
     App2Top,
-    AppLoadingMore,
+    AppFootLoadingMore,
     SearchPrompt,
     ProdColumelist,
     SkeletonProd
   },
   methods: {
+    onLoadMore() {
+      !this.isLoadingMore && this.queryMore()
+    },
     onSearchFocus() {
+      this.$refs.scroll && this.$refs.scroll.animateToTop()
       this.isShowSearchPrompt = true
       this.isShowCancelBtn = true
     },
@@ -145,13 +146,25 @@ export default {
       let query = {}
       if (type === 'CATEGORY') {
         action = getProductList
-        query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
+        query = {
+          category_guid: this.$route.query.guid,
+          keyword: this.keyword,
+          ...this.query
+        }
       } else if (type === 'SHOP') {
         action = getShopProductList
-        query = { shop_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
+        query = {
+          shop_guid: this.$route.query.guid,
+          keyword: this.keyword,
+          ...this.query
+        }
       } else if (type === 'SEARCH') {
         action = getProductList
-        query = { category_guid: this.$route.query.guid, keyword: this.keyword, ...this.query }
+        query = {
+          category_guid: this.$route.query.guid,
+          keyword: this.keyword,
+          ...this.query
+        }
       }
       data = await this.$actionWithAlert(action(query))
       this.query.page_index++
@@ -208,15 +221,7 @@ export default {
     this.fullPath = this.$route.fullPath
     this.historyItems = storage.getStorage(LOCAL_SEARCH_HISTORY) || []
     await this.initData()
-    this.hotItems = await getRecommendSearch() || []
-    this.$nextTick(() => {
-      let LoadingMoreObserver = this.$options.$_LoadingMoreObserver = new IntersectionObserver((entries) => {
-        if (entries[0].intersectionRatio) {
-          !this.isLoadingMore && this.queryMore()
-        }
-      })
-      LoadingMoreObserver.observe(this.$refs.footPoint)
-    })
+    this.hotItems = (await getRecommendSearch()) || []
     this.isLoading = false
   },
   activated() {
@@ -228,16 +233,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.page-flex-loading-point {
-  position: absolute;
-  bottom: 60px;
-  bottom: 30vh;
-  right: 20px;
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
-  z-index: 10;
-}
 .search-page {
   padding-top: 44px;
 }

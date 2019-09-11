@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <keep-alive include="mainRoot,prodList">
-      <router-view/>
+      <router-view />
     </keep-alive>
-    <AppAlert ref="alert"/>
-    <AppToast ref="toast"/>
-    <AppLoading ref="loading"/>
-    <AppConfirm ref="confirm"/>
+    <AppAlert ref="alert" />
+    <AppToast ref="toast" />
+    <AppLoading ref="loading" />
+    <AppConfirm ref="confirm" />
   </div>
 </template>
 <script>
@@ -14,6 +14,7 @@ import AppAlert from '@/components/AppAlert'
 import AppToast from '@/components/AppToast'
 import AppLoading from '@/components/AppLoading'
 import AppConfirm from '@/components/AppConfirm'
+import wxAction from '@/controllers/wx.js'
 import Vue from 'vue'
 export default {
   components: {
@@ -23,9 +24,13 @@ export default {
     AppLoading
   },
   mounted() {
-    Vue.prototype.$gotoUrl = function (url) {
+    Vue.prototype.$gotoUrl = function(url) {
       if (url) {
-        if (url.indexOf('/') === 0) {
+        if (url.indexOf('mini:') === 0) {
+          wxAction.miniProgram.redirectTo({
+            url: url.replace('mini:', '')
+          })
+        } else if (url.indexOf('/') === 0) {
           this.$router.push(url)
         } else {
           window.location.href = url
@@ -36,18 +41,23 @@ export default {
     Vue.prototype.$appLoading = this.$refs.loading
     Vue.prototype.$appToast = this.$refs.toast
     Vue.prototype.$appConfirm = this.$refs.confirm
-    Vue.prototype.$actionWithLoading = function (promiseAction, { loading = '正在加载' } = {}) {
-      this.$appLoading.showLoading(loading)
-      return promiseAction.then(data => {
-        this.$appLoading.hiddenLoading()
-        return data
-      }).catch(error => {
-        this.$appLoading.hiddenLoading()
-        this.$appAlert.showAlert(error.message)
-        return Promise.reject(error)
-      })
+    Vue.prototype.$actionWithLoading = function(
+      promiseAction,
+      { loading = '正在加载', needLoading = true } = {}
+    ) {
+      needLoading && this.$appLoading.showLoading(loading)
+      return promiseAction
+        .then(data => {
+          this.$appLoading.hiddenLoading()
+          return data
+        })
+        .catch(error => {
+          this.$appLoading.hiddenLoading()
+          this.$appAlert.showAlert(error.message)
+          return Promise.reject(error)
+        })
     }
-    Vue.prototype.$actionWithAlert = function (promiseAction) {
+    Vue.prototype.$actionWithAlert = function(promiseAction) {
       return promiseAction.catch(error => {
         this.$appAlert.showAlert(error.message)
         return Promise.reject(error)
@@ -67,7 +77,7 @@ body {
   min-height: 100vh;
   max-width: 640px;
   margin: 0 auto;
-  font-family: "PingFang-SC-Medium", "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'PingFang-SC-Medium', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #1d1d1d;
@@ -91,7 +101,7 @@ body {
     margin-bottom: 18px;
   }
   .app-fb-tab::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     right: 0;

@@ -1,49 +1,55 @@
 <template>
   <section class="classify-page xa-view">
-    <router-link class="xa-cell search-bar-box" tag="div" to="/prodlist?type=SEARCH">
-      <div class="xa-flex xa-cell search-bar">
-        <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;
-        <span>搜索</span>
-      </div>
-    </router-link>
-    <section class="classify-content">
-      <div class="classify-slide">
-        <div
-          class="slide-item"
-          v-for="(item,index) in slides"
-          :class="{'active':curSide==item.guid}"
-          :key="index"
-          @click="curSide=item.guid"
-        >{{item.name}}</div>
-      </div>
-      <div class="classify-main">
-        <router-link
-          class="main-item"
-          v-for="(item,index) in classifyMap[curSide]"
-          :key="index"
-          tag="div"
-          :to="'/prodList?guid='+item.guid"
-        >
-          <div class="xa-img" :style="'backgroundImage:url('+item.logo+')'"></div>
-          <p>{{item.name}}</p>
-        </router-link>
-      </div>
-    </section>
+    <SkeletClassify v-if="isLoading" />
+    <template v-else>
+      <router-link class="xa-cell search-bar-box" tag="div" to="/prodlist?type=SEARCH">
+        <div class="xa-flex xa-cell search-bar">
+          <i class="iconfont icon-sousuo" style="font-size:18px"></i>&nbsp;&nbsp;
+          <span>搜索</span>
+        </div>
+      </router-link>
+      <section class="classify-content">
+        <div class="classify-slide">
+          <div
+            class="slide-item"
+            v-for="(item,index) in slides"
+            :class="{'active':curSide==item.guid}"
+            :key="index"
+            @click="curSide=item.guid"
+          >{{item.name}}</div>
+        </div>
+        <div class="classify-main">
+          <router-link
+            class="main-item"
+            v-for="(item,index) in classifyMap[curSide]"
+            :key="index"
+            tag="div"
+            :to="'/prodList?guid='+item.guid"
+          >
+            <div class="xa-img" :style="'backgroundImage:url('+item.logo+')'"></div>
+            <p>{{item.name}}</p>
+          </router-link>
+        </div>
+      </section>
+    </template>
   </section>
 </template>
 <script>
 import { getCategory } from '@/controllers/category'
+import SkeletClassify from '@/components/SkeletClassify'
 export default {
   name: 'classify',
+  components: { SkeletClassify },
   data() {
     return {
+      isLoading: true,
       curSide: '',
       slides: [],
       classifyMap: {}
     }
   },
   async created() {
-    const data = await this.$actionWithLoading(getCategory())
+    const data = await this.$actionWithAlert(getCategory())
     const classifyMap = {}
     let curSide = ''
     this.slides = data.map(item => {
@@ -56,6 +62,7 @@ export default {
     })
     this.curSide = curSide
     this.classifyMap = classifyMap
+    this.isLoading = false
   }
 }
 </script>
@@ -101,7 +108,7 @@ export default {
       color: #da0126;
       background-color: #fff;
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         height: 24px;
         width: 3px;

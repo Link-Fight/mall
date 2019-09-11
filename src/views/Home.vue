@@ -57,6 +57,7 @@ import HomeGoods from '@/components/HomeGoods'
 import AppLoadingMore from '@/components/AppLoadingMore'
 import App2Top from '@/components/App2Top'
 import { getMain, getRecommendProduct } from '@/controllers/main'
+// import { login } from '@/controllers/user'
 export default {
   name: 'home',
   data() {
@@ -141,6 +142,7 @@ export default {
     }
   },
   async beforeMount() {
+    // login()
     this.isLoading = true
     const data = await this.$actionWithAlert(getMain())
     this.navItms = data.recommend_nav

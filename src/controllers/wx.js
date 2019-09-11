@@ -255,5 +255,6 @@ export default {
     wx.onMenuShareQQ(config)
     wx.onMenuShareWeibo(config)
     wx.onMenuShareQZone(config)
-  }
+  },
+  miniProgram: wx.miniProgram
 }

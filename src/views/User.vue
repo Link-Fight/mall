@@ -17,6 +17,10 @@
         <span class="xa-flex">我的订单</span>
         <i class="iconfont icon-dingdan"></i>
       </router-link>
+      <router-link to="/coupon/index" tag="div" class="link-item xa-cell">
+        <span class="xa-flex">我的优惠券</span>
+        <i class="iconfont icon-quan"></i>
+      </router-link>
       <router-link to="/form/feedback" tag="div" class="link-item xa-cell">
         <span class="xa-flex">意见反馈</span>
         <i class="iconfont icon-kefu"></i>
@@ -49,7 +53,6 @@ export default {
     height: 45px;
     background-size: cover;
     border-radius: 50%;
-    background-size: 100% auto;
     // margin-right: 16px;
     box-shadow: 0 0 8px #000;
   }
